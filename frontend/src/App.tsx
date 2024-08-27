@@ -1,5 +1,4 @@
 import axios from "axios";
-import "./App.css";
 import { Box, Button, ChakraProvider, Input } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
 
