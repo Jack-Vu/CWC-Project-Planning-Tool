@@ -6,10 +6,28 @@ import {
   InputRightElement,
   Text
 } from "@chakra-ui/react";
-import React from "react";
+import { ChangeEvent, useState } from "react";
 
 const SignUp = () => {
-  const [show, setShow] = React.useState(false);
+  const [signupForm, setSignupForm] = useState({
+    name: "",
+    email: "",
+    username: "",
+    password: ""
+  });
+  const [show, setShow] = useState(false);
+
+  const handleChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSignupForm({
+      ...signupForm,
+      [name]: value
+    });
+  };
+
+  const onSubmit = () => {
+    console.log(signupForm);
+  };
   const handleClick = () => setShow(!show);
   //   const handleClick = async () => {
   //     const response = await axios.post("http://localhost:3025/name", {
@@ -34,20 +52,37 @@ const SignUp = () => {
       >
         <Box w="100%">
           <Text>Name: </Text>
-          <Input placeholder="Type in a last name..." type="text" />
+          <Input
+            placeholder="Type in a last name..."
+            onChange={handleChangeForm}
+            name="name"
+            type="text"
+          />
         </Box>
         <Box w="100%">
           <Text>Email address: </Text>
-          <Input placeholder="Type in a last name..." type="email" />
+          <Input
+            placeholder="Type in a last name..."
+            onChange={handleChangeForm}
+            name="email"
+            type="email"
+          />
         </Box>
         <Box w="100%">
           <Text>Username: </Text>
-          <Input placeholder="Type in a last name..." type="text" />
+          <Input
+            placeholder="Type in a last name..."
+            onChange={handleChangeForm}
+            name="username"
+            type="text"
+          />
         </Box>
         <Box w="100%">
           <Text>Password: </Text>
           <InputGroup size="md">
             <Input
+              onChange={handleChangeForm}
+              name="password"
               type={show ? "text" : "password"}
               placeholder="Enter password"
             />
@@ -62,7 +97,9 @@ const SignUp = () => {
           <Text>Profile Picture:</Text>
           <Button>Choose File</Button>
         </Box>
-        <Button w="100%">Submit</Button>
+        <Button w="100%" onClick={onSubmit}>
+          Submit
+        </Button>
       </Box>
     </Box>
   );
