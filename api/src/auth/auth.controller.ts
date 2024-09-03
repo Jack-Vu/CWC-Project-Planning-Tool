@@ -6,21 +6,15 @@ import * as sanitizeHtml from 'sanitize-html';
 
 export class SignUpDto {
   @IsNotEmpty()
-  @Transform((params) => {
-    sanitizeHtml(params.value);
-  })
+  @Transform((params) => sanitizeHtml(params.value))
   name: string;
 
   @IsEmail()
-  @Transform((params) => {
-    sanitizeHtml(params.value);
-  })
+  @Transform((params) => sanitizeHtml(params.value))
   email: string;
 
   @IsNotEmpty()
-  @Transform((params) => {
-    sanitizeHtml(params.value);
-  })
+  @Transform((params) => sanitizeHtml(params.value))
   username: string;
 
   @IsNotEmpty()
