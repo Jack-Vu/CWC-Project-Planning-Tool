@@ -12,7 +12,23 @@ import {
 import axios from "axios";
 import { ChangeEvent, useState } from "react";
 
+const isInvalidEmail = (email: string) => {
+  const emailFormat = /\S+@\S+\.\S+/;
+  if (email.match(emailFormat) && email.length > 0) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const isInvalidSecondPassword = (pass1: string, pass2: string) => {
+  return pass1 !== pass2;
+};
+
 const SignUp = () => {
+  const [show, setShow] = useState(false);
+  const [showSecond, setSecondShow] = useState(false);
+  const [secondPassword, setSecondPassword] = useState("");
   const [signUpForm, setSignUpForm] = useState({
     name: "",
     email: "",
@@ -23,22 +39,18 @@ const SignUp = () => {
     name: false,
     email: false,
     username: false,
-    password: false
+    password: false,
+    secondPassword: false
   });
-  const [show, setShow] = useState(false);
 
-  const isInvalidEmail = (email: string) => {
-    const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email.match(emailFormat)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
   const isNameError = signUpForm.name === "" && submitClicked.name;
-  const isEmailError = signUpForm.email === "" && submitClicked.email;
+  const isEmailError = isInvalidEmail(signUpForm.email) && submitClicked.email;
   const isUsernameError = signUpForm.username === "" && submitClicked.username;
   const isPasswordError = signUpForm.password === "" && submitClicked.password;
+  const isSecondPasswordError =
+    (isInvalidSecondPassword(signUpForm.password, secondPassword) &&
+      submitClicked.secondPassword) ||
+    (signUpForm.password === "" && submitClicked.secondPassword);
 
   const handleChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -46,6 +58,10 @@ const SignUp = () => {
       ...submitClicked,
       [name]: false
     });
+    if (name === "secondPassword") {
+      setSecondPassword(value);
+      return;
+    }
     setSignUpForm({
       ...signUpForm,
       [name]: value
@@ -57,13 +73,17 @@ const SignUp = () => {
       name: true,
       email: true,
       username: true,
-      password: true
+      password: true,
+      secondPassword: true
     });
+
     if (
       signUpForm.name === "" ||
-      signUpForm.email === "" ||
+      isInvalidEmail(signUpForm.email) ||
       signUpForm.username === "" ||
-      signUpForm.password === ""
+      signUpForm.password === "" ||
+      secondPassword === "" ||
+      isInvalidSecondPassword(signUpForm.password, secondPassword)
     ) {
       return;
     } else {
@@ -82,16 +102,19 @@ const SignUp = () => {
             username: "",
             password: ""
           });
+          setSecondPassword("");
           setSubmitClicked({
             name: false,
             email: false,
             username: false,
-            password: false
+            password: false,
+            secondPassword: false
           });
         });
     }
   };
   const handleShowHideClick = () => setShow(!show);
+  const handleShowHideSecondPasswordClick = () => setSecondShow(!showSecond);
 
   return (
     <Box>
@@ -115,7 +138,7 @@ const SignUp = () => {
             value={signUpForm.name}
           />
           {isNameError && (
-            <FormErrorMessage>Name is required!</FormErrorMessage>
+            <FormErrorMessage>Name is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isEmailError}>
@@ -127,7 +150,7 @@ const SignUp = () => {
             value={signUpForm.email}
           />
           {isEmailError && (
-            <FormErrorMessage>A valid email is required!</FormErrorMessage>
+            <FormErrorMessage>A valid email is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isUsernameError}>
@@ -139,7 +162,7 @@ const SignUp = () => {
             value={signUpForm.username}
           />
           {isUsernameError && (
-            <FormErrorMessage>Username is required!</FormErrorMessage>
+            <FormErrorMessage>Username is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isPasswordError}>
@@ -158,7 +181,30 @@ const SignUp = () => {
             </InputRightElement>
           </InputGroup>
           {isPasswordError && (
-            <FormErrorMessage>Password is required!</FormErrorMessage>
+            <FormErrorMessage>A password is required</FormErrorMessage>
+          )}
+        </FormControl>
+        <FormControl isRequired isInvalid={isSecondPasswordError}>
+          <FormLabel>Enter Password Again: </FormLabel>
+          <InputGroup size="md">
+            <Input
+              onChange={handleChangeForm}
+              name="secondPassword"
+              type={showSecond ? "text" : "password"}
+              value={secondPassword}
+            />
+            <InputRightElement width="4.5rem">
+              <Button
+                h="1.75rem"
+                size="sm"
+                onClick={handleShowHideSecondPasswordClick}
+              >
+                {showSecond ? "Hide" : "Show"}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+          {isSecondPasswordError && (
+            <FormErrorMessage>Passwords do not match.</FormErrorMessage>
           )}
         </FormControl>
         <Box display="flex" flexDirection="column" alignSelf="flex-start">
