@@ -124,6 +124,30 @@ const SignUp = () => {
             duration: 3000,
             isClosable: true
           });
+        })
+        .catch((error) => {
+          setSignUpForm({
+            name: "",
+            email: "",
+            username: "",
+            password: ""
+          });
+          setSecondPassword("");
+          setSubmitClicked({
+            name: false,
+            email: false,
+            username: false,
+            password: false,
+            secondPassword: false
+          });
+          toast({
+            title: "Error.",
+            description:
+              "We were not able to create your account. Please try again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
         });
     }
   };

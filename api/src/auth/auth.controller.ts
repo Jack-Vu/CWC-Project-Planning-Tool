@@ -1,8 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Transform } from 'class-transformer';
 import * as sanitizeHtml from 'sanitize-html';
+import { AuthGuard } from './auth.guard';
 
 export class SignUpDto {
   @IsNotEmpty()
@@ -28,5 +29,15 @@ export class AuthController {
   @Post('sign-up')
   signUp(@Body() signUpDto: SignUpDto) {
     return this.authService.signUp(signUpDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('user-details')
+  getUser(@Request() req) {
+    if (req.user) {
+      return req.user;
+    } else {
+      return 'no user'
+    }
   }
 }
