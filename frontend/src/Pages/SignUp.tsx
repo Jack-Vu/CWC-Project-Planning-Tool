@@ -155,7 +155,7 @@ const SignUp = () => {
   const handleShowHideSecondPasswordClick = () => setSecondShow(!showSecond);
 
   return (
-    <Box>
+    <>
       <Text textAlign="center" mb={4} fontSize="20px">
         Create An Account
       </Text>
@@ -252,8 +252,18 @@ const SignUp = () => {
         <Button w="100%" onClick={onSubmit}>
           Submit
         </Button>
+        <Box display="flex" alignItems="center" gap={4} marginTop={2}>
+          <Text>Already have an account? </Text>
+          <Button
+            onClick={() => {
+              navigate("/log-in");
+            }}
+          >
+            Log in
+          </Button>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

@@ -37,4 +37,15 @@ export class AuthService {
     const user = await this.usersService.createUser(signUpDto);
     return await this.createAccessToken(user);
   }
+
+  async logIn(logInDto) {
+    console.log(logInDto);
+    
+    // const user = this.usersService.findUserByUsername(logInDto.username)
+    // if (!user) {
+    //   throw new BadRequestException('Username already exists!');
+    // }
+    return "fake token";
+  }
+
 }
