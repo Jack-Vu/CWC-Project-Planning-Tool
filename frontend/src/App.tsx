@@ -1,44 +1,36 @@
-import axios from "axios";
-import "./App.css";
-import { Box, Button, ChakraProvider, Input } from "@chakra-ui/react";
-import { ChangeEvent, useState } from "react";
+import { ChakraProvider } from "@chakra-ui/react";
+import { Header } from "./Components";
+import { Outlet, useLoaderData } from "react-router-dom";
+import { useState } from "react";
+
+export type Data = {
+  email: string;
+  name: string;
+  username: string;
+};
+
+export type Context = {
+  loggedIn: boolean;
+  toggledLoggedIn: () => void;
+};
 
 function App() {
-  const [firstName, setFirstName] = useState("Jack");
-  const [lastName, setLastName] = useState("Vu");
+  const data = useLoaderData() as Data | undefined;
+  const [loggedIn, setLoggedIn] = useState(data?.username !== undefined);
+  console.log("Logged in", loggedIn);
 
-  const handleChangeFirstName = (e: ChangeEvent<HTMLInputElement>) => {
-    setFirstName(e.target.value);
-  };
-  const handleChangeLastName = (e: ChangeEvent<HTMLInputElement>) => {
-    setLastName(e.target.value);
+  const toggledLoggedIn = () => {
+    setLoggedIn(!loggedIn);
   };
 
-  const handleClick = async () => {
-    const response = await axios.post("http://localhost:3025/name", {
-      firstName,
-      lastName
-    });
-    console.log("Response", response.data);
-    console.log(firstName, lastName);
+  const context: Context = {
+    loggedIn,
+    toggledLoggedIn
   };
   return (
     <ChakraProvider>
-      <Box display="flex" m={10} gap={4}>
-        <Input
-          placeholder="Type in a first name..."
-          name="first"
-          onChange={handleChangeFirstName}
-        />
-        <Input
-          placeholder="Type in a last name..."
-          name="last"
-          onChange={handleChangeLastName}
-        />
-        <Button colorScheme="purple" onClick={handleClick}>
-          Add
-        </Button>
-      </Box>
+      <Header loggedIn={loggedIn} />
+      <Outlet context={context} />
     </ChakraProvider>
   );
 }
