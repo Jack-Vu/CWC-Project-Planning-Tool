@@ -12,11 +12,13 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { ChangeEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Context } from "../App";
 
 const LogIn = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const context = useOutletContext() as Context;
 
   const [show, setShow] = useState(false);
   const handleShowHideClick = () => setShow(!show);
@@ -44,7 +46,6 @@ const LogIn = () => {
   };
 
   const onSubmit = () => {
-    
     setSubmitClicked({
       username: true,
       password: true
@@ -59,6 +60,7 @@ const LogIn = () => {
         })
         .then((response) => {
           const token = response.data;
+          context.toggledLoggedIn();
           localStorage.setItem("token", token);
           setSignUpForm({
             username: "",

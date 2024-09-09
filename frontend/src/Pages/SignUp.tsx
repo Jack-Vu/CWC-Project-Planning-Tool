@@ -12,7 +12,8 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { ChangeEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Context } from "../App";
 
 const isInvalidEmail = (email: string) => {
   const emailFormat = /\S+@\S+\.\S+/;
@@ -30,6 +31,7 @@ const isInvalidSecondPassword = (pass1: string, pass2: string) => {
 const SignUp = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const context = useOutletContext() as Context;
 
   const [show, setShow] = useState(false);
   const [showSecond, setSecondShow] = useState(false);
@@ -101,6 +103,7 @@ const SignUp = () => {
         })
         .then((response) => {
           const token = response.data;
+          context.toggledLoggedIn();
           localStorage.setItem("token", token);
           setSignUpForm({
             name: "",

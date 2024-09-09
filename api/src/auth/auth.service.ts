@@ -29,8 +29,6 @@ export class AuthService {
     const usernameExists = (
       await this.usersService.findUserByUsername(signUpDto.username)
     )?.username;
-    console.log(usernameExists);
-
     const emailExists = (
       await this.usersService.findUserByEmail(signUpDto.email)
     )?.email;
@@ -55,7 +53,6 @@ export class AuthService {
   }
 
   async logIn(logInDto: LogInDto) {
-    console.log(logInDto);
     const user = await this.usersService.findUserByUsername(logInDto.username);
     if (!user) {
       // TODO remove comment only use for testing
@@ -72,5 +69,15 @@ export class AuthService {
     }
 
     return await this.createAccessToken(user);
+  }
+
+  async getProfileData(username: string) {
+    const user =  await this.usersService.findUserByUsername(username);
+
+    return {
+      email: user.email,
+      name: user.name,
+      username: user.username
+    }
   }
 }
