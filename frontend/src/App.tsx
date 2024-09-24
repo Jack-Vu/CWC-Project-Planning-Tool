@@ -17,7 +17,6 @@ export type Context = {
 function App() {
   const data = useLoaderData() as Data | undefined;
   const [loggedIn, setLoggedIn] = useState(data?.username !== undefined);
-  console.log("Logged in", loggedIn);
 
   const toggledLoggedIn = () => {
     setLoggedIn(!loggedIn);
