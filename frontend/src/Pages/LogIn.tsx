@@ -7,19 +7,12 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Text,
   useDisclosure,
   useToast
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Context } from "../App";
 import { ForgotPasswordModal } from "../Components";
