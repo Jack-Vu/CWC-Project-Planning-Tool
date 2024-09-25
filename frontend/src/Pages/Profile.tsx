@@ -57,7 +57,7 @@ const Profile = () => {
                 title={title}
                 value={value}
                 username={data.username}
-                setData={() => setData}
+                setData={setData}
               />
             );
           })}
