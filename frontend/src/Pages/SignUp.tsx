@@ -24,7 +24,7 @@ export const isInvalidEmail = (email: string) => {
   }
 };
 
-const isInvalidSecondPassword = (pass1: string, pass2: string) => {
+export const isInvalidSecondPassword = (pass1: string, pass2: string) => {
   return pass1 !== pass2;
 };
 

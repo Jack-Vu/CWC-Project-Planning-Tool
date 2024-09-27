@@ -30,7 +30,6 @@ const ForgotPasswordModal = ({ isOpen, onClose }: Props) => {
 
   const submitEmail = () => {
     const invalidEmail = isInvalidEmail(email);
-    console.log(invalidEmail);
     if (invalidEmail) {
       toast({
         title: "Error.",
@@ -45,7 +44,6 @@ const ForgotPasswordModal = ({ isOpen, onClose }: Props) => {
           email
         })
         .then((response) => {
-          console.log("Response:", response);
           toast({
             title: "Success.",
             description: "Check your email account for further directions",
@@ -55,18 +53,26 @@ const ForgotPasswordModal = ({ isOpen, onClose }: Props) => {
           });
         })
         .catch((error) => {
-          console.log("Error", error);
-          toast({
-            title: "Error.",
-            description: error.response.data.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true
-          });
+          if (error.response.data.message === "email not found") {
+            toast({
+              title: "Success.",
+              description: "Check your email account for further directions",
+              status: "success",
+              duration: 3000,
+              isClosable: true
+            });
+          } else {
+            toast({
+              title: "Error.",
+              description: error.response.data.message,
+              status: "error",
+              duration: 3000,
+              isClosable: true
+            });
+          }
         });
     }
     setEmail("");
-    console.log("Email", email);
     onClose();
   };
 

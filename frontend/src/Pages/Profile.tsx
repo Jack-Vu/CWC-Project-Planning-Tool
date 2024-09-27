@@ -26,7 +26,7 @@ const Profile = () => {
 
   const fieldMap = [
     { field: "name", title: "Name", value: data.name },
-    { field: "email", title: "Email Address", value: data.email },
+    { field: "email", title: "Email", value: data.email },
     { field: "username", title: "Username", value: data.username },
     { field: "password", title: "Password", value: "*********" }
   ];
