@@ -6,13 +6,17 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  InputRightElement
+  InputRightElement,
+  useToast
 } from "@chakra-ui/react";
+import axios from "axios";
 import { ChangeEvent, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ResetPassword = () => {
   const { id, token } = useParams();
+  const navigate = useNavigate();
+  const toast = useToast();
 
   const [show, setShow] = useState(false);
   const [showSecond, setSecondShow] = useState(false);
@@ -44,9 +48,44 @@ const ResetPassword = () => {
   const onSubmit = () => {
     setSubmitClicked(true);
     setSubmitSecondClicked(true);
-    // setPassword("");
-    // setSecondPassword("");
-  
+    if (password !== "" && password === secondPassword) {
+      axios
+        .post("http://localhost:3025/auth/save-new-password", {
+          newPassword: password,
+          id,
+          token
+        })
+        .then((response) => {
+          console.log("Response", response);
+          setSubmitClicked(false);
+          setSubmitSecondClicked(false);
+          setPassword("");
+          setSecondPassword("");
+          navigate("/log-in");
+          toast({
+            title: "Success",
+            description:
+              "Your password has been reset! Please log in with your new password.",
+            status: "success",
+            duration: 3000,
+            isClosable: true
+          });
+        })
+        .catch(() => {
+            setSubmitClicked(false);
+          setSubmitSecondClicked(false);
+          setPassword("");
+          setSecondPassword("");
+          toast({
+            title: "Error",
+            description:
+              "We can not reset your password at this time. Please start the reset password process again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          })
+        });
+    }
   };
 
   return (

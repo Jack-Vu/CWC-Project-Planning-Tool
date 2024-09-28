@@ -118,11 +118,28 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException('email not found');
     }
-    // create jwt with user current hashed password
     const token = await this.createAccessToken(user, user.password);
-    // send an email to the user with a link to a reset password page on the frontend with the JWT and userID as the params
 
-    console.log(token);
     return await this.mailService.sendPasswordResetEmail(user, token);
+  }
+
+  async saveNewPassword(newPassword: string, id: number, token: string) {
+    //get the user assoicated with id
+    const user = await this.usersService.findUserById(id);
+
+    //verify using the user we just loocked up hashed password
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const payload = await this.jwtService
+      .verifyAsync(token, {
+        secret: user.password,
+      })
+      .catch(() => {
+        throw new UnauthorizedException('token is invalid');
+      })
+      .then(async () => {
+        const hashedNewPassword = await this.hashPassword(newPassword);
+        user.password = hashedNewPassword;
+        return await this.usersService.createUser(user);
+      });
   }
 }
