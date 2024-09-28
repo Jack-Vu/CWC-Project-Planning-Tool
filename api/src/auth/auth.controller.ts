@@ -99,6 +99,7 @@ export class AuthController {
   sendResetPasswordEmail(@Body() email: Email) {
     return this.authService.sendResetPasswordEmail(email);
   }
+
   @Post('save-new-password')
   saveNewPassword(@Body() body: NewPasswordDto) {
     return this.authService.saveNewPassword(
@@ -106,5 +107,11 @@ export class AuthController {
       body.id,
       body.token,
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('delete-user')
+  deleteUser(@Request() req) {
+    return this.authService.deleteUser(req.user.sub);
   }
 }
