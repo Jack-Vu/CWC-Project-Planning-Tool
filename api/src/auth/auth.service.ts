@@ -14,11 +14,13 @@ import {
 } from './auth.controller';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
+import { ProjectsService } from 'src/projects/projects.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private projectsService: ProjectsService,
     private mailService: MailService,
     private jwtService: JwtService,
   ) {}
@@ -124,10 +126,7 @@ export class AuthService {
   }
 
   async saveNewPassword(newPassword: string, id: number, token: string) {
-    //get the user assoicated with id
     const user = await this.usersService.findUserById(id);
-
-    //verify using the user we just loocked up hashed password
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const payload = await this.jwtService
       .verifyAsync(token, {
@@ -145,5 +144,13 @@ export class AuthService {
 
   async deleteUser(id: number) {
     return await this.usersService.deleteUser(id);
+  }
+
+  async getUserProjects(id: number) {
+    console.log(id);
+  }
+
+  async createProject(name: string, description: string, userId: number) {
+    return await this.projectsService.createProject(name, description, userId)
   }
 }
