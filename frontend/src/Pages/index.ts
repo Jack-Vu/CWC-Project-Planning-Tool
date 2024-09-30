@@ -3,3 +3,4 @@ export * from "./LogIn";
 export * from "./Projects";
 export * from "./Projects";
 export * from "./Profile";
+export * from "./ResetPassword";

@@ -8,17 +8,20 @@ import {
   InputGroup,
   InputRightElement,
   Text,
+  useDisclosure,
   useToast
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Context } from "../App";
+import { ForgotPasswordModal } from "../Components";
 
 const LogIn = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const context = useOutletContext() as Context;
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [show, setShow] = useState(false);
   const handleShowHideClick = () => setShow(!show);
@@ -30,6 +33,7 @@ const LogIn = () => {
     username: false,
     password: false
   });
+
   const isUsernameError = signUpForm.username === "" && submitClicked.username;
   const isPasswordError = signUpForm.password === "" && submitClicked.password;
 
@@ -147,11 +151,12 @@ const LogIn = () => {
         <Button w="100%" onClick={onSubmit}>
           Submit
         </Button>
-        <Box display="flex" alignItems="center" gap={4} marginTop={2}>
-          <Text>Forgot your password? </Text>
-          <Button>Reset Password</Button>
+        <Box display="flex" alignItems="center" gap={10} mt={10}>
+          <Text lineHeight="40px">Forgot your password? </Text>
+          <Button onClick={onOpen}>Reset Password</Button>
         </Box>
       </Box>
+      <ForgotPasswordModal isOpen={isOpen} onClose={onClose} />
     </>
   );
 };

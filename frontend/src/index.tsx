@@ -6,7 +6,7 @@ import {
   RouterProvider
 } from "react-router-dom";
 import App from "./App";
-import { LogIn, Profile, Projects, SignUp } from "./Pages";
+import { LogIn, Profile, Projects, ResetPassword, SignUp } from "./Pages";
 import axios from "axios";
 import { createStandaloneToast } from "@chakra-ui/react";
 
@@ -78,6 +78,10 @@ const router = createBrowserRouter([
             return redirect("/sign-up");
           }
         }
+      },
+      {
+        path: "reset-password/:token/:id",
+        element: <ResetPassword />
       }
     ]
   }

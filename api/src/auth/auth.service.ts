@@ -6,12 +6,20 @@ import {
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { LogInDto, SignUpDto } from './auth.controller';
+import {
+  AccountDetailDto,
+  Email,
+  LogInDto,
+  SignUpDto,
+} from './auth.controller';
+import { User } from 'src/users/entities/user.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private mailService: MailService,
     private jwtService: JwtService,
   ) {}
 
@@ -20,9 +28,16 @@ export class AuthService {
     return await bcrypt.hash(password, saltRounds);
   }
 
-  async createAccessToken(user) {
-    const payload = { username: user.username };
-    return await this.jwtService.signAsync(payload);
+  async createAccessToken(user: User, secret?: string) {
+    const payload = { sub: user.id };
+    if (secret) {
+      return await this.jwtService.signAsync(payload, {
+        secret,
+        expiresIn: '10m',
+      });
+    } else {
+      return await this.jwtService.signAsync(payload);
+    }
   }
 
   async signUp(signUpDto: SignUpDto) {
@@ -56,7 +71,6 @@ export class AuthService {
     const user = await this.usersService.findUserByUsername(logInDto.username);
     if (!user) {
       // TODO remove comment only use for testing
-
       throw new UnauthorizedException("user doesn't exist");
     }
     const passwordsMatch = await this.verifyPassword(
@@ -70,14 +84,66 @@ export class AuthService {
 
     return await this.createAccessToken(user);
   }
+  async changeAccountDetail(accountDetailDto: AccountDetailDto) {
+    const user = await this.usersService.findUserByUsername(
+      accountDetailDto.username,
+    );
+    if (accountDetailDto.field === 'password') {
+      const plainTextPassword = accountDetailDto.value;
+      const hashedPassword = await this.hashPassword(plainTextPassword);
+      user[accountDetailDto.field] = hashedPassword;
+    } else {
+      user[accountDetailDto.field] = accountDetailDto.value;
+    }
+    const updatedUser = await this.usersService.createUser(user);
+    return {
+      name: updatedUser.name,
+      email: updatedUser.email,
+      username: updatedUser.username,
+    };
+  }
 
-  async getProfileData(username: string) {
-    const user =  await this.usersService.findUserByUsername(username);
+  async getProfileData(id: number) {
+    const user = await this.usersService.findUserById(id);
 
     return {
       email: user.email,
       name: user.name,
-      username: user.username
+      username: user.username,
+    };
+  }
+
+  async sendResetPasswordEmail(email: Email) {
+    const user = await this.usersService.findUserByEmail(email.email);
+    if (!user) {
+      throw new BadRequestException('email not found');
     }
+    const token = await this.createAccessToken(user, user.password);
+
+    return await this.mailService.sendPasswordResetEmail(user, token);
+  }
+
+  async saveNewPassword(newPassword: string, id: number, token: string) {
+    //get the user assoicated with id
+    const user = await this.usersService.findUserById(id);
+
+    //verify using the user we just loocked up hashed password
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const payload = await this.jwtService
+      .verifyAsync(token, {
+        secret: user.password,
+      })
+      .catch(() => {
+        throw new UnauthorizedException('token is invalid');
+      })
+      .then(async () => {
+        const hashedNewPassword = await this.hashPassword(newPassword);
+        user.password = hashedNewPassword;
+        return await this.usersService.createUser(user);
+      });
+  }
+
+  async deleteUser(id: number) {
+    return await this.usersService.deleteUser(id);
   }
 }
