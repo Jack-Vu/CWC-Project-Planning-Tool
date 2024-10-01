@@ -10,18 +10,20 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
-  Textarea
+  Textarea,
+  useToast
 } from "@chakra-ui/react";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
-import { Project } from "../../Pages";
+import { ProjectType } from "../../Pages";
 import axios from "axios";
 
 type Props = {
-  projects: Project[];
-  setProjects: Dispatch<SetStateAction<Project[]>>;
+  projects: ProjectType[];
+  setProjects: Dispatch<SetStateAction<ProjectType[]>>;
 };
 
 const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
+  const toast = useToast();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [createButtonClicked, setCreateButtonClicked] = useState(false);
@@ -38,8 +40,6 @@ const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
 
   const onSubmit = () => {
     setCreateButtonClicked(true);
-    // call create-project route on API to add project to database
-    // on response, update project state with list of projects returned from API
     if (name) {
       const token = localStorage.getItem("token");
 
@@ -55,21 +55,30 @@ const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
           }
         )
         .then((response) => {
-          console.log("Response", response.data);
+          setProjects(response.data);
+          setName("");
+          setDescription("");
+          setCreateButtonClicked(false);
+          setIsOpen(false);
+          toast({
+            title: "Success.",
+            description: "Your project has been created!",
+            status: "success",
+            duration: 3000,
+            isClosable: true
+          });
+        })
+        .catch((error) => {
+          console.log("Error", error);
+          toast({
+            title: "Error.",
+            description:
+              "There was an error creating your project. Please try again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
         });
-      setProjects([
-        ...projects,
-        {
-          name,
-          description,
-          status: "To Do"
-        }
-      ]);
-
-      setName("");
-      setDescription("");
-      setCreateButtonClicked(false);
-      setIsOpen(false);
     }
   };
 

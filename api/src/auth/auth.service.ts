@@ -146,11 +146,16 @@ export class AuthService {
     return await this.usersService.deleteUser(id);
   }
 
-  async getUserProjects(id: number) {
-    console.log(id);
+  async getUserProjects(userId: number) {
+    return this.projectsService.getUserProjects(userId);
   }
 
   async createProject(name: string, description: string, userId: number) {
-    return await this.projectsService.createProject(name, description, userId)
+    return await this.projectsService.createProject(name, description, userId);
+  }
+
+  async getProjectById(projectId: number, userId: number) {
+    const projects = await this.projectsService.getUserProjects(userId);
+    return projects.filter((project) => project.id === projectId)[0];
   }
 }

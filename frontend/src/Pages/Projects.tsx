@@ -1,66 +1,43 @@
 import { Box, Text } from "@chakra-ui/react";
-import { useLoaderData } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { Data } from "../App";
 import { CreateProjectAccordion } from "../Components/Projects";
 import { useState } from "react";
 
-export type Project = {
+export type ProjectType = {
   name: string;
   description?: string;
   status: string;
+  id: number;
 };
 
-const fakeProjects: Project[] = [
-  {
-    name: "Project A",
-    description:
-      "This is the description of Project A Lorem ipsum dolor, sit amet consectetur adipisicing elit. At vitae nulla, doloremque repellat magnam dignissimos porro harum animi odit tempore labore iste officia fugit ab impedit itaque. Iusto, consequatur placeat",
-    status: "To Do"
-  },
-  {
-    name: "Project B",
-    description:
-      "This is the description of Project B Lorem ipsum dolor, sit amet consectetur adipisicing elit. At vitae nulla, doloremque repellat magnam dignissimos porro harum animi odit tempore labore iste officia fugit ab impedit itaque. Iusto, consequatur placeat",
-    status: "To Do"
-  },
-  {
-    name: "Project C",
-    description:
-      "This is the description of Project C Lorem ipsum dolor, sit amet consectetur adipisicing elit. At vitae nulla, doloremque repellat magnam dignissimos porro harum animi odit tempore labore iste officia fugit ab impedit itaque. Iusto, consequatur placeat",
-    status: "In progress"
-  },
-  {
-    name: "Project D",
-    description:
-      "This is the description of Project D Lorem ipsum dolor, sit amet consectetur adipisicing elit. At vitae nulla, doloremque repellat magnam dignissimos porro harum animi odit tempore labore iste officia fugit ab impedit itaque. Iusto, consequatur placeat",
-    status: "Done!"
-  },
-  {
-    name: "Project E",
-    description:
-      "This is the description of Project E Lorem ipsum dolor, sit amet consectetur adipisicing elit. At vitae nulla, doloremque repellat magnam dignissimos porro harum animi odit tempore labore iste officia fugit ab impedit itaque. Iusto, consequatur placeat",
-    status: "Done!"
-  }
-];
-const Projects = () => {
-  const data = useLoaderData() as Data;
-  const [projects, setProjects] = useState(fakeProjects);
-  console.log("Data", data);
+type LoaderData = {
+  user: Data;
+  projects: ProjectType[];
+};
 
+const Projects = () => {
+  const navigate = useNavigate();
+  const data = useLoaderData() as LoaderData;
+  const user = data.user as Data;
+  const [projects, setProjects] = useState(data.projects);
+
+  const onProjectClick = (id: number) => {
+    navigate(`/project/${id}`);
+  };
   return (
     <Box mb={4} fontSize={20}>
-      <Text textAlign="center">{data.name}'s Projects</Text>
-      <Box m={10}>
-        {projects.map((project: Project) => {
-          return (
-            <Box
-              key={project.name}
-              display="flex"
-              border="1px solid black"
-              p={4}
-              mb={6}
-            >
-              <Text w="10%">{project.name}</Text>
+      <Text textAlign="center">{user.name}'s Projects</Text>
+      {projects.map((project: ProjectType) => {
+        return (
+          <Box
+            key={project.name}
+            m={10}
+            onClick={() => onProjectClick(project.id)}
+            _hover={{ cursor: "pointer", backgroundColor: "var(--chakra-colors-blackAlpha-50)" }}
+          >
+            <Box display="flex" border="1px solid black" p={4} mb={6}>
+              <Text w="15%">{project.name}</Text>
               <Text flex={1} isTruncated>
                 {project.description}
               </Text>
@@ -68,8 +45,10 @@ const Projects = () => {
                 {project.status}
               </Text>
             </Box>
-          );
-        })}
+          </Box>
+        );
+      })}
+      <Box m={10}>
         <CreateProjectAccordion projects={projects} setProjects={setProjects} />
       </Box>
     </Box>

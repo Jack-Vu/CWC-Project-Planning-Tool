@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Request,
   UseGuards,
@@ -127,8 +128,13 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('user-projects')
-  getUserProjects(@Request() req) {
-    return this.authService.getProfileData(req.user.sub);
+  async getUserProjects(@Request() req) {
+    const user = await this.authService.getProfileData(req.user.sub);
+    const projects = await this.authService.getUserProjects(req.user.sub);
+    return {
+      user,
+      projects,
+    };
   }
 
   @UseGuards(AuthGuard)
@@ -139,5 +145,11 @@ export class AuthController {
       projectDto.description,
       req.user.sub,
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('project/:id')
+  getProjectById(@Param('id') id: number, @Request() req) {
+    return this.authService.getProjectById(id, req.user.sub);
   }
 }
