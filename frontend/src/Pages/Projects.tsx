@@ -1,5 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
-import { redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Data } from "../App";
 import { CreateProjectAccordion } from "../Components/Projects";
 import { useState } from "react";
