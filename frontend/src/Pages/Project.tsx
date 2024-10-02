@@ -1,11 +1,19 @@
 import { Box, Button, Text } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { ProjectType } from "./Projects";
+import { CreateFeatureAccordion } from "../Components/Projects";
+
+export type Feature = {
+  name: string;
+  status: "To Do" | "In Progress" | "Done";
+  userStoryCount: number;
+  completedUserStories: number;
+};
 
 const columns = [{ name: "To Do" }, { name: "In Progress" }, { name: "Done" }];
 
-const features = [
+const sampleFeatures: Feature[] = [
   {
     name: "Feature A",
     status: "To Do",
@@ -64,7 +72,7 @@ const features = [
 
 const Project = () => {
   const data = useLoaderData() as ProjectType;
-  console.log(data);
+  const [features, setFeatures] = useState(sampleFeatures);
 
   return (
     <Box m={10}>
@@ -96,11 +104,12 @@ const Project = () => {
                       key={feature.name}
                       border="1px solid black"
                       p={4}
-                      m={4}
+                      mx={4}
+                      mt={4}
                       display="flex"
                       justifyContent="space-between"
                     >
-                      <Text >{feature.name}</Text>
+                      <Text>{feature.name}</Text>
                       <Text>
                         {feature.completedUserStories}/{feature.userStoryCount}
                       </Text>
@@ -109,6 +118,15 @@ const Project = () => {
                 }
                 return null;
               })}
+
+              {column.name === "To Do" ? (
+                <Box p={4}>
+                  <CreateFeatureAccordion
+                    features={features}
+                    setFeatures={setFeatures}
+                  />
+                </Box>
+              ) : null}
             </Box>
           );
         })}

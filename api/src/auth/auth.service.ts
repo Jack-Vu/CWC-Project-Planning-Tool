@@ -158,4 +158,12 @@ export class AuthService {
     const projects = await this.projectsService.getUserProjects(userId);
     return projects.filter((project) => project.id === projectId)[0];
   }
+
+  async createFeature(name: string, description: string, userId: number) {
+    console.log('Name', name);
+    console.log('Description', description);
+    console.log('UserId', userId);
+
+    // return await this.featureService.createFeature(name, description, userId);
+  }
 }

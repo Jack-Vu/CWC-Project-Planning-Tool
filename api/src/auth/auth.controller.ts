@@ -62,6 +62,15 @@ export class ProjectDto {
   @Transform((params) => sanitizeHtml(params.value))
   description: string;
 }
+export class FeatureDto {
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  name: string;
+
+  @IsOptional()
+  @Transform((params) => sanitizeHtml(params.value))
+  description: string;
+}
 
 export class Email {
   @IsEmail(undefined, { message: 'Please enter a valid email address!' })
@@ -151,5 +160,15 @@ export class AuthController {
   @Get('project/:id')
   getProjectById(@Param('id') id: number, @Request() req) {
     return this.authService.getProjectById(id, req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('create-feature')
+  createFeature(@Body() featureDto: FeatureDto, @Request() req) {
+    return this.authService.createFeature(
+      featureDto.name,
+      featureDto.description,
+      req.user.sub,
+    );
   }
 }
