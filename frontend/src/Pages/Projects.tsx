@@ -3,12 +3,14 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { Data } from "../App";
 import { CreateProjectAccordion } from "../Components/Projects";
 import { useState } from "react";
+import { Feature } from "./Project";
 
 export type ProjectType = {
   name: string;
   description?: string;
   status: string;
   id: number;
+  features: Feature[];
 };
 
 type LoaderData = {

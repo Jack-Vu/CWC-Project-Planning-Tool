@@ -20,9 +20,14 @@ import axios from "axios";
 type Props = {
   features: Feature[];
   setFeatures: Dispatch<SetStateAction<Feature[]>>;
+  projectId: number;
 };
 
-const CreateFeatureAccordion = ({ features, setFeatures }: Props) => {
+const CreateFeatureAccordion = ({
+  features,
+  projectId,
+  setFeatures
+}: Props) => {
   const toast = useToast();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -42,15 +47,13 @@ const CreateFeatureAccordion = ({ features, setFeatures }: Props) => {
     setCreateButtonClicked(true);
     if (name) {
       const token = localStorage.getItem("token");
-      console.log(name);
-      console.log(description);
-
       axios
         .post(
           "http://localhost:3025/auth/create-feature",
           {
             name,
-            description
+            description,
+            id: projectId
           },
           {
             headers: { Authorization: `Bearer ${token}` }

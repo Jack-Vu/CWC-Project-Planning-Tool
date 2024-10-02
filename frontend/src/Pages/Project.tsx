@@ -1,5 +1,5 @@
 import { Box, Button, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { ProjectType } from "./Projects";
 import { CreateFeatureAccordion } from "../Components/Projects";
@@ -13,66 +13,66 @@ export type Feature = {
 
 const columns = [{ name: "To Do" }, { name: "In Progress" }, { name: "Done" }];
 
-const sampleFeatures: Feature[] = [
-  {
-    name: "Feature A",
-    status: "To Do",
-    userStoryCount: 10,
-    completedUserStories: 0
-  },
-  {
-    name: "Feature B",
-    status: "Done",
-    userStoryCount: 10,
-    completedUserStories: 10
-  },
-  {
-    name: "Feature B1",
-    status: "Done",
-    userStoryCount: 10,
-    completedUserStories: 10
-  },
-  {
-    name: "Feature B2",
-    status: "Done",
-    userStoryCount: 10,
-    completedUserStories: 10
-  },
-  {
-    name: "Feature C",
-    status: "In Progress",
-    userStoryCount: 10,
-    completedUserStories: 2
-  },
-  {
-    name: "Feature C1",
-    status: "In Progress",
-    userStoryCount: 10,
-    completedUserStories: 3
-  },
-  {
-    name: "Feature C2",
-    status: "In Progress",
-    userStoryCount: 10,
-    completedUserStories: 4
-  },
-  {
-    name: "Feature D",
-    status: "To Do",
-    userStoryCount: 10,
-    completedUserStories: 0
-  },
-  {
-    name: "Feature E",
-    status: "To Do",
-    userStoryCount: 10,
-    completedUserStories: 0
-  }
-];
+// const sampleFeatures: Feature[] = [
+//   {
+//     name: "Feature A",
+//     status: "To Do",
+//     userStoryCount: 10,
+//     completedUserStories: 0
+//   },
+//   {
+//     name: "Feature B",
+//     status: "Done",
+//     userStoryCount: 10,
+//     completedUserStories: 10
+//   },
+//   {
+//     name: "Feature B1",
+//     status: "Done",
+//     userStoryCount: 10,
+//     completedUserStories: 10
+//   },
+//   {
+//     name: "Feature B2",
+//     status: "Done",
+//     userStoryCount: 10,
+//     completedUserStories: 10
+//   },
+//   {
+//     name: "Feature C",
+//     status: "In Progress",
+//     userStoryCount: 10,
+//     completedUserStories: 2
+//   },
+//   {
+//     name: "Feature C1",
+//     status: "In Progress",
+//     userStoryCount: 10,
+//     completedUserStories: 3
+//   },
+//   {
+//     name: "Feature C2",
+//     status: "In Progress",
+//     userStoryCount: 10,
+//     completedUserStories: 4
+//   },
+//   {
+//     name: "Feature D",
+//     status: "To Do",
+//     userStoryCount: 10,
+//     completedUserStories: 0
+//   },
+//   {
+//     name: "Feature E",
+//     status: "To Do",
+//     userStoryCount: 10,
+//     completedUserStories: 0
+//   }
+// ];
 
 const Project = () => {
-  const data = useLoaderData() as ProjectType;
-  const [features, setFeatures] = useState(sampleFeatures);
+  const project = useLoaderData() as ProjectType;
+  const [features, setFeatures] = useState(project.features);
 
   return (
     <Box m={10}>
@@ -84,9 +84,9 @@ const Project = () => {
       >
         <Box>
           <Text mb={4} fontSize={20}>
-            {data.name}
+            {project.name}
           </Text>
-          <Text>{data.description || "There is no product description"}</Text>
+          <Text>{project.description || "There is no product description"}</Text>
         </Box>
         <Button>Delete Project</Button>
       </Box>
@@ -124,6 +124,7 @@ const Project = () => {
                   <CreateFeatureAccordion
                     features={features}
                     setFeatures={setFeatures}
+                    projectId={project.id}
                   />
                 </Box>
               ) : null}
