@@ -35,7 +35,8 @@ const Projects = () => {
           <Box
             key={project.name}
             m={10}
-            onClick={() => onProjectClick(project.id)}
+            onClick={() => 
+              onProjectClick(project.id)}
             _hover={{
               cursor: "pointer",
               backgroundColor: "var(--chakra-colors-blackAlpha-50)"

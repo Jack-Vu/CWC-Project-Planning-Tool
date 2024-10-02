@@ -63,11 +63,13 @@ function FeatureModal({
           <ModalCloseButton />
           {sampleUserStories.map((story) => {
             return (
-              <UserStoryDetailsAccordion
-                name={story.name}
-                description={story.description}
-                status={story.status}
-              />
+              <Box key={story.name}>
+                <UserStoryDetailsAccordion
+                  name={story.name}
+                  description={story.description}
+                  status={story.status}
+                />
+              </Box>
             );
           })}
         </Box>

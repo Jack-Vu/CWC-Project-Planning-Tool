@@ -88,14 +88,16 @@ const Project = () => {
           })}
         </Box>
       </Box>
-      <FeatureModal
-        isOpen={isOpen}
-        onClose={onClose}
-        featureName={selectedFeature.name}
-        featureDescription={
-          selectedFeature.description || "There is no feature description"
-        }
-      />
+      {selectedFeature && (
+        <FeatureModal
+          isOpen={isOpen}
+          onClose={onClose}
+          featureName={selectedFeature.name}
+          featureDescription={
+            selectedFeature.description || "There is no feature description"
+          }
+        />
+      )}
     </>
   );
 };
