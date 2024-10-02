@@ -70,6 +70,9 @@ export class FeatureDto {
   @IsOptional()
   @Transform((params) => sanitizeHtml(params.value))
   description: string;
+
+  @IsNotEmpty()
+  id: number;
 }
 
 export class Email {
@@ -169,6 +172,7 @@ export class AuthController {
       featureDto.name,
       featureDto.description,
       req.user.sub,
+      featureDto.id,
     );
   }
 }

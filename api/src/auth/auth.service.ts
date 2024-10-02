@@ -15,12 +15,14 @@ import {
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
 import { ProjectsService } from 'src/projects/projects.service';
+import { FeaturesService } from 'src/features/features.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private projectsService: ProjectsService,
+    private featuresService: FeaturesService,
     private mailService: MailService,
     private jwtService: JwtService,
   ) {}
@@ -159,11 +161,26 @@ export class AuthService {
     return projects.filter((project) => project.id === projectId)[0];
   }
 
-  async createFeature(name: string, description: string, userId: number) {
-    console.log('Name', name);
-    console.log('Description', description);
-    console.log('UserId', userId);
-
-    // return await this.featureService.createFeature(name, description, userId);
+  async createFeature(
+    name: string,
+    description: string,
+    userId: number,
+    projectId: number,
+  ) {
+    const project = (await this.projectsService.getUserProjects(userId)).find(
+      (projects) => {
+        return projects.id === projectId;
+      },
+    );
+    console.log(project);
+    if (project.id) {
+      return await this.featuresService.createFeature(
+        name,
+        description,
+        project.id,
+      );
+    } else {
+      throw new UnauthorizedException('project not found');
+    }
   }
 }
