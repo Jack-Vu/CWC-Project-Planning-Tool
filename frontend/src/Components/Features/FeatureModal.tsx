@@ -1,4 +1,3 @@
-import { ArrowDownIcon, ChevronDownIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Box,
   Modal,
@@ -8,7 +7,6 @@ import {
   Text
 } from "@chakra-ui/react";
 import { UserStoryDetailsAccordion } from "../UserStories";
-import { useState } from "react";
 
 type Props = {
   isOpen: boolean;
