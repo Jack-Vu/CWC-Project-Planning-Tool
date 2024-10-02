@@ -76,7 +76,7 @@ const LogIn = () => {
           });
           navigate("/projects");
           toast({
-            title: "Account created.",
+            title: "Success.",
             description: `Welcome back, ${signUpForm.username}.`,
             status: "success",
             duration: 3000,

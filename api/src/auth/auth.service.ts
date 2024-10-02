@@ -14,11 +14,15 @@ import {
 } from './auth.controller';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
+import { ProjectsService } from 'src/projects/projects.service';
+import { FeaturesService } from 'src/features/features.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private projectsService: ProjectsService,
+    private featuresService: FeaturesService,
     private mailService: MailService,
     private jwtService: JwtService,
   ) {}
@@ -124,10 +128,7 @@ export class AuthService {
   }
 
   async saveNewPassword(newPassword: string, id: number, token: string) {
-    //get the user assoicated with id
     const user = await this.usersService.findUserById(id);
-
-    //verify using the user we just loocked up hashed password
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const payload = await this.jwtService
       .verifyAsync(token, {
@@ -145,5 +146,41 @@ export class AuthService {
 
   async deleteUser(id: number) {
     return await this.usersService.deleteUser(id);
+  }
+
+  async getUserProjects(userId: number) {
+    return this.projectsService.getUserProjects(userId);
+  }
+
+  async createProject(name: string, description: string, userId: number) {
+    return await this.projectsService.createProject(name, description, userId);
+  }
+
+  async getProjectById(projectId: number, userId: number) {
+    const projects = await this.projectsService.getUserProjects(userId);
+    return projects.filter((project) => project.id === projectId)[0];
+  }
+
+  async createFeature(
+    name: string,
+    description: string,
+    userId: number,
+    projectId: number,
+  ) {
+    const project = (await this.projectsService.getUserProjects(userId)).find(
+      (projects) => {
+        return projects.id === projectId;
+      },
+    );
+    console.log(project);
+    if (project.id) {
+      return await this.featuresService.createFeature(
+        name,
+        description,
+        project.id,
+      );
+    } else {
+      throw new UnauthorizedException('project not found');
+    }
   }
 }
