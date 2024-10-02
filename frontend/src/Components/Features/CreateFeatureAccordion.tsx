@@ -18,16 +18,11 @@ import { Feature } from "../../Pages";
 import axios from "axios";
 
 type Props = {
-  features: Feature[];
   setFeatures: Dispatch<SetStateAction<Feature[]>>;
   projectId: number;
 };
 
-const CreateFeatureAccordion = ({
-  features,
-  projectId,
-  setFeatures
-}: Props) => {
+const CreateFeatureAccordion = ({ projectId, setFeatures }: Props) => {
   const toast = useToast();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
