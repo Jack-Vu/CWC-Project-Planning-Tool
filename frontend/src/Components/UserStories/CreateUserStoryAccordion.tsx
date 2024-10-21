@@ -14,16 +14,21 @@ import {
   useToast
 } from "@chakra-ui/react";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
-import { Feature } from "../../Pages";
 import axios from "axios";
+import { UserStory } from "../Features";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
-  setFeatures: Dispatch<SetStateAction<Feature[]>>;
+  setUserStories: Dispatch<SetStateAction<UserStory[]>>;
+  featureId: number;
   projectId: number;
 };
 
-const CreateFeatureAccordion = ({ projectId, setFeatures }: Props) => {
+const CreateUserStoryAccordion = ({
+  featureId,
+  projectId,
+  setUserStories
+}: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -46,25 +51,28 @@ const CreateFeatureAccordion = ({ projectId, setFeatures }: Props) => {
       const token = localStorage.getItem("token");
       axios
         .post(
-          "http://localhost:3025/auth/create-feature",
+          "http://localhost:3025/auth/create-user-story",
           {
             name,
             description,
-            projectId
+            projectId,
+            featureId
           },
           {
             headers: { Authorization: `Bearer ${token}` }
           }
         )
         .then((response) => {
-          setFeatures(response.data);
+          console.log(response.data);
+
+          setUserStories(response.data);
           setName("");
           setDescription("");
           setCreateButtonClicked(false);
           setIsOpen(false);
           toast({
             title: "Success.",
-            description: "Your feature has been created!",
+            description: "Your user story has been created!",
             status: "success",
             duration: 3000,
             isClosable: true
@@ -84,7 +92,7 @@ const CreateFeatureAccordion = ({ projectId, setFeatures }: Props) => {
             toast({
               title: "Error.",
               description:
-                "There was an error creating your feature. Please try again!",
+                "There was an error creating your user story. Please try again!",
               status: "error",
               duration: 3000,
               isClosable: true
@@ -112,13 +120,13 @@ const CreateFeatureAccordion = ({ projectId, setFeatures }: Props) => {
                   <AddIcon fontSize="12px" />
                 )}
                 <Box as="span" flex="1" textAlign="left" ml={3} p={2}>
-                  Add a feature
+                  Add a user story
                 </Box>
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4} borderTop="1px solid black" textAlign="left">
               <FormControl isRequired isInvalid={isNameError} mb={2}>
-                <FormLabel>Feature Name:</FormLabel>
+                <FormLabel>User Story Name:</FormLabel>
                 <Input
                   onChange={onChangeName}
                   name="name"
@@ -126,11 +134,13 @@ const CreateFeatureAccordion = ({ projectId, setFeatures }: Props) => {
                   value={name}
                 />
                 {isNameError && (
-                  <FormErrorMessage>Feature name is required.</FormErrorMessage>
+                  <FormErrorMessage>
+                    User Story name is required.
+                  </FormErrorMessage>
                 )}
               </FormControl>
               <FormControl mb={4}>
-                <FormLabel>Feature Description:</FormLabel>
+                <FormLabel>User Story Description:</FormLabel>
                 <Textarea
                   onChange={onChangeDescription}
                   name="description"
@@ -138,7 +148,7 @@ const CreateFeatureAccordion = ({ projectId, setFeatures }: Props) => {
                 />
               </FormControl>
               <Button onClick={onSubmit} display="flex" w="100%">
-                Create Feature
+                Create User Story
               </Button>
             </AccordionPanel>
           </>
@@ -148,4 +158,4 @@ const CreateFeatureAccordion = ({ projectId, setFeatures }: Props) => {
   );
 };
 
-export { CreateFeatureAccordion };
+export { CreateUserStoryAccordion };

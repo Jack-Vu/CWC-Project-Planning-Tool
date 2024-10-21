@@ -6,13 +6,27 @@ import {
   ModalOverlay,
   Text
 } from "@chakra-ui/react";
-import { UserStoryDetailsAccordion } from "../UserStories";
+import {
+  CreateUserStoryAccordion,
+  UserStoryDetailsAccordion
+} from "../UserStories";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   featureName: string;
   featureDescription: string;
+  featureId: number;
+  projectId: number;
+  featureUserStories: UserStory[];
+  setUserStories: Dispatch<SetStateAction<UserStory[]>>;
+};
+
+export type UserStory = {
+  name: string;
+  description: string;
+  status: string;
 };
 
 const sampleUserStories = [
@@ -47,7 +61,11 @@ function FeatureModal({
   isOpen,
   onClose,
   featureName,
-  featureDescription
+  featureDescription,
+  featureId,
+  projectId,
+  featureUserStories,
+  setUserStories
 }: Props) {
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
@@ -61,7 +79,7 @@ function FeatureModal({
             <Text>{featureDescription}</Text>
           </Box>
           <ModalCloseButton />
-          {sampleUserStories.map((story) => {
+          {featureUserStories?.map((story) => {
             return (
               <Box key={story.name}>
                 <UserStoryDetailsAccordion
@@ -72,6 +90,13 @@ function FeatureModal({
               </Box>
             );
           })}
+          <Box mt={4}>
+            <CreateUserStoryAccordion
+              featureId={featureId}
+              projectId={projectId}
+              setUserStories={setUserStories}
+            />
+          </Box>
         </Box>
       </ModalContent>
     </Modal>

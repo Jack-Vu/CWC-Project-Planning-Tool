@@ -11,7 +11,10 @@ export class FeaturesService {
   ) {}
 
   async getProjectFeatures(id: number) {
-    return await this.featuresRepository.find({ where: { project: { id } } });
+    return await this.featuresRepository.find({
+      where: { project: { id } },
+      relations: ['userStories'],
+    });
   }
 
   async createFeature(name: string, description: string, projectId: number) {

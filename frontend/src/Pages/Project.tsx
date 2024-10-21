@@ -1,16 +1,18 @@
 import { Box, Button, Text, useDisclosure } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 
-import { CreateFeatureAccordion, FeatureModal } from "../Components";
+import { CreateFeatureAccordion, FeatureModal, UserStory } from "../Components";
 import { ProjectType } from "./Projects";
 
 export type Feature = {
   name: string;
   description?: string;
   status: "To Do" | "In Progress" | "Done";
+  userStories: UserStory[];
   userStoryCount: number;
   completedUserStories: number;
+  id: number;
 };
 
 const columns = [{ name: "To Do" }, { name: "In Progress" }, { name: "Done" }];
@@ -19,6 +21,7 @@ const Project = () => {
   const project = useLoaderData() as ProjectType;
   const [features, setFeatures] = useState(project.features);
   const [selectedFeature, setSelectedFeature] = useState(features[0]);
+  const [userStories, setUserStories] = useState(selectedFeature?.userStories);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -59,6 +62,7 @@ const Project = () => {
                         display="flex"
                         justifyContent="space-between"
                         onClick={() => {
+                          setUserStories(feature.userStories);
                           setSelectedFeature(feature);
                           onOpen();
                         }}
@@ -96,6 +100,10 @@ const Project = () => {
           featureDescription={
             selectedFeature.description || "There is no feature description"
           }
+          featureId={selectedFeature.id}
+          projectId={project.id}
+          featureUserStories={userStories}
+          setUserStories={setUserStories}
         />
       )}
     </>

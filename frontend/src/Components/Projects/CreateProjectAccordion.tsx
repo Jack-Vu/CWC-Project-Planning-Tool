@@ -16,6 +16,7 @@ import {
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { ProjectType } from "../../Pages";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   projects: ProjectType[];
@@ -24,6 +25,7 @@ type Props = {
 
 const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
   const toast = useToast();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [createButtonClicked, setCreateButtonClicked] = useState(false);
@@ -69,15 +71,25 @@ const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
           });
         })
         .catch((error) => {
-          console.log("Error", error);
-          toast({
-            title: "Error.",
-            description:
-              "There was an error creating your project. Please try again!",
-            status: "error",
-            duration: 3000,
-            isClosable: true
-          });
+          if (error.response.data.message === "Unauthorized") {
+            toast({
+              title: "Error.",
+              description: "Your session has expired, please log in again!",
+              status: "error",
+              duration: 3000,
+              isClosable: true
+            });
+            navigate("/log-in");
+          } else {
+            toast({
+              title: "Error.",
+              description:
+                "There was an error creating your project. Please try again!",
+              status: "error",
+              duration: 3000,
+              isClosable: true
+            });
+          }
         });
     }
   };

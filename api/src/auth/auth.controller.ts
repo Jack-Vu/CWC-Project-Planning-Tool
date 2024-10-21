@@ -72,7 +72,22 @@ export class FeatureDto {
   description: string;
 
   @IsNotEmpty()
-  id: number;
+  projectId: number;
+}
+export class UserStoryDto {
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  name: string;
+
+  @IsOptional()
+  @Transform((params) => sanitizeHtml(params.value))
+  description: string;
+
+  @IsNotEmpty()
+  featureId: number;
+
+  @IsNotEmpty()
+  projectId: number;
 }
 
 export class Email {
@@ -172,7 +187,18 @@ export class AuthController {
       featureDto.name,
       featureDto.description,
       req.user.sub,
-      featureDto.id,
+      featureDto.projectId,
+    );
+  }
+  @UseGuards(AuthGuard)
+  @Post('create-user-story')
+  createUserStory(@Body() userStoryDto: UserStoryDto, @Request() req) {
+    return this.authService.createUserStory(
+      userStoryDto.name,
+      userStoryDto.description,
+      req.user.sub,
+      userStoryDto.projectId,
+      userStoryDto.featureId,
     );
   }
 }
