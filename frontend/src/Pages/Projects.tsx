@@ -33,7 +33,7 @@ const Projects = () => {
       {projects.map((project: ProjectType) => {
         return (
           <Box
-            key={project.name}
+            key={project.id}
             m={10}
             onClick={() => 
               onProjectClick(project.id)}

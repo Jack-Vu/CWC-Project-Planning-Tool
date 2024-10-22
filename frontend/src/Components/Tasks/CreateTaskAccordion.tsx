@@ -10,29 +10,29 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
-  Textarea,
   useToast
 } from "@chakra-ui/react";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
-import { UserStory } from "../Features";
 import { useNavigate } from "react-router-dom";
+import { Task } from "../UserStories";
 
 type Props = {
   featureId: number;
   projectId: number;
-  setUserStories: Dispatch<SetStateAction<UserStory[]>>;
+  userStoryId: number;
+  setTasks: Dispatch<SetStateAction<Task[]>>;
 };
 
-const CreateUserStoryAccordion = ({
+const CreateTaskAccordion = ({
   featureId,
   projectId,
-  setUserStories
+  userStoryId,
+  setTasks
 }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
   const [createButtonClicked, setCreateButtonClicked] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const isNameError = name === "" && createButtonClicked;
@@ -41,9 +41,6 @@ const CreateUserStoryAccordion = ({
     setCreateButtonClicked(false);
     setName(e.target.value);
   };
-  const onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setDescription(e.target.value);
-  };
 
   const onSubmit = () => {
     setCreateButtonClicked(true);
@@ -51,12 +48,12 @@ const CreateUserStoryAccordion = ({
       const token = localStorage.getItem("token");
       axios
         .post(
-          "http://localhost:3025/auth/create-user-story",
+          "http://localhost:3025/auth/create-task",
           {
             name,
-            description,
             projectId,
-            featureId
+            featureId,
+            userStoryId
           },
           {
             headers: { Authorization: `Bearer ${token}` }
@@ -65,13 +62,12 @@ const CreateUserStoryAccordion = ({
         .then((response) => {
           console.log(response.data);
           setName("");
-          setDescription("");
-          setUserStories(response.data);
+          setTasks(response.data);
           setCreateButtonClicked(false);
           setIsOpen(false);
           toast({
             title: "Success.",
-            description: "Your user story has been created!",
+            description: "Your developer task has been created!",
             status: "success",
             duration: 3000,
             isClosable: true
@@ -91,7 +87,7 @@ const CreateUserStoryAccordion = ({
             toast({
               title: "Error.",
               description:
-                "There was an error creating your user story. Please try again!",
+                "There was an error creating your developer task. Please try again!",
               status: "error",
               duration: 3000,
               isClosable: true
@@ -100,10 +96,9 @@ const CreateUserStoryAccordion = ({
         });
     }
   };
-
   return (
     <Accordion allowToggle index={isOpen ? 0 : -1}>
-      <AccordionItem border="1px solid black">
+      <AccordionItem borderTop="1px solid black">
         {({ isExpanded }) => (
           <>
             <h2>
@@ -119,13 +114,13 @@ const CreateUserStoryAccordion = ({
                   <AddIcon fontSize="12px" />
                 )}
                 <Box as="span" flex="1" textAlign="left" ml={3} p={2}>
-                  Add a user story
+                  Add a task
                 </Box>
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4} borderTop="1px solid black" textAlign="left">
               <FormControl isRequired isInvalid={isNameError} mb={2}>
-                <FormLabel>User Story Name:</FormLabel>
+                <FormLabel>Task Name:</FormLabel>
                 <Input
                   onChange={onChangeName}
                   name="name"
@@ -134,20 +129,12 @@ const CreateUserStoryAccordion = ({
                 />
                 {isNameError && (
                   <FormErrorMessage>
-                    User Story name is required.
+                    Developer task name is required.
                   </FormErrorMessage>
                 )}
               </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>User Story Description:</FormLabel>
-                <Textarea
-                  onChange={onChangeDescription}
-                  name="description"
-                  value={description}
-                />
-              </FormControl>
               <Button onClick={onSubmit} display="flex" w="100%">
-                Create User Story
+                Create Task
               </Button>
             </AccordionPanel>
           </>
@@ -157,4 +144,4 @@ const CreateUserStoryAccordion = ({
   );
 };
 
-export { CreateUserStoryAccordion };
+export { CreateTaskAccordion };

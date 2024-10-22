@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import {
   CreateUserStoryAccordion,
+  Task,
   UserStoryDetailsAccordion
 } from "../UserStories";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -20,42 +21,15 @@ type Props = {
   featureId: number;
   projectId: number;
   featureUserStories: UserStory[];
-  setUserStories: Dispatch<SetStateAction<UserStory[]>>;
 };
 
 export type UserStory = {
   name: string;
   description: string;
   status: string;
+  id: number;
+  tasks: Task[];
 };
-
-const sampleUserStories = [
-  {
-    name: "User Story 1",
-    description: "This is my user story description!",
-    status: "2/10"
-  },
-  {
-    name: "User Story 2",
-    description: "This is my user story description!",
-    status: "4/10"
-  },
-  {
-    name: "User Story 3",
-    description: "This is my user story description!",
-    status: "1/10"
-  },
-  {
-    name: "User Story 4",
-    description: "This is my user story description!",
-    status: "0/10"
-  },
-  {
-    name: "User Story 5",
-    description: "This is my user story description!",
-    status: "7/10"
-  }
-];
 
 function FeatureModal({
   isOpen,
@@ -64,9 +38,13 @@ function FeatureModal({
   featureDescription,
   featureId,
   projectId,
-  featureUserStories,
-  setUserStories
+  featureUserStories
 }: Props) {
+  const [userStories, setUserStories] = useState(featureUserStories);
+  useEffect(() => {
+    setUserStories(featureUserStories);
+  }, [featureUserStories]);
+
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
@@ -76,16 +54,22 @@ function FeatureModal({
             <Text mb={4} fontSize={20}>
               {featureName}
             </Text>
-            <Text>{featureDescription}</Text>
+            <Text>
+              {featureDescription || "There is no feature description"}
+            </Text>
           </Box>
           <ModalCloseButton />
-          {featureUserStories?.map((story) => {
+          {userStories?.map((story) => {
             return (
-              <Box key={story.name}>
+              <Box key={story.id}>
                 <UserStoryDetailsAccordion
                   name={story.name}
                   description={story.description}
                   status={story.status}
+                  featureId={featureId}
+                  projectId={projectId}
+                  userStoryId={story.id}
+                  userStoryTask={story.tasks}
                 />
               </Box>
             );

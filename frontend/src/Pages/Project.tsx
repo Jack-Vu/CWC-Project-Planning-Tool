@@ -1,5 +1,5 @@
 import { Box, Button, Text, useDisclosure } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 
 import { CreateFeatureAccordion, FeatureModal, UserStory } from "../Components";
@@ -19,9 +19,9 @@ const columns = [{ name: "To Do" }, { name: "In Progress" }, { name: "Done" }];
 
 const Project = () => {
   const project = useLoaderData() as ProjectType;
-  const [features, setFeatures] = useState(project.features);
+
+  const [features, setFeatures] = useState<Feature[]>(project.features);
   const [selectedFeature, setSelectedFeature] = useState(features[0]);
-  const [userStories, setUserStories] = useState(selectedFeature?.userStories);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -51,10 +51,11 @@ const Project = () => {
                   {column.name}
                 </Text>
                 {features.map((feature) => {
-                  if (feature.status === column.name) {
+                  const status = "To Do";
+                  if (status === column.name) {
                     return (
                       <Box
-                        key={feature.name}
+                        key={feature.id}
                         border="1px solid black"
                         p={4}
                         mx={4}
@@ -62,7 +63,6 @@ const Project = () => {
                         display="flex"
                         justifyContent="space-between"
                         onClick={() => {
-                          setUserStories(feature.userStories);
                           setSelectedFeature(feature);
                           onOpen();
                         }}
@@ -102,8 +102,7 @@ const Project = () => {
           }
           featureId={selectedFeature.id}
           projectId={project.id}
-          featureUserStories={userStories}
-          setUserStories={setUserStories}
+          featureUserStories={selectedFeature?.userStories}
         />
       )}
     </>

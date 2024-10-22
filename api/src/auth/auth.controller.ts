@@ -84,10 +84,24 @@ export class UserStoryDto {
   description: string;
 
   @IsNotEmpty()
+  projectId: number;
+  
+  @IsNotEmpty()
   featureId: number;
+}
+export class TaskDto {
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  name: string;
 
   @IsNotEmpty()
   projectId: number;
+
+  @IsNotEmpty()
+  featureId: number;
+
+  @IsNotEmpty()
+  userStoryId: number;
 }
 
 export class Email {
@@ -199,6 +213,18 @@ export class AuthController {
       req.user.sub,
       userStoryDto.projectId,
       userStoryDto.featureId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('create-task')
+  createTask(@Body() taskDto: TaskDto, @Request() req) {
+    return this.authService.createTask(
+      taskDto.name,
+      req.user.sub,
+      taskDto.projectId,
+      taskDto.featureId,
+      taskDto.userStoryId,
     );
   }
 }
