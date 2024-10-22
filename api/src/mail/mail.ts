@@ -1,5 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import { config as dotenvConfig } from 'dotenv';
+import { BadRequestException } from '@nestjs/common';
 dotenvConfig();
 
 const transporter = nodemailer.createTransport({
@@ -17,7 +18,7 @@ export const sendMail = async (mailOptions, callback) => {
   try {
     const details = await transporter.sendMail(mailOptions);
     callback(details);
-  } catch (error) {
-    console.log(error);
+  } catch {
+    throw new BadRequestException();
   }
 };

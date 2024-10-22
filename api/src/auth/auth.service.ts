@@ -177,11 +177,8 @@ export class AuthService {
       },
     );
     if (project.id) {
-      return await this.featuresService.createFeature(
-        name,
-        description,
-        project.id,
-      );
+      await this.featuresService.createFeature(name, description, project.id);
+      return await this.projectsService.getProjectById(projectId);
     } else {
       throw new UnauthorizedException('project not found');
     }
@@ -199,11 +196,12 @@ export class AuthService {
     const feature = features.find((feature) => feature.id === featureId);
 
     if (feature.id) {
-      return await this.userStoriesService.createUserStory(
+      await this.userStoriesService.createUserStory(
         name,
         description,
         feature.id,
       );
+      return this.projectsService.getProjectById(projectId);
     } else {
       throw new UnauthorizedException('feature not found');
     }
@@ -226,7 +224,8 @@ export class AuthService {
       (userStory) => (userStory.id = userStoryId),
     );
     if (userStory.id) {
-      return await this.tasksService.createTask(name, userStoryId);
+      await this.tasksService.createTask(name, userStoryId);
+      return await this.projectsService.getProjectById(projectId);
     } else {
       throw new UnauthorizedException('user story not found');
     }

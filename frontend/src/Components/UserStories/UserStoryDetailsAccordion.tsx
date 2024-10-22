@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { CreateTaskAccordion } from "../Tasks";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { UserStory } from "../Features";
+import { ProjectType } from "../../Pages";
 
 export type Task = {
   id: number;
@@ -26,27 +26,9 @@ type Props = {
   featureId: number;
   projectId: number;
   userStoryId: number;
-  userStoryTask: Task[];
+  tasks: Task[];
+  setProject: Dispatch<SetStateAction<ProjectType>>;
 };
-
-const sampleDevTasks = [
-  {
-    name: "Dev Task 1",
-    status: "To Do"
-  },
-  {
-    name: "Dev Task 2",
-    status: "To Do"
-  },
-  {
-    name: "Dev Task 3",
-    status: "To Do"
-  },
-  {
-    name: "Dev Task 4",
-    status: "To Do"
-  }
-];
 
 function UserStoryDetailsAccordion({
   name,
@@ -55,13 +37,9 @@ function UserStoryDetailsAccordion({
   featureId,
   projectId,
   userStoryId,
-  userStoryTask
+  tasks,
+  setProject
 }: Props) {
-  const [tasks, setTasks] = useState(userStoryTask);
-  useEffect(() => {
-    setTasks(userStoryTask);
-  }, [userStoryTask]);
-
   return (
     <Accordion allowToggle>
       <AccordionItem borderTop="none">
@@ -86,7 +64,7 @@ function UserStoryDetailsAccordion({
         </Box>
         <AccordionPanel border="1px solid black" borderTop="none" p={0}>
           <Box p={4} pb={10}>
-            {description || "There is no user story description"}
+            {description || "There is no user story description..."}
           </Box>
           {tasks?.map((task) => {
             return (
@@ -112,7 +90,7 @@ function UserStoryDetailsAccordion({
             featureId={featureId}
             projectId={projectId}
             userStoryId={userStoryId}
-            setTasks={setTasks}
+            setProject={setProject}
           />
         </AccordionPanel>
       </AccordionItem>

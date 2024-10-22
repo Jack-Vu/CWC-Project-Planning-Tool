@@ -11,7 +11,7 @@ import {
   Task,
   UserStoryDetailsAccordion
 } from "../UserStories";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { ProjectType } from "../../Pages";
 
 type Props = {
   isOpen: boolean;
@@ -20,7 +20,8 @@ type Props = {
   featureDescription: string;
   featureId: number;
   projectId: number;
-  featureUserStories: UserStory[];
+  stories: UserStory[];
+  setProject: React.Dispatch<React.SetStateAction<ProjectType>>
 };
 
 export type UserStory = {
@@ -38,12 +39,9 @@ function FeatureModal({
   featureDescription,
   featureId,
   projectId,
-  featureUserStories
+  stories,
+  setProject
 }: Props) {
-  const [userStories, setUserStories] = useState(featureUserStories);
-  useEffect(() => {
-    setUserStories(featureUserStories);
-  }, [featureUserStories]);
 
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
@@ -55,11 +53,11 @@ function FeatureModal({
               {featureName}
             </Text>
             <Text>
-              {featureDescription || "There is no feature description"}
+              {featureDescription || "There is no feature description..."}
             </Text>
           </Box>
           <ModalCloseButton />
-          {userStories?.map((story) => {
+          {stories?.map((story) => {
             return (
               <Box key={story.id}>
                 <UserStoryDetailsAccordion
@@ -69,7 +67,8 @@ function FeatureModal({
                   featureId={featureId}
                   projectId={projectId}
                   userStoryId={story.id}
-                  userStoryTask={story.tasks}
+                  tasks={story.tasks}
+                  setProject={setProject}
                 />
               </Box>
             );
@@ -78,7 +77,7 @@ function FeatureModal({
             <CreateUserStoryAccordion
               featureId={featureId}
               projectId={projectId}
-              setUserStories={setUserStories}
+              setProject={setProject}
             />
           </Box>
         </Box>

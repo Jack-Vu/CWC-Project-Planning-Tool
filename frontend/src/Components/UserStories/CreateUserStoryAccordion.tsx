@@ -15,19 +15,19 @@ import {
 } from "@chakra-ui/react";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
-import { UserStory } from "../Features";
 import { useNavigate } from "react-router-dom";
+import { ProjectType } from "../../Pages";
 
 type Props = {
   featureId: number;
   projectId: number;
-  setUserStories: Dispatch<SetStateAction<UserStory[]>>;
+  setProject: Dispatch<SetStateAction<ProjectType>>;
 };
 
 const CreateUserStoryAccordion = ({
   featureId,
   projectId,
-  setUserStories
+  setProject
 }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
@@ -63,10 +63,9 @@ const CreateUserStoryAccordion = ({
           }
         )
         .then((response) => {
-          console.log(response.data);
           setName("");
           setDescription("");
-          setUserStories(response.data);
+          setProject(response.data);
           setCreateButtonClicked(false);
           setIsOpen(false);
           toast({

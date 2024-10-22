@@ -16,19 +16,20 @@ import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Task } from "../UserStories";
+import { ProjectType } from "../../Pages";
 
 type Props = {
   featureId: number;
   projectId: number;
   userStoryId: number;
-  setTasks: Dispatch<SetStateAction<Task[]>>;
+  setProject: Dispatch<SetStateAction<ProjectType>>;
 };
 
 const CreateTaskAccordion = ({
   featureId,
   projectId,
   userStoryId,
-  setTasks
+  setProject
 }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
@@ -60,9 +61,8 @@ const CreateTaskAccordion = ({
           }
         )
         .then((response) => {
-          console.log(response.data);
           setName("");
-          setTasks(response.data);
+          setProject(response.data);
           setCreateButtonClicked(false);
           setIsOpen(false);
           toast({

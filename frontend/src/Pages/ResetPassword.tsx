@@ -56,7 +56,6 @@ const ResetPassword = () => {
           token
         })
         .then((response) => {
-          console.log("Response", response);
           setSubmitClicked(false);
           setSubmitSecondClicked(false);
           setPassword("");
