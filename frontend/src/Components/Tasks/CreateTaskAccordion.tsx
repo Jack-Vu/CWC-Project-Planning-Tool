@@ -15,7 +15,6 @@ import {
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Task } from "../UserStories";
 import { ProjectType } from "../../Pages";
 
 type Props = {

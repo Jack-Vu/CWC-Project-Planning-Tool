@@ -1,5 +1,5 @@
 import { Box, Button, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLoaderData } from "react-router-dom";
 
 import { CreateFeatureAccordion, FeatureBox, UserStory } from "../Components";

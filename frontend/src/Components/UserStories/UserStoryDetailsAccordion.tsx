@@ -10,7 +10,7 @@ import {
   Text
 } from "@chakra-ui/react";
 import { CreateTaskAccordion } from "../Tasks";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { ProjectType } from "../../Pages";
 
 export type Task = {
