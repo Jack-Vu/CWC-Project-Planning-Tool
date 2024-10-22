@@ -13,6 +13,7 @@ export class UserStoriesService {
   async getFeatureUserStories(id: number) {
     return await this.userStoriesRepository.find({
       where: { feature: { id } },
+      relations: ['tasks'],
     });
   }
 
