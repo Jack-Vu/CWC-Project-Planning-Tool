@@ -56,14 +56,10 @@ export class AuthService {
       await this.usersService.findUserByEmail(signUpDto.email)
     )?.email;
     if (usernameExists) {
-      // TODO remove comment only use for testing
-
-      throw new BadRequestException('Username already exists!');
+      throw new BadRequestException('Bad Request!');
     }
     if (emailExists) {
-      // TODO remove comment only use for testing
-
-      throw new BadRequestException('Email already exists!');
+      throw new BadRequestException('Bad Request!');
     }
     const hashedPassword = await this.hashPassword(signUpDto.password);
     signUpDto.password = hashedPassword;
@@ -78,16 +74,14 @@ export class AuthService {
   async logIn(logInDto: LogInDto) {
     const user = await this.usersService.findUserByUsername(logInDto.username);
     if (!user) {
-      // TODO remove comment only use for testing
-      throw new UnauthorizedException("user doesn't exist");
+      throw new UnauthorizedException('Unauthorized!');
     }
     const passwordsMatch = await this.verifyPassword(
       logInDto.password,
       user.password,
     );
     if (!passwordsMatch) {
-      // TODO remove comment only use for testing
-      throw new UnauthorizedException('incorrect password');
+      throw new UnauthorizedException('Unauthorized!');
     }
 
     return await this.createAccessToken(user);
@@ -176,11 +170,11 @@ export class AuthService {
         return project.id === projectId;
       },
     );
-    if (project.id) {
+    if (project) {
       await this.featuresService.createFeature(name, description, project.id);
       return await this.projectsService.getProjectById(projectId);
     } else {
-      throw new UnauthorizedException('project not found');
+      throw new UnauthorizedException('Unauthorized!');
     }
   }
   async createUserStory(
@@ -192,18 +186,23 @@ export class AuthService {
   ) {
     const projects = await this.projectsService.getUserProjects(userId);
     const project = projects.find((project) => project.id === projectId);
-    const features = project.features;
-    const feature = features.find((feature) => feature.id === featureId);
 
-    if (feature.id) {
-      await this.userStoriesService.createUserStory(
-        name,
-        description,
-        feature.id,
-      );
-      return this.projectsService.getProjectById(projectId);
+    if (project) {
+      const features = project.features;
+      const feature = features.find((feature) => feature.id === featureId);
+
+      if (feature) {
+        await this.userStoriesService.createUserStory(
+          name,
+          description,
+          feature.id,
+        );
+        return this.projectsService.getProjectById(projectId);
+      } else {
+        throw new UnauthorizedException('Unauthorized!');
+      }
     } else {
-      throw new UnauthorizedException('feature not found');
+      throw new UnauthorizedException('Unauthorized!');
     }
   }
 
@@ -216,18 +215,26 @@ export class AuthService {
   ) {
     const projects = await this.projectsService.getUserProjects(userId);
     const project = projects.find((project) => project.id === projectId);
-    const features = project.features;
-    const feature = features.find((feature) => feature.id === featureId);
-    const userStories = feature.userStories;
+    if (project) {
+      const features = project.features;
+      const feature = features.find((feature) => feature.id === featureId);
+      if (feature) {
+        const userStories = feature.userStories;
 
-    const userStory = userStories.find(
-      (userStory) => (userStory.id = userStoryId),
-    );
-    if (userStory.id) {
-      await this.tasksService.createTask(name, userStoryId);
-      return await this.projectsService.getProjectById(projectId);
+        const userStory = userStories.find(
+          (userStory) => (userStory.id = userStoryId),
+        );
+        if (userStory) {
+          await this.tasksService.createTask(name, userStoryId);
+          return await this.projectsService.getProjectById(projectId);
+        } else {
+          throw new UnauthorizedException('Unauthorized!');
+        }
+      } else {
+        throw new UnauthorizedException('Unauthorized!');
+      }
     } else {
-      throw new UnauthorizedException('user story not found');
+      throw new UnauthorizedException('Unauthorized!');
     }
   }
 }

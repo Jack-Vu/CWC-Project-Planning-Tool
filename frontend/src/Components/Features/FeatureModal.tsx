@@ -21,15 +21,16 @@ type Props = {
   featureId: number;
   projectId: number;
   stories: UserStory[];
-  setProject: React.Dispatch<React.SetStateAction<ProjectType>>
+  setProject: React.Dispatch<React.SetStateAction<ProjectType>>;
 };
 
 export type UserStory = {
   name: string;
   description: string;
-  status: string;
   id: number;
   tasks: Task[];
+  completedTasks: number;
+  tasksCount: number;
 };
 
 function FeatureModal({
@@ -42,7 +43,6 @@ function FeatureModal({
   stories,
   setProject
 }: Props) {
-
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
@@ -63,7 +63,7 @@ function FeatureModal({
                 <UserStoryDetailsAccordion
                   name={story.name}
                   description={story.description}
-                  status={story.status}
+                  status={`${story.completedTasks}/${story.tasksCount}`}
                   featureId={featureId}
                   projectId={projectId}
                   userStoryId={story.id}

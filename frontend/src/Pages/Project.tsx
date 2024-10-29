@@ -8,18 +8,19 @@ import { ProjectType } from "./Projects";
 export type Feature = {
   name: string;
   description?: string;
-  status: "To Do" | "In Progress" | "Done";
+  status: "To Do" | "In Progress" | "Done!";
   userStories: UserStory[];
   userStoryCount: number;
   completedUserStories: number;
   id: number;
 };
 
-const columns = [{ name: "To Do" }, { name: "In Progress" }, { name: "Done" }];
+const columns = [{ name: "To Do" }, { name: "In Progress" }, { name: "Done!" }];
 
 const Project = () => {
   const loaderData = useLoaderData() as ProjectType;
   const [project, setProject] = useState(loaderData);
+  console.log(project);
 
   return (
     <>
@@ -48,8 +49,7 @@ const Project = () => {
                   {column.name}
                 </Text>
                 {project.features.map((feature) => {
-                  const status = "To Do";
-                  if (status === column.name) {
+                  if (feature.status === column.name) {
                     return (
                       <Box key={feature.id}>
                         <FeatureBox
