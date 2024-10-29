@@ -19,7 +19,7 @@ const FeatureBox = ({ feature, projectId, setProject }: Props) => {
         border="1px solid black"
         p={4}
         mx={4}
-        mt={4}
+        my={4}
         display="flex"
         justifyContent="space-between"
         onClick={onOpen}

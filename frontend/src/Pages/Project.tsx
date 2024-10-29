@@ -64,7 +64,7 @@ const Project = () => {
                 })}
 
                 {column.name === "To Do" ? (
-                  <Box p={4}>
+                  <Box m={4}>
                     <CreateFeatureAccordion
                       setProject={setProject}
                       projectId={project.id}
