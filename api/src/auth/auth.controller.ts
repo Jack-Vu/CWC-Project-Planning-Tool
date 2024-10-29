@@ -2,12 +2,13 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
 import * as sanitizeHtml from 'sanitize-html';
 import { AuthGuard } from './auth.guard';
@@ -50,6 +51,57 @@ export class AccountDetailDto {
   @IsNotEmpty()
   @Transform((params) => sanitizeHtml(params.value))
   value: string;
+}
+
+export class ProjectDto {
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  name: string;
+
+  @IsOptional()
+  @Transform((params) => sanitizeHtml(params.value))
+  description: string;
+}
+export class FeatureDto {
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  name: string;
+
+  @IsOptional()
+  @Transform((params) => sanitizeHtml(params.value))
+  description: string;
+
+  @IsNotEmpty()
+  projectId: number;
+}
+export class UserStoryDto {
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  name: string;
+
+  @IsOptional()
+  @Transform((params) => sanitizeHtml(params.value))
+  description: string;
+
+  @IsNotEmpty()
+  projectId: number;
+  
+  @IsNotEmpty()
+  featureId: number;
+}
+export class TaskDto {
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  name: string;
+
+  @IsNotEmpty()
+  projectId: number;
+
+  @IsNotEmpty()
+  featureId: number;
+
+  @IsNotEmpty()
+  userStoryId: number;
 }
 
 export class Email {
@@ -113,5 +165,66 @@ export class AuthController {
   @Post('delete-user')
   deleteUser(@Request() req) {
     return this.authService.deleteUser(req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('user-projects')
+  async getUserProjects(@Request() req) {
+    const user = await this.authService.getProfileData(req.user.sub);
+    const projects = await this.authService.getUserProjects(req.user.sub);
+    return {
+      user,
+      projects,
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('create-project')
+  createProject(@Body() projectDto: ProjectDto, @Request() req) {
+    return this.authService.createProject(
+      projectDto.name,
+      projectDto.description,
+      req.user.sub,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('project/:id')
+  getProjectById(@Param('id') id: number, @Request() req) {
+    return this.authService.getProjectById(id, req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('create-feature')
+  createFeature(@Body() featureDto: FeatureDto, @Request() req) {
+    return this.authService.createFeature(
+      featureDto.name,
+      featureDto.description,
+      req.user.sub,
+      featureDto.projectId,
+    );
+  }
+  @UseGuards(AuthGuard)
+  @Post('create-user-story')
+  createUserStory(@Body() userStoryDto: UserStoryDto, @Request() req) {
+    return this.authService.createUserStory(
+      userStoryDto.name,
+      userStoryDto.description,
+      req.user.sub,
+      userStoryDto.projectId,
+      userStoryDto.featureId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('create-task')
+  createTask(@Body() taskDto: TaskDto, @Request() req) {
+    return this.authService.createTask(
+      taskDto.name,
+      req.user.sub,
+      taskDto.projectId,
+      taskDto.featureId,
+      taskDto.userStoryId,
+    );
   }
 }

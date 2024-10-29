@@ -31,7 +31,6 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
   const onClickCheck = () => {
     if (field === "email") {
       const invalidEmail = isInvalidEmail(valueState);
-      console.log(invalidEmail);
       if (invalidEmail) {
         toast({
           title: "Error.",
@@ -67,7 +66,6 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((response) => {
-        console.log(response.data);
         setData(response.data);
         toast({
           title: "Success.",
@@ -78,7 +76,6 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
         });
       })
       .catch((error) => {
-        console.log(error);
         toast({
           title: "Error.",
           description:

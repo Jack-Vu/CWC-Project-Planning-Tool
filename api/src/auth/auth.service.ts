@@ -14,11 +14,19 @@ import {
 } from './auth.controller';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
+import { ProjectsService } from 'src/projects/projects.service';
+import { FeaturesService } from 'src/features/features.service';
+import { UserStoriesService } from 'src/userStories/userStories.service';
+import { TasksService } from 'src/tasks/tasks.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private projectsService: ProjectsService,
+    private featuresService: FeaturesService,
+    private userStoriesService: UserStoriesService,
+    private tasksService: TasksService,
     private mailService: MailService,
     private jwtService: JwtService,
   ) {}
@@ -48,14 +56,10 @@ export class AuthService {
       await this.usersService.findUserByEmail(signUpDto.email)
     )?.email;
     if (usernameExists) {
-      // TODO remove comment only use for testing
-
-      throw new BadRequestException('Username already exists!');
+      throw new BadRequestException('Bad Request!');
     }
     if (emailExists) {
-      // TODO remove comment only use for testing
-
-      throw new BadRequestException('Email already exists!');
+      throw new BadRequestException('Bad Request!');
     }
     const hashedPassword = await this.hashPassword(signUpDto.password);
     signUpDto.password = hashedPassword;
@@ -70,16 +74,14 @@ export class AuthService {
   async logIn(logInDto: LogInDto) {
     const user = await this.usersService.findUserByUsername(logInDto.username);
     if (!user) {
-      // TODO remove comment only use for testing
-      throw new UnauthorizedException("user doesn't exist");
+      throw new UnauthorizedException('Unauthorized!');
     }
     const passwordsMatch = await this.verifyPassword(
       logInDto.password,
       user.password,
     );
     if (!passwordsMatch) {
-      // TODO remove comment only use for testing
-      throw new UnauthorizedException('incorrect password');
+      throw new UnauthorizedException('Unauthorized!');
     }
 
     return await this.createAccessToken(user);
@@ -124,10 +126,7 @@ export class AuthService {
   }
 
   async saveNewPassword(newPassword: string, id: number, token: string) {
-    //get the user assoicated with id
     const user = await this.usersService.findUserById(id);
-
-    //verify using the user we just loocked up hashed password
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const payload = await this.jwtService
       .verifyAsync(token, {
@@ -145,5 +144,97 @@ export class AuthService {
 
   async deleteUser(id: number) {
     return await this.usersService.deleteUser(id);
+  }
+
+  async getUserProjects(userId: number) {
+    return this.projectsService.getUserProjects(userId);
+  }
+
+  async createProject(name: string, description: string, userId: number) {
+    return await this.projectsService.createProject(name, description, userId);
+  }
+
+  async getProjectById(projectId: number, userId: number) {
+    const projects = await this.projectsService.getUserProjects(userId);
+    return projects.filter((project) => project.id === projectId)[0];
+  }
+
+  async createFeature(
+    name: string,
+    description: string,
+    userId: number,
+    projectId: number,
+  ) {
+    const project = (await this.projectsService.getUserProjects(userId)).find(
+      (project) => {
+        return project.id === projectId;
+      },
+    );
+    if (project) {
+      await this.featuresService.createFeature(name, description, project.id);
+      return await this.projectsService.getProjectById(projectId);
+    } else {
+      throw new UnauthorizedException('Unauthorized!');
+    }
+  }
+  async createUserStory(
+    name: string,
+    description: string,
+    userId: number,
+    projectId: number,
+    featureId: number,
+  ) {
+    const projects = await this.projectsService.getUserProjects(userId);
+    const project = projects.find((project) => project.id === projectId);
+
+    if (project) {
+      const features = project.features;
+      const feature = features.find((feature) => feature.id === featureId);
+
+      if (feature) {
+        await this.userStoriesService.createUserStory(
+          name,
+          description,
+          feature.id,
+        );
+        return this.projectsService.getProjectById(projectId);
+      } else {
+        throw new UnauthorizedException('Unauthorized!');
+      }
+    } else {
+      throw new UnauthorizedException('Unauthorized!');
+    }
+  }
+
+  async createTask(
+    name: string,
+    userId: number,
+    projectId: number,
+    featureId: number,
+    userStoryId: number,
+  ) {
+    const projects = await this.projectsService.getUserProjects(userId);
+    const project = projects.find((project) => project.id === projectId);
+    if (project) {
+      const features = project.features;
+      const feature = features.find((feature) => feature.id === featureId);
+      if (feature) {
+        const userStories = feature.userStories;
+
+        const userStory = userStories.find(
+          (userStory) => (userStory.id = userStoryId),
+        );
+        if (userStory) {
+          await this.tasksService.createTask(name, userStoryId);
+          return await this.projectsService.getProjectById(projectId);
+        } else {
+          throw new UnauthorizedException('Unauthorized!');
+        }
+      } else {
+        throw new UnauthorizedException('Unauthorized!');
+      }
+    } else {
+      throw new UnauthorizedException('Unauthorized!');
+    }
   }
 }
