@@ -6,10 +6,9 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-  Button,
   Text
 } from "@chakra-ui/react";
-import { CreateTaskAccordion } from "../Tasks";
+import { CreateTaskAccordion, TaskBox } from "../Tasks";
 import { Dispatch, SetStateAction } from "react";
 import { ProjectType } from "../../Pages";
 
@@ -68,21 +67,8 @@ function UserStoryDetailsAccordion({
           </Box>
           {tasks?.map((task) => {
             return (
-              <Box
-                key={task.id}
-                px={4}
-                py={3}
-                borderTop="1px solid black"
-                w="100%"
-                display="flex"
-                justifyContent={"space-between"}
-                alignItems="center"
-              >
-                <Text>{task.name}</Text>
-                <Box display="flex" gap={4} alignItems="center">
-                  <Button>{task.status}</Button>
-                  <DeleteIcon />
-                </Box>
+              <Box key={task.id}>
+                <TaskBox task={task} setProject={setProject} />
               </Box>
             );
           })}

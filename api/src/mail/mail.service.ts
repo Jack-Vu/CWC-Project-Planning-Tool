@@ -14,7 +14,7 @@ export class MailService {
         html: resetPasswordTemplate(token, user.id),
       },
       () => {
-        console.log('password reset email sent');
+        // console.log('password reset email sent');
       },
     );
   }

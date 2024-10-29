@@ -57,8 +57,6 @@ const CreateFeatureAccordion = ({ projectId, setProject }: Props) => {
           }
         )
         .then((response) => {
-          console.log("Project", response.data);
-
           setProject(response.data);
           setName("");
           setDescription("");

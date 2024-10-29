@@ -20,7 +20,6 @@ const columns = [{ name: "To Do" }, { name: "In Progress" }, { name: "Done!" }];
 const Project = () => {
   const loaderData = useLoaderData() as ProjectType;
   const [project, setProject] = useState(loaderData);
-  console.log(project);
 
   return (
     <>

@@ -39,6 +39,7 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
           duration: 3000,
           isClosable: true
         });
+        setValueState(value);
         return;
       }
     }
@@ -51,6 +52,9 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
         duration: 3000,
         isClosable: true
       });
+      if (field !== "password") {
+        setValueState(value);
+      }
       return;
     }
     const token = localStorage.getItem("token");

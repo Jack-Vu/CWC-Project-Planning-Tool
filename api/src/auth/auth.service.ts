@@ -237,4 +237,18 @@ export class AuthService {
       throw new UnauthorizedException('Unauthorized!');
     }
   }
+  async updateTask(
+    field: string,
+    value: string,
+    userId: number,
+    taskId: number,
+  ) {
+    const projectId = await this.tasksService.updateTask(
+      field,
+      value,
+      userId,
+      taskId,
+    );
+    return await this.projectsService.getProjectById(projectId);
+  }
 }
