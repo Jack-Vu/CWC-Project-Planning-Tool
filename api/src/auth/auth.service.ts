@@ -243,12 +243,12 @@ export class AuthService {
     userId: number,
     taskId: number,
   ) {
-    const projectId = await this.tasksService.updateTask(
+    const userStoryId = await this.tasksService.updateTask(
       field,
       value,
       userId,
       taskId,
     );
-    return await this.projectsService.getProjectById(projectId);
+    return await this.userStoriesService.getUserStoryById(userStoryId);
   }
 }

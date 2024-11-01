@@ -11,14 +11,13 @@ import { Task } from "../UserStories";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { ProjectType } from "../../Pages";
 
 type Props = {
   task: Task;
-  setProject: Dispatch<SetStateAction<ProjectType>>;
+  setStoryStatus: Dispatch<SetStateAction<string>>;
 };
 
-const TaskBox = ({ task, setProject }: Props) => {
+const TaskBox = ({ task, setStoryStatus }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
   const [taskStatus, setTaskStatus] = useState(task.status);
@@ -58,7 +57,7 @@ const TaskBox = ({ task, setProject }: Props) => {
           }
         )
         .then((response) => {
-          setProject(response.data);
+          setStoryStatus(response.data);
           setUpdateName(false);
           toast({
             title: "Success.",
