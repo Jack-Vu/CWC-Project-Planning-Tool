@@ -115,6 +115,17 @@ export class UpdateTaskDto {
   @IsNotEmpty()
   taskId: number;
 }
+export class UpdateUserStoryDto {
+  @IsNotEmpty()
+  field: string;
+
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  value: string;
+
+  @IsNotEmpty()
+  userStoryId: number;
+}
 
 export class Email {
   @IsEmail(undefined, { message: 'Please enter a valid email address!' })
@@ -249,5 +260,20 @@ export class AuthController {
       req.user.sub,
       updateTaskDto.taskId,
     );
+  }
+  @UseGuards(AuthGuard)
+  @Post('update-user-story')
+  updateUserStory(
+    @Body() updateUserStoryDto: UpdateUserStoryDto,
+    @Request() req,
+  ) {
+    console.log(updateUserStoryDto);
+    
+    // return this.authService.updateUserStory(
+    //   updateUserStoryDto.field,
+    //   updateUserStoryDto.value,
+    //   req.user.sub,
+    //   updateUserStoryDto.userStoryId,
+    // );
   }
 }

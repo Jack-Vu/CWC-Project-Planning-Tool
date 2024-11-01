@@ -117,6 +117,7 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
         {updateName ? (
           <Input
             flex={1}
+            h="40px"
             value={taskName}
             onChange={onChange}
             autoFocus
@@ -126,7 +127,7 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
           <Text textAlign="left">{task.name}</Text>
         )}
         <IconButton
-          aria-label={`Edit task}`}
+          aria-label={`Edit task`}
           icon={updateName ? <CheckIcon /> : <EditIcon />}
           onClick={
             updateName ? () => updateTask("name", taskName) : onClickEdit
