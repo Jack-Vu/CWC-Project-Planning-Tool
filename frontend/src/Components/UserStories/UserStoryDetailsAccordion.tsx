@@ -110,7 +110,12 @@ function UserStoryDetailsAccordion({
         )
         .then((response) => {
           console.log(response.data);
-          setUpdateName(false);
+          if (field === "name") {
+            setUpdateName(false);
+          } else {
+            setUpdateDescription(false);
+          }
+
           toast({
             title: "Success.",
             description: `Your task ${field} has been updated!`,
@@ -207,9 +212,9 @@ function UserStoryDetailsAccordion({
             )}
             <IconButton
               aria-label={`Edit User Story`}
-              icon={updateName ? <CheckIcon /> : <EditIcon />}
+              icon={updateDescription ? <CheckIcon /> : <EditIcon />}
               onClick={
-                updateName
+                updateDescription
                   ? () => updateUserStory("description", storyDescription)
                   : onClickEditDescription
               }
