@@ -60,14 +60,14 @@ function UserStoryDetailsAccordion({
   const [storyStatus, setStoryStatus] = useState(status);
   const [storyName, setStoryName] = useState(name);
   const [storyDescription, setStoryDescription] = useState(description);
-  const [updateName, setUpdateName] = useState(false);
-  const [updateDescription, setUpdateDescription] = useState(false);
+  const [updateStoryName, setUpdateStoryName] = useState(false);
+  const [updateStoryDescription, setUpdateStoryDescription] = useState(false);
 
   const onClickEditName = () => {
-    setUpdateName(!updateName);
+    setUpdateStoryName(!updateStoryName);
   };
   const onClickEditDescription = () => {
-    setUpdateDescription(!updateDescription);
+    setUpdateStoryDescription(!updateStoryDescription);
   };
   const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
     setStoryName(e.target.value);
@@ -101,13 +101,9 @@ function UserStoryDetailsAccordion({
           }
         )
         .then((response) => {
-          setProject(response.data)
-          if (field === "name") {
-            setUpdateName(false);
-          } else {
-            setUpdateDescription(false);
-          }
-
+          setProject(response.data);
+          setUpdateStoryName(false);
+          setUpdateStoryDescription(false);
           toast({
             title: "Success.",
             description: `Your user story ${field} has been updated!`,
@@ -141,7 +137,7 @@ function UserStoryDetailsAccordion({
   };
   return (
     <>
-      {updateName ? (
+      {updateStoryName ? (
         <Box
           mt={4}
           border="1px solid black"
@@ -214,21 +210,24 @@ function UserStoryDetailsAccordion({
                 display="flex"
                 alignItems="center"
               >
-                {updateDescription ? (
+                {updateStoryDescription ? (
                   <Input
                     value={storyDescription}
                     onChange={onChangeDescription}
                     autoFocus
                     type={"text"}
+                    flex={1}
                   />
                 ) : (
-                  <Text textAlign="left">{storyDescription}</Text>
+                  <Text textAlign="left" flex={1}>
+                    {storyDescription}
+                  </Text>
                 )}
                 <IconButton
                   aria-label={`Edit User Story`}
-                  icon={updateDescription ? <CheckIcon /> : <EditIcon />}
+                  icon={updateStoryDescription ? <CheckIcon /> : <EditIcon />}
                   onClick={
-                    updateDescription
+                    updateStoryDescription
                       ? () => updateUserStory("description", storyDescription)
                       : onClickEditDescription
                   }
