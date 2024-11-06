@@ -71,9 +71,7 @@ const FeatureBox = ({ feature, projectId, setProject }: Props) => {
         isOpen={isOpen}
         onClose={onCloseModal}
         featureName={feature.name}
-        featureDescription={
-          feature.description || "There is no feature description..."
-        }
+        featureDescription={feature.description}
         featureId={feature.id}
         projectId={projectId}
         stories={feature?.userStories}

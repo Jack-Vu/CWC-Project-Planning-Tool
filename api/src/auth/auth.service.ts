@@ -251,18 +251,18 @@ export class AuthService {
     );
     return await this.userStoriesService.getUserStoryById(userStoryId);
   }
-  // async updateUserStory(
-  //   field: string,
-  //   value: string,
-  //   userId: number,
-  //   userStoryId: number,
-  // ) {
-  //   const userStoryId = await this.tasksService.updateTask(
-  //     field,
-  //     value,
-  //     userId,
-  //     userStoryId,
-  //   );
-  //   return await this.userStoriesService.getUserStoryById(userStoryId);
-  // }
+  async updateUserStory(
+    field: string,
+    value: string,
+    userId: number,
+    userStoryId: number,
+  ) {
+    const projectId = await this.userStoriesService.updateUserStory(
+      field,
+      value,
+      userId,
+      userStoryId,
+    );
+    return await this.projectsService.getProjectById(projectId);
+  }
 }

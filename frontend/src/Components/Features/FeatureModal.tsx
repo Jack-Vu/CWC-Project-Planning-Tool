@@ -17,7 +17,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   featureName: string;
-  featureDescription: string;
+  featureDescription?: string;
   featureId: number;
   projectId: number;
   stories: UserStory[];
@@ -52,9 +52,7 @@ function FeatureModal({
             <Text mb={4} fontSize={20}>
               {featureName}
             </Text>
-            <Text>
-              {featureDescription || "There is no feature description..."}
-            </Text>
+            <Text>{featureDescription}</Text>
           </Box>
           <ModalCloseButton />
           {stories?.map((story) => {

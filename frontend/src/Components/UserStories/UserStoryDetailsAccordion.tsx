@@ -1,4 +1,9 @@
-import { CheckIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  DeleteIcon,
+  EditIcon
+} from "@chakra-ui/icons";
 import {
   Accordion,
   AccordionButton,
@@ -16,7 +21,6 @@ import {
   ChangeEvent,
   Dispatch,
   MouseEvent,
-  MouseEventHandler,
   SetStateAction,
   useState
 } from "react";
@@ -55,18 +59,14 @@ function UserStoryDetailsAccordion({
   const navigate = useNavigate();
   const [storyStatus, setStoryStatus] = useState(status);
   const [storyName, setStoryName] = useState(name);
-  const [storyDescription, setStoryDescription] = useState(
-    description || "There is no user story description..."
-  );
+  const [storyDescription, setStoryDescription] = useState(description);
   const [updateName, setUpdateName] = useState(false);
   const [updateDescription, setUpdateDescription] = useState(false);
 
-  const onClickEditName = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  const onClickEditName = () => {
     setUpdateName(!updateName);
   };
-  const onClickEditDescription = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  const onClickEditDescription = () => {
     setUpdateDescription(!updateDescription);
   };
   const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -76,14 +76,6 @@ function UserStoryDetailsAccordion({
     setStoryDescription(e.target.value);
   };
   const updateUserStory = (field: "name" | "description", value: string) => {
-    // console.log("Field", field);
-    // console.log("Value", value);
-    // if (field === "name") {
-    //   setUpdateName(!updateName);
-    // } else {
-    //   setUpdateDescription(!updateDescription);
-    // }
-
     const token = localStorage.getItem("token");
     if (storyName === "") {
       toast({
@@ -109,7 +101,7 @@ function UserStoryDetailsAccordion({
           }
         )
         .then((response) => {
-          console.log(response.data);
+          setProject(response.data)
           if (field === "name") {
             setUpdateName(false);
           } else {
@@ -118,7 +110,7 @@ function UserStoryDetailsAccordion({
 
           toast({
             title: "Success.",
-            description: `Your task ${field} has been updated!`,
+            description: `Your user story ${field} has been updated!`,
             status: "success",
             duration: 3000,
             isClosable: true
@@ -148,9 +140,9 @@ function UserStoryDetailsAccordion({
     }
   };
   return (
-    <Accordion allowToggle>
-      <AccordionItem borderTop="none">
-        <AccordionButton
+    <>
+      {updateName ? (
+        <Box
           mt={4}
           border="1px solid black"
           w="100%"
@@ -159,85 +151,109 @@ function UserStoryDetailsAccordion({
           display="flex"
           alignItems="center"
           justifyContent="space-between"
+          gap={2}
         >
-          <Box textAlign="left" display="flex" alignItems="center">
-            {updateName ? (
-              <Input
-                value={storyName}
-                onChange={onChangeName}
-                h="40px"
-                autoFocus
-                type={"text"}
-              />
-            ) : (
-              <Text textAlign="left">{storyName}</Text>
-            )}
-            <IconButton
-              aria-label={`Edit User Story`}
-              icon={updateName ? <CheckIcon /> : <EditIcon />}
-              onClick={
-                updateName
-                  ? (e: MouseEvent<HTMLButtonElement>) => {
-                      e.stopPropagation();
-                      updateUserStory("name", storyName);
-                    }
-                  : onClickEditName
-              }
-              marginLeft={2}
-            />
-          </Box>
+          <Input
+            value={storyName}
+            onChange={onChangeName}
+            h="40px"
+            autoFocus
+            type={"text"}
+          />
+
+          <IconButton
+            aria-label={`Edit User Story`}
+            icon={<CheckIcon />}
+            onClick={() => {
+              updateUserStory("name", storyName);
+            }}
+            marginLeft={2}
+          />
           <Box display="flex" alignItems="center" gap={2}>
             <Text>{storyStatus}</Text>
             <DeleteIcon />
-            <AccordionIcon />
+            <ChevronDownIcon boxSize={5} />
           </Box>
-        </AccordionButton>
-        <AccordionPanel border="1px solid black" borderTop="none" p={0}>
-          <Box
-            p={4}
-            pb={10}
-            textAlign="left"
-            display="flex"
-            alignItems="center"
-          >
-            {updateDescription ? (
-              <Input
-                value={storyDescription}
-                onChange={onChangeDescription}
-                autoFocus
-                type={"text"}
-              />
-            ) : (
-              <Text textAlign="left">{storyDescription}</Text>
-            )}
-            <IconButton
-              aria-label={`Edit User Story`}
-              icon={updateDescription ? <CheckIcon /> : <EditIcon />}
-              onClick={
-                updateDescription
-                  ? () => updateUserStory("description", storyDescription)
-                  : onClickEditDescription
-              }
-              marginLeft={2}
-            />
-          </Box>
+        </Box>
+      ) : (
+        <Accordion allowToggle>
+          <AccordionItem borderTop="none">
+            <AccordionButton
+              mt={4}
+              border="1px solid black"
+              w="100%"
+              h="58px"
+              p={4}
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              gap={2}
+            >
+              <Text textAlign="left" flex={1}>
+                {storyName}
+              </Text>
 
-          {tasks?.map((task) => {
-            return (
-              <Box key={task.id}>
-                <TaskBox task={task} setStoryStatus={setStoryStatus} />
+              <IconButton
+                aria-label={`Edit User Story`}
+                icon={<EditIcon />}
+                onClick={onClickEditName}
+                marginLeft={2}
+              />
+
+              <Box display="flex" alignItems="center" gap={2}>
+                <Text>{storyStatus}</Text>
+                <DeleteIcon />
+                <AccordionIcon />
               </Box>
-            );
-          })}
-          <CreateTaskAccordion
-            featureId={featureId}
-            projectId={projectId}
-            userStoryId={userStoryId}
-            setProject={setProject}
-          />
-        </AccordionPanel>
-      </AccordionItem>
-    </Accordion>
+            </AccordionButton>
+            <AccordionPanel border="1px solid black" borderTop="none" p={0}>
+              <Box
+                p={4}
+                pb={10}
+                textAlign="left"
+                display="flex"
+                alignItems="center"
+              >
+                {updateDescription ? (
+                  <Input
+                    value={storyDescription}
+                    onChange={onChangeDescription}
+                    autoFocus
+                    type={"text"}
+                  />
+                ) : (
+                  <Text textAlign="left">{storyDescription}</Text>
+                )}
+                <IconButton
+                  aria-label={`Edit User Story`}
+                  icon={updateDescription ? <CheckIcon /> : <EditIcon />}
+                  onClick={
+                    updateDescription
+                      ? () => updateUserStory("description", storyDescription)
+                      : onClickEditDescription
+                  }
+                  marginLeft={2}
+                />
+              </Box>
+
+              {tasks?.map((task) => {
+                return (
+                  <Box key={task.id}>
+                    <TaskBox task={task} setStoryStatus={setStoryStatus} />
+                  </Box>
+                );
+              })}
+              <CreateTaskAccordion
+                featureId={featureId}
+                projectId={projectId}
+                userStoryId={userStoryId}
+                setProject={setProject}
+              />
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      )}
+    </>
   );
 }
 

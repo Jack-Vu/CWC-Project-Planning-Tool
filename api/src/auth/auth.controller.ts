@@ -267,13 +267,11 @@ export class AuthController {
     @Body() updateUserStoryDto: UpdateUserStoryDto,
     @Request() req,
   ) {
-    console.log(updateUserStoryDto);
-    
-    // return this.authService.updateUserStory(
-    //   updateUserStoryDto.field,
-    //   updateUserStoryDto.value,
-    //   req.user.sub,
-    //   updateUserStoryDto.userStoryId,
-    // );
+    return this.authService.updateUserStory(
+      updateUserStoryDto.field,
+      updateUserStoryDto.value,
+      req.user.sub,
+      updateUserStoryDto.userStoryId,
+    );
   }
 }

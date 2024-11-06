@@ -110,13 +110,11 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
       borderTop="1px solid black"
       w="100%"
       display="flex"
-      justifyContent={"space-between"}
       alignItems="center"
     >
-      <Box display="flex" alignItems="center">
+      <Box display="flex" flex={1} alignItems="center">
         {updateName ? (
           <Input
-            flex={1}
             h="40px"
             value={taskName}
             onChange={onChange}
@@ -126,6 +124,9 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
         ) : (
           <Text textAlign="left">{task.name}</Text>
         )}
+      </Box>
+
+      <Box display="flex" gap={2} alignItems="center">
         <IconButton
           aria-label={`Edit task`}
           icon={updateName ? <CheckIcon /> : <EditIcon />}
@@ -134,8 +135,6 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
           }
           marginLeft={2}
         />
-      </Box>
-      <Box display="flex" gap={4} alignItems="center">
         <Button w="118px" onClick={toggleTaskStatus}>
           {taskStatus}
         </Button>

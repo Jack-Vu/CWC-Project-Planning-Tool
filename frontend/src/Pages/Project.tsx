@@ -35,7 +35,7 @@ const Project = () => {
               {project.name}
             </Text>
             <Text>
-              {project.description || "There is no project description..."}
+              {project.description}
             </Text>
           </Box>
           <Button>Delete Project</Button>
