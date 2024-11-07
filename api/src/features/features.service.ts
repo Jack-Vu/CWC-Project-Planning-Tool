@@ -44,9 +44,9 @@ export class FeaturesService {
 
     if (featureToUpdate) {
       featureToUpdate[field] = value;
-      const updateFeature = await this.featuresRepository.save(featureToUpdate);
+      const updatedFeature = await this.featuresRepository.save(featureToUpdate);
 
-      return updateFeature.project.id;
+      return updatedFeature.project.id;
     } else {
       throw new BadRequestException('You cannot edit that feature');
     }

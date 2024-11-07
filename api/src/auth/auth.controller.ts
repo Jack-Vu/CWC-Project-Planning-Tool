@@ -115,6 +115,7 @@ export class UpdateTaskDto {
   @IsNotEmpty()
   taskId: number;
 }
+
 export class UpdateUserStoryDto {
   @IsNotEmpty()
   field: string;
@@ -138,6 +139,19 @@ export class UpdateFeatureDto {
   @IsNotEmpty()
   featureId: number;
 }
+
+export class UpdateProjectDto {
+  @IsNotEmpty()
+  field: string;
+
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  value: string;
+
+  @IsNotEmpty()
+  projectId: number;
+}
+
 export class Email {
   @IsEmail(undefined, { message: 'Please enter a valid email address!' })
   @Transform((params) => sanitizeHtml(params.value))
@@ -294,6 +308,16 @@ export class AuthController {
       updateFeatureDto.value,
       req.user.sub,
       updateFeatureDto.featureId,
+    );
+  }
+  @UseGuards(AuthGuard)
+  @Post('update-project')
+  updateProject(@Body() updateProjectDto: UpdateProjectDto, @Request() req) {
+    return this.authService.updateProject(
+      updateProjectDto.field,
+      updateProjectDto.value,
+      req.user.sub,
+      updateProjectDto.projectId,
     );
   }
 }

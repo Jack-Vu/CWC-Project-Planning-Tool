@@ -40,8 +40,8 @@ export class TasksService {
     });
     if (taskToUpdate) {
       taskToUpdate[field] = value;
-      await this.tasksRepository.save(taskToUpdate);
-      return taskToUpdate.userStory.id;
+     const updatedTask = await this.tasksRepository.save(taskToUpdate);
+      return updatedTask.userStory.id;
     } else {
       throw new BadRequestException('You cannot edit that task');
     }

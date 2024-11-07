@@ -57,9 +57,9 @@ export class UserStoriesService {
 
     if (storyToUpdate) {
       storyToUpdate[field] = value;
-      const updateStory = await this.userStoriesRepository.save(storyToUpdate);
+      const updatedStory = await this.userStoriesRepository.save(storyToUpdate);
 
-      return updateStory.feature.project.id;
+      return updatedStory.feature.project.id;
     } else {
       throw new BadRequestException('You cannot edit that user story');
     }
