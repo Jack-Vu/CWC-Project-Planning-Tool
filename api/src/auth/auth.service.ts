@@ -249,7 +249,7 @@ export class AuthService {
       userId,
       taskId,
     );
-    return await this.userStoriesService.getUserStoryById(userStoryId);
+    return await this.userStoriesService.getUserStoryStatusById(userStoryId);
   }
   async updateUserStory(
     field: string,

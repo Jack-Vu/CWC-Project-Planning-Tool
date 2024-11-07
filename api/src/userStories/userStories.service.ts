@@ -28,7 +28,7 @@ export class UserStoriesService {
     return await this.getFeatureUserStories(featureId);
   }
 
-  async getUserStoryById(id: number) {
+  async getUserStoryStatusById(id: number) {
     const userStory = await this.userStoriesRepository.findOne({
       where: { id },
       relations: ['tasks'],

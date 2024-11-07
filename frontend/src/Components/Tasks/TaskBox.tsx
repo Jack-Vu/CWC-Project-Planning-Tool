@@ -122,7 +122,7 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
             type={"text"}
           />
         ) : (
-          <Text textAlign="left">{task.name}</Text>
+          <Text textAlign="left">{taskName}</Text>
         )}
       </Box>
 
