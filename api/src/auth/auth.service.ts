@@ -265,4 +265,18 @@ export class AuthService {
     );
     return await this.projectsService.getProjectById(projectId);
   }
+  async updateFeature(
+    field: string,
+    value: string,
+    userId: number,
+    featureId: number,
+  ) {
+    const projectId = await this.featuresService.updateFeature(
+      field,
+      value,
+      userId,
+      featureId,
+    );
+    return await this.projectsService.getProjectById(projectId);
+  }
 }

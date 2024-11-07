@@ -17,13 +17,7 @@ import {
   useToast
 } from "@chakra-ui/react";
 import { CreateTaskAccordion, TaskBox } from "../Tasks";
-import {
-  ChangeEvent,
-  Dispatch,
-  MouseEvent,
-  SetStateAction,
-  useState
-} from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { ProjectType } from "../../Pages";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -102,8 +96,11 @@ function UserStoryDetailsAccordion({
         )
         .then((response) => {
           setProject(response.data);
-          setUpdateStoryName(false);
-          setUpdateStoryDescription(false);
+          if (field === "name") {
+            setUpdateStoryName(false);
+          } else {
+            setUpdateStoryDescription(false);
+          }
           toast({
             title: "Success.",
             description: `Your user story ${field} has been updated!`,
@@ -126,7 +123,7 @@ function UserStoryDetailsAccordion({
             toast({
               title: "Error.",
               description:
-                "There was an error updating your task. Please try again!",
+                "There was an error updating your user story. Please try again!",
               status: "error",
               duration: 3000,
               isClosable: true
@@ -147,7 +144,7 @@ function UserStoryDetailsAccordion({
           display="flex"
           alignItems="center"
           justifyContent="space-between"
-          gap={2}
+          gap={4}
         >
           <Input
             value={storyName}
@@ -163,7 +160,6 @@ function UserStoryDetailsAccordion({
             onClick={() => {
               updateUserStory("name", storyName);
             }}
-            marginLeft={2}
           />
           <Box display="flex" alignItems="center" gap={2}>
             <Text>{storyStatus}</Text>
@@ -209,6 +205,7 @@ function UserStoryDetailsAccordion({
                 textAlign="left"
                 display="flex"
                 alignItems="center"
+                gap={4}
               >
                 {updateStoryDescription ? (
                   <Input
@@ -231,7 +228,6 @@ function UserStoryDetailsAccordion({
                       ? () => updateUserStory("description", storyDescription)
                       : onClickEditDescription
                   }
-                  marginLeft={2}
                 />
               </Box>
 

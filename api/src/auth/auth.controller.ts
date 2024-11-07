@@ -127,6 +127,17 @@ export class UpdateUserStoryDto {
   userStoryId: number;
 }
 
+export class UpdateFeatureDto {
+  @IsNotEmpty()
+  field: string;
+
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  value: string;
+
+  @IsNotEmpty()
+  featureId: number;
+}
 export class Email {
   @IsEmail(undefined, { message: 'Please enter a valid email address!' })
   @Transform((params) => sanitizeHtml(params.value))
@@ -272,6 +283,17 @@ export class AuthController {
       updateUserStoryDto.value,
       req.user.sub,
       updateUserStoryDto.userStoryId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('update-feature')
+  updateFeature(@Body() updateFeatureDto: UpdateFeatureDto, @Request() req) {
+    return this.authService.updateFeature(
+      updateFeatureDto.field,
+      updateFeatureDto.value,
+      req.user.sub,
+      updateFeatureDto.featureId,
     );
   }
 }
