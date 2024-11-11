@@ -44,6 +44,9 @@ export class UserStoriesService {
   async getUserStoryById(id: number) {
     return await this.userStoriesRepository.findOne({
       where: { id },
+      order: {
+        tasks: { id: 'ASC' },
+      },
       relations: ['tasks'],
     });
   }
