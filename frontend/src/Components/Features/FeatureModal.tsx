@@ -1,10 +1,13 @@
 import {
   Box,
+  IconButton,
+  Input,
   Modal,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
-  Text
+  Text,
+  useToast
 } from "@chakra-ui/react";
 import {
   CreateUserStoryAccordion,
@@ -12,12 +15,16 @@ import {
   UserStoryDetailsAccordion
 } from "../UserStories";
 import { ProjectType } from "../../Pages";
+import { ChangeEvent, useState } from "react";
+import { CheckIcon, EditIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   featureName: string;
-  featureDescription: string;
+  featureDescription?: string;
   featureId: number;
   projectId: number;
   stories: UserStory[];
@@ -43,18 +50,147 @@ function FeatureModal({
   stories,
   setProject
 }: Props) {
+  const toast = useToast();
+  const navigate = useNavigate();
+
+  const [name, setName] = useState(featureName);
+  const [description, setDescription] = useState(featureDescription);
+
+  const [updateFeatureName, setUpdateFeatureName] = useState(false);
+  const [updateFeatureDescription, setUpdateFeatureDescription] =
+    useState(false);
+
+  const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+  const onChangeDescription = (e: ChangeEvent<HTMLInputElement>) => {
+    setDescription(e.target.value);
+  };
+
+  const editName = () => {
+    setUpdateFeatureName(!updateFeatureName);
+  };
+  const editDescription = () => {
+    setUpdateFeatureDescription(!updateFeatureDescription);
+  };
+
+  const updateFeature = (field: "name" | "description", value?: string) => {
+    const token = localStorage.getItem("token");
+    if (name === "") {
+      toast({
+        title: "Error.",
+        description: "Please enter a valid feature name!",
+        status: "error",
+        duration: 3000,
+        isClosable: true
+      });
+      setName(featureName);
+      return;
+    } else {
+      axios
+        .post(
+          "http://localhost:3025/auth/update-feature",
+          {
+            field,
+            value,
+            featureId
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        )
+        .then((response) => {
+          setProject(response.data);
+          if (field === "name") {
+            setUpdateFeatureName(false);
+          } else {
+            setUpdateFeatureDescription(false);
+          }
+          toast({
+            title: "Success.",
+            description: `Your feature ${field} has been updated!`,
+            status: "success",
+            duration: 3000,
+            isClosable: true
+          });
+        })
+        .catch((error) => {
+          if (error.response.data.message === "Unauthorized") {
+            toast({
+              title: "Error.",
+              description: "Your session has expired, please log in again!",
+              status: "error",
+              duration: 3000,
+              isClosable: true
+            });
+            navigate("/log-in");
+          } else {
+            toast({
+              title: "Error.",
+              description:
+                "There was an error updating your feature. Please try again!",
+              status: "error",
+              duration: 3000,
+              isClosable: true
+            });
+          }
+        });
+    }
+  };
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
       <ModalContent minW="75%" minH="75%">
         <Box m={10}>
-          <Box mb={10}>
-            <Text mb={4} fontSize={20}>
-              {featureName}
-            </Text>
-            <Text>
-              {featureDescription || "There is no feature description..."}
-            </Text>
+          <Box mb={20}>
+            <Box display="flex" alignItems="center" mb={4} gap={4}>
+              {updateFeatureName ? (
+                <Input
+                  value={name}
+                  onChange={onChangeName}
+                  h="40px"
+                  autoFocus
+                  type={"text"}
+                />
+              ) : (
+                <Text fontSize={20}>{featureName}</Text>
+              )}
+              <IconButton
+                aria-label={`Edit User Story`}
+                icon={updateFeatureName ? <CheckIcon /> : <EditIcon />}
+                onClick={
+                  updateFeatureName
+                    ? () => {
+                        updateFeature("name", name);
+                      }
+                    : editName
+                }
+              />
+            </Box>
+            <Box display="flex" alignItems="center" gap={4}>
+              {updateFeatureDescription ? (
+                <Input
+                  value={description}
+                  onChange={onChangeDescription}
+                  h="40px"
+                  autoFocus
+                  type={"text"}
+                />
+              ) : (
+                <Text>{featureDescription}</Text>
+              )}
+              <IconButton
+                aria-label={`Edit User Story`}
+                icon={updateFeatureDescription ? <CheckIcon /> : <EditIcon />}
+                onClick={
+                  updateFeatureDescription
+                    ? () => {
+                        updateFeature("description", description);
+                      }
+                    : editDescription
+                }
+              />
+            </Box>
           </Box>
           <ModalCloseButton />
           {stories?.map((story) => {

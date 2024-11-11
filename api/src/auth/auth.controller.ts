@@ -85,7 +85,7 @@ export class UserStoryDto {
 
   @IsNotEmpty()
   projectId: number;
-  
+
   @IsNotEmpty()
   featureId: number;
 }
@@ -102,6 +102,54 @@ export class TaskDto {
 
   @IsNotEmpty()
   userStoryId: number;
+}
+
+export class UpdateTaskDto {
+  @IsNotEmpty()
+  field: string;
+
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  value: string;
+
+  @IsNotEmpty()
+  taskId: number;
+}
+
+export class UpdateUserStoryDto {
+  @IsNotEmpty()
+  field: string;
+
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  value: string;
+
+  @IsNotEmpty()
+  userStoryId: number;
+}
+
+export class UpdateFeatureDto {
+  @IsNotEmpty()
+  field: string;
+
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  value: string;
+
+  @IsNotEmpty()
+  featureId: number;
+}
+
+export class UpdateProjectDto {
+  @IsNotEmpty()
+  field: string;
+
+  @IsNotEmpty()
+  @Transform((params) => sanitizeHtml(params.value))
+  value: string;
+
+  @IsNotEmpty()
+  projectId: number;
 }
 
 export class Email {
@@ -225,6 +273,51 @@ export class AuthController {
       taskDto.projectId,
       taskDto.featureId,
       taskDto.userStoryId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('update-task')
+  updateTask(@Body() updateTaskDto: UpdateTaskDto, @Request() req) {
+    return this.authService.updateTask(
+      updateTaskDto.field,
+      updateTaskDto.value,
+      req.user.sub,
+      updateTaskDto.taskId,
+    );
+  }
+  @UseGuards(AuthGuard)
+  @Post('update-user-story')
+  updateUserStory(
+    @Body() updateUserStoryDto: UpdateUserStoryDto,
+    @Request() req,
+  ) {
+    return this.authService.updateUserStory(
+      updateUserStoryDto.field,
+      updateUserStoryDto.value,
+      req.user.sub,
+      updateUserStoryDto.userStoryId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('update-feature')
+  updateFeature(@Body() updateFeatureDto: UpdateFeatureDto, @Request() req) {
+    return this.authService.updateFeature(
+      updateFeatureDto.field,
+      updateFeatureDto.value,
+      req.user.sub,
+      updateFeatureDto.featureId,
+    );
+  }
+  @UseGuards(AuthGuard)
+  @Post('update-project')
+  updateProject(@Body() updateProjectDto: UpdateProjectDto, @Request() req) {
+    return this.authService.updateProject(
+      updateProjectDto.field,
+      updateProjectDto.value,
+      req.user.sub,
+      updateProjectDto.projectId,
     );
   }
 }
