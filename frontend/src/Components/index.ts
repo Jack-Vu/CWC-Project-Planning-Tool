@@ -5,3 +5,4 @@ export * from "./Projects";
 export * from "./Features";
 export * from "./UserStories";
 export * from "./Tasks";
+export * from "./DeleteModal";

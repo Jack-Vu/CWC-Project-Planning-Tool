@@ -14,12 +14,16 @@ import {
   IconButton,
   Input,
   Text,
+  useDisclosure,
   useToast
 } from "@chakra-ui/react";
 import { CreateTaskAccordion, TaskBox } from "../Tasks";
 import {
   ChangeEvent,
   Dispatch,
+  EventHandler,
+  MouseEvent,
+  MouseEventHandler,
   SetStateAction,
   useEffect,
   useState
@@ -27,6 +31,7 @@ import {
 import { ProjectType } from "../../Pages";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { DeleteModal } from "../DeleteModal";
 
 export type Task = {
   id: number;
@@ -57,6 +62,8 @@ function UserStoryDetailsAccordion({
 }: Props) {
   const toast = useToast();
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [storyStatus, setStoryStatus] = useState(status);
   const [storyName, setStoryName] = useState(name);
   const [storyDescription, setStoryDescription] = useState(description);
@@ -224,7 +231,7 @@ function UserStoryDetailsAccordion({
             <IconButton
               aria-label="Delete Task"
               icon={<DeleteIcon />}
-              onClick={deleteStory}
+              onClick={onOpen}
             />
             <ChevronDownIcon boxSize={5} />
           </Box>
@@ -259,7 +266,10 @@ function UserStoryDetailsAccordion({
                 <IconButton
                   aria-label="Delete Task"
                   icon={<DeleteIcon />}
-                  onClick={deleteStory}
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.stopPropagation();
+                    onOpen();
+                  }}
                 />
                 <AccordionIcon />
               </Box>
@@ -318,6 +328,12 @@ function UserStoryDetailsAccordion({
           </AccordionItem>
         </Accordion>
       )}
+      <DeleteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        deleteItem={deleteStory}
+        itemType="user story"
+      />
     </>
   );
 }
