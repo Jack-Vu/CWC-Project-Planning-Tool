@@ -21,9 +21,7 @@ import { CreateTaskAccordion, TaskBox } from "../Tasks";
 import {
   ChangeEvent,
   Dispatch,
-  EventHandler,
   MouseEvent,
-  MouseEventHandler,
   SetStateAction,
   useEffect,
   useState
