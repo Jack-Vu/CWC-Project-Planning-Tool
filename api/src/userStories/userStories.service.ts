@@ -74,4 +74,22 @@ export class UserStoriesService {
       throw new BadRequestException('You cannot edit that user story');
     }
   }
+
+  async deleteUserStory(userStoryId: number, userId: number) {
+    const storyToDelete = await this.userStoriesRepository.findOne({
+      where: {
+        id: userStoryId,
+        feature: { project: { user: { id: userId } } },
+      },
+      relations: ['feature', 'feature.project'],
+    });
+
+    if (storyToDelete) {
+      await this.userStoriesRepository.delete(storyToDelete);
+      return storyToDelete.feature.project.id;
+    } else {
+      throw new BadRequestException('You cannot delete that user story');
+    }
+    console.log('Story to delete', storyToDelete);
+  }
 }

@@ -299,12 +299,17 @@ export class AuthService {
       await this.userStoriesService.getUserStoryStatusById(userStoryId);
     const updatedUserStory =
       await this.userStoriesService.getUserStoryById(userStoryId);
-
-    console.log(updatedUserStory);
-
     return {
       storyStatus,
       taskList: updatedUserStory.tasks,
     };
+  }
+
+  async deleteUserStory(userStoryId: number, userId: number) {
+    const projectId = await this.userStoriesService.deleteUserStory(
+      userStoryId,
+      userId,
+    );
+    return await this.projectsService.getProjectById(projectId);
   }
 }

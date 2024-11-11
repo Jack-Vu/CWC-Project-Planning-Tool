@@ -144,6 +144,52 @@ function UserStoryDetailsAccordion({
         });
     }
   };
+
+  const deleteStory = () => {
+    const token = localStorage.getItem("token");
+
+    axios
+      .post(
+        "http://localhost:3025/auth/delete-user-story",
+        {
+          userStoryId
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
+      .then((response) => {
+        setProject(response.data);
+        toast({
+          title: "Success.",
+          description: "Your user story has been deleted!",
+          status: "success",
+          duration: 3000,
+          isClosable: true
+        });
+      })
+      .catch((error) => {
+        if (error.response.data.message === "Unauthorized") {
+          toast({
+            title: "Error.",
+            description: "Your session has expired, please log in again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+          navigate("/log-in");
+        } else {
+          toast({
+            title: "Error.",
+            description:
+              "There was an error deleting your user story. Please try again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+        }
+      });
+  };
   return (
     <>
       {updateStoryName ? (
@@ -156,7 +202,7 @@ function UserStoryDetailsAccordion({
           display="flex"
           alignItems="center"
           justifyContent="space-between"
-          gap={4}
+          gap={3}
         >
           <Input
             value={storyName}
@@ -173,9 +219,13 @@ function UserStoryDetailsAccordion({
               updateUserStory("name", storyName);
             }}
           />
-          <Box display="flex" alignItems="center" gap={2}>
+          <Box display="flex" alignItems="center" gap={3}>
             <Text>{storyStatus}</Text>
-            <DeleteIcon />
+            <IconButton
+              aria-label="Delete Task"
+              icon={<DeleteIcon />}
+              onClick={deleteStory}
+            />
             <ChevronDownIcon boxSize={5} />
           </Box>
         </Box>
@@ -191,7 +241,7 @@ function UserStoryDetailsAccordion({
               display="flex"
               alignItems="center"
               justifyContent="space-between"
-              gap={2}
+              gap={3}
             >
               <Text textAlign="left" flex={1}>
                 {storyName}
@@ -204,9 +254,13 @@ function UserStoryDetailsAccordion({
                 marginLeft={2}
               />
 
-              <Box display="flex" alignItems="center" gap={2}>
+              <Box display="flex" alignItems="center" gap={3}>
                 <Text>{storyStatus}</Text>
-                <DeleteIcon />
+                <IconButton
+                  aria-label="Delete Task"
+                  icon={<DeleteIcon />}
+                  onClick={deleteStory}
+                />
                 <AccordionIcon />
               </Box>
             </AccordionButton>
@@ -217,7 +271,7 @@ function UserStoryDetailsAccordion({
                 textAlign="left"
                 display="flex"
                 alignItems="center"
-                gap={4}
+                gap={3}
               >
                 {updateStoryDescription ? (
                   <Input

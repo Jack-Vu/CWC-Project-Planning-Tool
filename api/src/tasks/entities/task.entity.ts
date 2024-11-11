@@ -6,7 +6,9 @@ export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UserStory, (userStories) => userStories.tasks)
+  @ManyToOne(() => UserStory, (userStories) => userStories.tasks, {
+    onDelete: 'CASCADE',
+  })
   userStory: UserStory;
 
   @Column()
