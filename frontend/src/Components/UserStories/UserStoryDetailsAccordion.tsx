@@ -17,7 +17,13 @@ import {
   useToast
 } from "@chakra-ui/react";
 import { CreateTaskAccordion, TaskBox } from "../Tasks";
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState
+} from "react";
 import { ProjectType } from "../../Pages";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -56,6 +62,12 @@ function UserStoryDetailsAccordion({
   const [storyDescription, setStoryDescription] = useState(description);
   const [updateStoryName, setUpdateStoryName] = useState(false);
   const [updateStoryDescription, setUpdateStoryDescription] = useState(false);
+  const [taskList, setTaskList] = useState(tasks);
+
+  useEffect(() => {
+    setStoryStatus(status);
+    setTaskList(tasks);
+  }, [status, tasks]);
 
   const onClickEditName = () => {
     setUpdateStoryName(!updateStoryName);
@@ -231,10 +243,14 @@ function UserStoryDetailsAccordion({
                 />
               </Box>
 
-              {tasks?.map((task) => {
+              {taskList?.map((task) => {
                 return (
                   <Box key={task.id}>
-                    <TaskBox task={task} setStoryStatus={setStoryStatus} />
+                    <TaskBox
+                      task={task}
+                      setStoryStatus={setStoryStatus}
+                      setTaskList={setTaskList}
+                    />
                   </Box>
                 );
               })}

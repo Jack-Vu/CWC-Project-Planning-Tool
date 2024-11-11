@@ -15,9 +15,10 @@ import { useNavigate } from "react-router-dom";
 type Props = {
   task: Task;
   setStoryStatus: Dispatch<SetStateAction<string>>;
+  setTaskList: Dispatch<SetStateAction<Task[]>>;
 };
 
-const TaskBox = ({ task, setStoryStatus }: Props) => {
+const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
   const [taskStatus, setTaskStatus] = useState(task.status);
@@ -103,6 +104,53 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
       updateTask("status", "To Do");
     }
   };
+  const deleteTask = () => {
+    const token = localStorage.getItem("token");
+
+    axios
+      .post(
+        "http://localhost:3025/auth/delete-task",
+        {
+          taskId: task.id
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
+      .then((response) => {
+        setStoryStatus(response.data.storyStatus);
+        setTaskList(response.data.taskList);
+        toast({
+          title: "Success.",
+          description: "Your task has been deleted!",
+          status: "success",
+          duration: 3000,
+          isClosable: true
+        });
+      })
+      .catch((error) => {
+        if (error.response.data.message === "Unauthorized") {
+          toast({
+            title: "Error.",
+            description: "Your session has expired, please log in again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+          navigate("/log-in");
+        } else {
+          toast({
+            title: "Error.",
+            description:
+              "There was an error deleting your task. Please try again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+        }
+      });
+  };
+
   return (
     <Box
       px={4}
@@ -138,7 +186,11 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
         <Button w="118px" onClick={toggleTaskStatus}>
           {taskStatus}
         </Button>
-        <DeleteIcon />
+        <IconButton
+          aria-label="Delete Task"
+          icon={<DeleteIcon />}
+          onClick={deleteTask}
+        />
       </Box>
     </Box>
   );

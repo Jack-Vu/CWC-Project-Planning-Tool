@@ -320,4 +320,10 @@ export class AuthController {
       updateProjectDto.projectId,
     );
   }
+
+  @UseGuards(AuthGuard)
+  @Post('delete-task')
+  deleteTask(@Body('taskId') taskId: number, @Request() req) {
+    return this.authService.deleteTask(taskId, req.user.sub);
+  }
 }

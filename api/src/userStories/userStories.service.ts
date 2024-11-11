@@ -41,6 +41,13 @@ export class UserStoriesService {
     return `${completedTasksLength}/${taskCount}`;
   }
 
+  async getUserStoryById(id: number) {
+    return await this.userStoriesRepository.findOne({
+      where: { id },
+      relations: ['tasks'],
+    });
+  }
+
   async updateUserStory(
     field: string,
     value: string,

@@ -40,10 +40,26 @@ export class TasksService {
     });
     if (taskToUpdate) {
       taskToUpdate[field] = value;
-     const updatedTask = await this.tasksRepository.save(taskToUpdate);
+      const updatedTask = await this.tasksRepository.save(taskToUpdate);
       return updatedTask.userStory.id;
     } else {
       throw new BadRequestException('You cannot edit that task');
+    }
+  }
+
+  async deleteTask(taskId: number, userId: number) {
+    const taskToDelete = await this.tasksRepository.findOne({
+      where: {
+        id: taskId,
+        userStory: { feature: { project: { user: { id: userId } } } },
+      },
+      relations: ['userStory'],
+    });
+    if (taskToDelete) {
+      await this.tasksRepository.delete(taskToDelete);
+      return taskToDelete.userStory.id;
+    } else {
+      throw new BadRequestException('You cannot delete that task');
     }
   }
 }

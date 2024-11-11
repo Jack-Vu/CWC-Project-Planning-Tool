@@ -292,4 +292,19 @@ export class AuthService {
       projectId,
     );
   }
+
+  async deleteTask(taskId: number, userId: number) {
+    const userStoryId = await this.tasksService.deleteTask(taskId, userId);
+    const storyStatus =
+      await this.userStoriesService.getUserStoryStatusById(userStoryId);
+    const updatedUserStory =
+      await this.userStoriesService.getUserStoryById(userStoryId);
+
+    console.log(updatedUserStory);
+
+    return {
+      storyStatus,
+      taskList: updatedUserStory.tasks,
+    };
+  }
 }
