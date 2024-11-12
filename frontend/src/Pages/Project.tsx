@@ -4,12 +4,18 @@ import {
   IconButton,
   Input,
   Text,
+  useDisclosure,
   useToast
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 
-import { CreateFeatureAccordion, FeatureBox, UserStory } from "../Components";
+import {
+  CreateFeatureAccordion,
+  DeleteModal,
+  FeatureBox,
+  UserStory
+} from "../Components";
 import { ProjectType } from "./Projects";
 import axios from "axios";
 import { CheckIcon, EditIcon } from "@chakra-ui/icons";
@@ -30,6 +36,8 @@ const Project = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const loaderData = useLoaderData() as ProjectType;
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [project, setProject] = useState(loaderData);
 
   const [projectName, setProjectName] = useState(project.name);
@@ -119,15 +127,56 @@ const Project = () => {
     }
   };
 
+  const deleteProject = () => {
+    const token = localStorage.getItem("token");
+
+    axios
+      .post(
+        "http://localhost:3025/auth/delete-project",
+        {
+          projectId: project.id
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
+      .then((response) => {
+        toast({
+          title: "Success.",
+          description: "Your project has been deleted!",
+          status: "success",
+          duration: 3000,
+          isClosable: true
+        });
+        navigate("/projects");
+      })
+      .catch((error) => {
+        if (error.response.data.message === "Unauthorized") {
+          toast({
+            title: "Error.",
+            description: "Your session has expired, please log in again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+          navigate("/log-in");
+        } else {
+          toast({
+            title: "Error.",
+            description:
+              "There was an error deleting your project. Please try again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+        }
+      });
+  };
+
   return (
     <>
       <Box m={10}>
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          mb={20}
-        >
+        <Box display="flex" justifyContent="space-between" mb={20}>
           <Box display="flex" flexDir="column" gap={4}>
             <Box display="flex" gap={5} alignItems="center">
               {updateProjectName ? (
@@ -178,7 +227,7 @@ const Project = () => {
               />
             </Box>
           </Box>
-          <Button>Delete Project</Button>
+          <Button onClick={onOpen}>Delete Project</Button>
         </Box>
         <Box display="flex" gap={10}>
           {columns.map((column) => {
@@ -215,6 +264,12 @@ const Project = () => {
           })}
         </Box>
       </Box>
+      <DeleteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        deleteItem={deleteProject}
+        itemType="project"
+      />
     </>
   );
 };
