@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   IconButton,
   Input,
   Modal,
@@ -7,6 +8,7 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
+  useDisclosure,
   useToast
 } from "@chakra-ui/react";
 import {
@@ -19,6 +21,7 @@ import { ChangeEvent, useState } from "react";
 import { CheckIcon, EditIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { DeleteModal } from "../DeleteModal";
 
 type Props = {
   isOpen: boolean;
@@ -52,6 +55,11 @@ function FeatureModal({
 }: Props) {
   const toast = useToast();
   const navigate = useNavigate();
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete
+  } = useDisclosure();
 
   const [name, setName] = useState(featureName);
   const [description, setDescription] = useState(featureDescription);
@@ -137,10 +145,56 @@ function FeatureModal({
         });
     }
   };
+
+  const deleteFeature = () => {
+    const token = localStorage.getItem("token");
+
+    axios
+      .post(
+        "http://localhost:3025/auth/delete-feature",
+        {
+          featureId
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
+      .then((response) => {
+        setProject(response.data);
+        toast({
+          title: "Success.",
+          description: "Your feature has been deleted!",
+          status: "success",
+          duration: 3000,
+          isClosable: true
+        });
+      })
+      .catch((error) => {
+        if (error.response.data.message === "Unauthorized") {
+          toast({
+            title: "Error.",
+            description: "Your session has expired, please log in again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+          navigate("/log-in");
+        } else {
+          toast({
+            title: "Error.",
+            description:
+              "There was an error deleting your feature. Please try again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+        }
+      });
+  };
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
-      <ModalContent minW="75%" minH="75%">
+      <ModalContent minW="75%" minH="75%" justifyContent="space-between">
         <Box m={10}>
           <Box mb={20}>
             <Box display="flex" alignItems="center" mb={4} gap={4}>
@@ -217,7 +271,16 @@ function FeatureModal({
             />
           </Box>
         </Box>
+        <Button m={10} onClick={onOpenDelete}>
+          Delete Feature
+        </Button>
       </ModalContent>
+      <DeleteModal
+        isOpen={isOpenDelete}
+        onClose={onCloseDelete}
+        itemType="feature"
+        deleteItem={deleteFeature}
+      />
     </Modal>
   );
 }

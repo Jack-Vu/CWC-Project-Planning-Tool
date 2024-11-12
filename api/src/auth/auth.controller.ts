@@ -332,4 +332,9 @@ export class AuthController {
   deleteUserStory(@Body('userStoryId') userStoryId: number, @Request() req) {
     return this.authService.deleteUserStory(userStoryId, req.user.sub);
   }
+  @UseGuards(AuthGuard)
+  @Post('delete-feature')
+  deleteFeature(@Body('featureId') featureId: number, @Request() req) {
+    return this.authService.deleteFeature(featureId, req.user.sub);
+  }
 }
