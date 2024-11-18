@@ -96,23 +96,36 @@ const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
 
   return (
     <Accordion allowToggle index={isOpen ? 0 : -1}>
-      <AccordionItem border="1px solid black">
+      <AccordionItem borderRadius="md" boxShadow="md">
         {({ isExpanded }) => (
           <>
             <h2>
               <AccordionButton
-                h="64px"
+                h="58px"
+                layerStyle="accordionButton"
+                borderBottomRadius={isExpanded ? "none" : "md"}
+                _hover={
+                  isExpanded
+                    ? {
+                        bgColor: "rgb(69, 98, 106, 0.75)"
+                      }
+                    : {
+                        bgColor: "rgb(69, 98, 106, 0.75)",
+                        transform: "scale(1.005)"
+                      }
+                }
                 onClick={() => {
                   setIsOpen(!isOpen);
                 }}
               >
                 {isExpanded ? (
-                  <MinusIcon fontSize="12px" />
+                  <MinusIcon color="white" fontSize="12px" />
                 ) : (
-                  <AddIcon fontSize="12px" />
+                  <AddIcon color="white" fontSize="12px" />
                 )}
                 <Box
                   layerStyle="text"
+                  color="white"
                   as="span"
                   flex="1"
                   textAlign="left"
@@ -123,7 +136,7 @@ const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
                 </Box>
               </AccordionButton>
             </h2>
-            <AccordionPanel pb={4} borderTop="1px solid black" textAlign="left">
+            <AccordionPanel pb={4} layerStyle="accordionPanel">
               <FormControl isRequired isInvalid={isNameError} mb={2}>
                 <FormLabel layerStyle="text">Project Name:</FormLabel>
                 <Input
@@ -148,7 +161,7 @@ const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
                   layerStyle="text"
                 />
               </FormControl>
-              <Button onClick={onSubmit} display="flex" m="0 0 0 auto">
+              <Button onClick={onSubmit} w="100%" colorScheme="green">
                 Create Project
               </Button>
             </AccordionPanel>
