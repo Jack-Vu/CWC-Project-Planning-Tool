@@ -2,6 +2,9 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Header } from "./Components";
 import { Outlet, useLoaderData } from "react-router-dom";
 import { useState } from "react";
+import { theme } from "./theme";
+import "@fontsource/pacifico";
+import "@fontsource/sometype-mono";
 
 export type Data = {
   email: string;
@@ -27,7 +30,7 @@ function App() {
     toggledLoggedIn
   };
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <Header loggedIn={loggedIn} />
       <Outlet context={context} />
     </ChakraProvider>

@@ -4,6 +4,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
   InputGroup,
   InputRightElement,
@@ -105,10 +106,10 @@ const LogIn = () => {
   };
 
   return (
-    <>
-      <Text textAlign="center" mb={4} fontSize="20px">
+    <Box mt={20}>
+      <Heading layerStyle="heading" textAlign="center" mb={4} fontSize="28px">
         Log In Your Account
-      </Text>
+      </Heading>
       <Box
         maxW="75%"
         display="flex"
@@ -118,25 +119,27 @@ const LogIn = () => {
         gap={4}
       >
         <FormControl isRequired isInvalid={isUsernameError}>
-          <FormLabel>Username: </FormLabel>
+          <FormLabel layerStyle="text">Username: </FormLabel>
           <Input
             onChange={handleChangeForm}
             name="username"
             type="text"
             value={signUpForm.username}
+            layerStyle="text"
           />
           {isUsernameError && (
             <FormErrorMessage>Username is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isPasswordError}>
-          <FormLabel>Password: </FormLabel>
+          <FormLabel layerStyle="text">Password: </FormLabel>
           <InputGroup size="md">
             <Input
               onChange={handleChangeForm}
               name="password"
               type={show ? "text" : "password"}
               value={signUpForm.password}
+              layerStyle="text"
             />
             <InputRightElement width="4.5rem">
               <Button h="1.75rem" size="sm" onClick={handleShowHideClick}>
@@ -152,12 +155,12 @@ const LogIn = () => {
           Submit
         </Button>
         <Box display="flex" alignItems="center" gap={10} mt={10}>
-          <Text lineHeight="40px">Forgot your password? </Text>
+          <Text layerStyle="text" lineHeight="40px">Forgot your password? </Text>
           <Button onClick={onOpen}>Reset Password</Button>
         </Box>
       </Box>
       <ForgotPasswordModal isOpen={isOpen} onClose={onClose} />
-    </>
+    </Box>
   );
 };
 

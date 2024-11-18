@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Text, useToast } from "@chakra-ui/react";
+import { Avatar, Box, Button, Heading, Text, useToast } from "@chakra-ui/react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Context, Data } from "../App";
 import { UserDetailsRow } from "../Components";
@@ -65,11 +65,11 @@ const Profile = () => {
   ];
 
   return (
-    <>
-      <Text textAlign="center" mb={4} fontSize="20px">
+    <Box mt={20}>
+      <Heading layerStyle="heading" textAlign="center" mb={4} fontSize="28px">
         Account Details
-      </Text>
-      <Text fontSize={20} textAlign="center" mb={4}>
+      </Heading>
+      <Text layerStyle="text" fontSize={20} textAlign="center" mb={4}>
         Welcome {data.name}! You can manage your account details here.
       </Text>
       <Box
@@ -100,7 +100,7 @@ const Profile = () => {
         <Button onClick={onLogOut}>Log Out</Button>
         <Button onClick={deleteAccount}>Delete Account</Button>
       </Box>
-    </>
+    </Box>
   );
 };
 

@@ -112,19 +112,20 @@ const CreateTaskAccordion = ({
                 ) : (
                   <AddIcon fontSize="12px" />
                 )}
-                <Box as="span" flex="1" textAlign="left" ml={3} p={2}>
+                <Box layerStyle="text" as="span" flex="1" textAlign="left" ml={3} p={2}>
                   Add a task
                 </Box>
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4} borderTop="1px solid black" textAlign="left">
               <FormControl isRequired isInvalid={isNameError} mb={2}>
-                <FormLabel>Task Name:</FormLabel>
+                <FormLabel layerStyle="text">Task Name:</FormLabel>
                 <Input
                   onChange={onChangeName}
                   name="name"
                   type="text"
                   value={name}
+                  layerStyle="text"
                 />
                 {isNameError && (
                   <FormErrorMessage>

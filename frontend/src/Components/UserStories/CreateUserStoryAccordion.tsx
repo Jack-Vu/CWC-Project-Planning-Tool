@@ -117,19 +117,27 @@ const CreateUserStoryAccordion = ({
                 ) : (
                   <AddIcon fontSize="12px" />
                 )}
-                <Box as="span" flex="1" textAlign="left" ml={3} p={2}>
+                <Box
+                  layerStyle="text"
+                  as="span"
+                  flex="1"
+                  textAlign="left"
+                  ml={3}
+                  p={2}
+                >
                   Add a user story
                 </Box>
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4} borderTop="1px solid black" textAlign="left">
               <FormControl isRequired isInvalid={isNameError} mb={2}>
-                <FormLabel>User Story Name:</FormLabel>
+                <FormLabel layerStyle="text">User Story Name:</FormLabel>
                 <Input
                   onChange={onChangeName}
                   name="name"
                   type="text"
                   value={name}
+                  layerStyle="text"
                 />
                 {isNameError && (
                   <FormErrorMessage>
@@ -138,11 +146,12 @@ const CreateUserStoryAccordion = ({
                 )}
               </FormControl>
               <FormControl mb={4}>
-                <FormLabel>User Story Description:</FormLabel>
+                <FormLabel layerStyle="text">User Story Description:</FormLabel>
                 <Textarea
                   onChange={onChangeDescription}
                   name="description"
                   value={description}
+                  layerStyle="text"
                 />
               </FormControl>
               <Button onClick={onSubmit} display="flex" w="100%">

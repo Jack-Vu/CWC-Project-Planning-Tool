@@ -215,6 +215,7 @@ function UserStoryDetailsAccordion({
             h="40px"
             autoFocus
             type={"text"}
+            layerStyle="text"
           />
 
           <IconButton
@@ -225,7 +226,7 @@ function UserStoryDetailsAccordion({
             }}
           />
           <Box display="flex" alignItems="center" gap={3}>
-            <Text>{storyStatus}</Text>
+            <Text layerStyle="text">{storyStatus}</Text>
             <IconButton
               aria-label="Delete Task"
               icon={<DeleteIcon />}
@@ -248,7 +249,7 @@ function UserStoryDetailsAccordion({
               justifyContent="space-between"
               gap={3}
             >
-              <Text textAlign="left" flex={1}>
+              <Text textAlign="left" flex={1} layerStyle="text">
                 {storyName}
               </Text>
 
@@ -260,7 +261,7 @@ function UserStoryDetailsAccordion({
               />
 
               <Box display="flex" alignItems="center" gap={3}>
-                <Text>{storyStatus}</Text>
+                <Text layerStyle="text">{storyStatus}</Text>
                 <IconButton
                   aria-label="Delete Task"
                   icon={<DeleteIcon />}
@@ -288,9 +289,10 @@ function UserStoryDetailsAccordion({
                     autoFocus
                     type={"text"}
                     flex={1}
+                    layerStyle="text"
                   />
                 ) : (
-                  <Text textAlign="left" flex={1}>
+                  <Text textAlign="left" flex={1} layerStyle="text">
                     {storyDescription}
                   </Text>
                 )}

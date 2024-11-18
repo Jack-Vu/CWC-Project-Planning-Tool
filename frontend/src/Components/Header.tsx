@@ -1,6 +1,7 @@
 import { Box, Heading, Image } from "@chakra-ui/react";
 import React from "react";
 import { Link } from "react-router-dom";
+import { theme } from "../theme";
 
 const pages = [
   { name: "Log In", path: "/log-in", showWhenLoggedIn: false },
@@ -14,17 +15,18 @@ type Props = {
 
 const Header = ({ loggedIn }: Props) => {
   return (
-    <Box p={4} display="flex" alignItems="center">
-      <Box p={4} display="flex" gap={4} alignItems="center">
+    <Box py={4} px={8} display="flex" alignItems="center">
+      <Box display="flex" gap={4} alignItems="center" flex={1}>
         <Image
           borderRadius="50%"
-          boxSize="70px"
+          boxShadow="lg"
+          boxSize="80px"
           src="https://media.istockphoto.com/id/1195743934/vector/cute-panda-character-vector-design.jpg?s=612x612&w=0&k=20&c=J3ht-bKADmsXvF6gFIleRtfJ6NGhXnfIsrwlsUF8w80="
           alt="Profile Picture Logo"
         />
-        <Heading fontSize="24px">Project Planning Tool</Heading>
+        <Heading layerStyle="heading">Project Planning Tool</Heading>
       </Box>
-      <Box display="flex" justifyContent="space-around" w="70%">
+      <Box display="flex" justifyContent="space-around" w="50%">
         {pages.map((page) => {
           if (
             (loggedIn && page.showWhenLoggedIn) ||
@@ -32,7 +34,7 @@ const Header = ({ loggedIn }: Props) => {
           ) {
             return (
               <Link to={page.path} key={page.name}>
-                <Box>{page.name}</Box>
+                <Box layerStyle="text">{page.name}</Box>
               </Link>
             );
           } else {

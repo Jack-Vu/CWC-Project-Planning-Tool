@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Heading,
   IconButton,
   Input,
   Text,
@@ -175,7 +176,7 @@ const Project = () => {
 
   return (
     <>
-      <Box m={10}>
+      <Box mx={10} mt={20}>
         <Box display="flex" justifyContent="space-between" mb={20}>
           <Box display="flex" flexDir="column" gap={4}>
             <Box display="flex" gap={5} alignItems="center">
@@ -188,7 +189,9 @@ const Project = () => {
                   type={"text"}
                 />
               ) : (
-                <Text fontSize={20}>{project.name}</Text>
+                <Heading layerStyle="heading" fontSize={28}>
+                  {project.name}
+                </Heading>
               )}
               <IconButton
                 aria-label={`Edit User Story`}
@@ -210,9 +213,10 @@ const Project = () => {
                   h="40px"
                   autoFocus
                   type={"text"}
+                  layerStyle="text"
                 />
               ) : (
-                <Text>{project.description}</Text>
+                <Text layerStyle="text">{project.description}</Text>
               )}
               <IconButton
                 aria-label={`Edit User Story`}
@@ -233,7 +237,7 @@ const Project = () => {
           {columns.map((column) => {
             return (
               <Box key={column.name} border="1px solid black" flex={1}>
-                <Text textAlign="center" fontSize={20} mt={2}>
+                <Text layerStyle="text" textAlign="center" fontSize={20} mt={2}>
                   {column.name}
                 </Text>
                 {project.features.map((feature) => {

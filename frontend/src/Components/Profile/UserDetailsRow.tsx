@@ -92,11 +92,12 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
   };
   return (
     <Box display="flex" alignItems="center">
-      <Text flex={1} lineHeight="32px">
+      <Text layerStyle="text" flex={1} lineHeight="32px">
         {title}:
       </Text>
       {updateField ? (
         <Input
+          layerStyle="text"
           flex={1}
           value={valueState}
           onChange={onChange}
@@ -104,7 +105,7 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
           type={field === "password" ? "password" : "text"}
         />
       ) : (
-        <Text textAlign="left" flex={1}>
+        <Text textAlign="left" flex={1} layerStyle="text">
           {field === "password" ? "*********" : valueState}
         </Text>
       )}

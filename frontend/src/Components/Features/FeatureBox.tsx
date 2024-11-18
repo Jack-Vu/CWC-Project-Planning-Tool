@@ -62,8 +62,8 @@ const FeatureBox = ({ feature, projectId, setProject }: Props) => {
         onClick={onOpen}
         cursor="pointer"
       >
-        <Text>{feature.name}</Text>
-        <Text>
+        <Text layerStyle="text">{feature.name}</Text>
+        <Text layerStyle="text">
           {feature.completedUserStories}/{feature.userStoryCount}
         </Text>
       </Box>

@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Data } from "../App";
 import { CreateProjectAccordion } from "../Components/Projects";
@@ -28,26 +28,29 @@ const Projects = () => {
     navigate(`/project/${id}`);
   };
   return (
-    <Box mb={4} fontSize={20}>
-      <Text textAlign="center">{user.name}'s Projects</Text>
+    <Box mt={20}>
+      <Heading layerStyle="heading" mb={4} fontSize={28} textAlign="center">
+        {user.name}'s Projects
+      </Heading>
       {projects.map((project: ProjectType) => {
         return (
           <Box
             key={project.id}
             m={10}
-            onClick={() => 
-              onProjectClick(project.id)}
+            onClick={() => onProjectClick(project.id)}
             _hover={{
               cursor: "pointer",
               backgroundColor: "var(--chakra-colors-blackAlpha-50)"
             }}
           >
             <Box display="flex" border="1px solid black" p={4} mb={6}>
-              <Text w="15%">{project.name}</Text>
-              <Text flex={1} isTruncated>
+              <Text layerStyle="text" w="15%">
+                {project.name}
+              </Text>
+              <Text layerStyle="text" flex={1} isTruncated>
                 {project.description}
               </Text>
-              <Text w="15%" ml={10}>
+              <Text layerStyle="text" w="15%" ml={10}>
                 {project.status}
               </Text>
             </Box>

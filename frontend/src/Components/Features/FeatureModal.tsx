@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Heading,
   IconButton,
   Input,
   Modal,
@@ -207,7 +208,7 @@ function FeatureModal({
                   type={"text"}
                 />
               ) : (
-                <Text fontSize={20}>{featureName}</Text>
+                <Heading layerStyle="heading" fontSize={28}>{featureName}</Heading>
               )}
               <IconButton
                 aria-label={`Edit User Story`}
@@ -229,9 +230,10 @@ function FeatureModal({
                   h="40px"
                   autoFocus
                   type={"text"}
+                  layerStyle="text"
                 />
               ) : (
-                <Text>{featureDescription}</Text>
+                <Text layerStyle="text">{featureDescription}</Text>
               )}
               <IconButton
                 aria-label={`Edit User Story`}

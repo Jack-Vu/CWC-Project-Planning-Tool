@@ -4,6 +4,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
   InputGroup,
   InputRightElement,
@@ -158,10 +159,10 @@ const SignUp = () => {
   const handleShowHideSecondPasswordClick = () => setSecondShow(!showSecond);
 
   return (
-    <>
-      <Text textAlign="center" mb={4} fontSize="20px">
+    <Box mt={20}>
+      <Heading layerStyle="heading" mb={4} fontSize={28} textAlign="center">
         Create An Account
-      </Text>
+      </Heading>
       <Box
         maxW="75%"
         display="flex"
@@ -171,49 +172,53 @@ const SignUp = () => {
         gap={4}
       >
         <FormControl isRequired isInvalid={isNameError}>
-          <FormLabel>Name: </FormLabel>
+          <FormLabel layerStyle="text">Name: </FormLabel>
           <Input
             onChange={handleChangeForm}
             name="name"
             type="text"
             value={signUpForm.name}
+            layerStyle="text"
           />
           {isNameError && (
             <FormErrorMessage>Name is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isEmailError}>
-          <FormLabel>Email: </FormLabel>
+          <FormLabel layerStyle="text">Email: </FormLabel>
           <Input
             onChange={handleChangeForm}
             name="email"
             type="email"
             value={signUpForm.email}
+            layerStyle="text"
           />
           {isEmailError && (
             <FormErrorMessage>A valid email is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isUsernameError}>
-          <FormLabel>Username: </FormLabel>
+          <FormLabel layerStyle="text">Username: </FormLabel>
           <Input
             onChange={handleChangeForm}
             name="username"
             type="text"
             value={signUpForm.username}
+            layerStyle="text"
           />
           {isUsernameError && (
             <FormErrorMessage>Username is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isPasswordError}>
-          <FormLabel>Password: </FormLabel>
+          <FormLabel layerStyle="text">Password: </FormLabel>
           <InputGroup size="md">
             <Input
               onChange={handleChangeForm}
               name="password"
               type={show ? "text" : "password"}
               value={signUpForm.password}
+              layerStyle="text"
             />
             <InputRightElement width="4.5rem">
               <Button h="1.75rem" size="sm" onClick={handleShowHideClick}>
@@ -226,13 +231,14 @@ const SignUp = () => {
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isSecondPasswordError}>
-          <FormLabel>Enter Password Again: </FormLabel>
+          <FormLabel layerStyle="text">Enter Password Again: </FormLabel>
           <InputGroup size="md">
             <Input
               onChange={handleChangeForm}
               name="secondPassword"
               type={showSecond ? "text" : "password"}
               value={secondPassword}
+              layerStyle="text"
             />
             <InputRightElement width="4.5rem">
               <Button
@@ -249,14 +255,14 @@ const SignUp = () => {
           )}
         </FormControl>
         <Box display="flex" flexDirection="column" alignSelf="flex-start">
-          <Text>Profile Picture:</Text>
+          <Text layerStyle="text">Profile Picture:</Text>
           <Button>Choose File</Button>
         </Box>
         <Button w="100%" onClick={onSubmit}>
           Submit
         </Button>
         <Box display="flex" alignItems="center" gap={4} marginTop={2}>
-          <Text>Already have an account? </Text>
+          <Text layerStyle="text">Already have an account? </Text>
           <Button
             onClick={() => {
               navigate("/log-in");
@@ -266,7 +272,7 @@ const SignUp = () => {
           </Button>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 
