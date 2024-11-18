@@ -1,7 +1,6 @@
 import { Box, Heading, Image } from "@chakra-ui/react";
 import React from "react";
 import { Link } from "react-router-dom";
-import { theme } from "../theme";
 
 const pages = [
   { name: "Log In", path: "/log-in", showWhenLoggedIn: false },
