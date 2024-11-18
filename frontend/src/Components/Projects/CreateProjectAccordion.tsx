@@ -96,7 +96,7 @@ const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
 
   return (
     <Accordion allowToggle index={isOpen ? 0 : -1}>
-      <AccordionItem borderRadius="md" boxShadow="md">
+      <AccordionItem border="none">
         {({ isExpanded }) => (
           <>
             <h2>
@@ -114,6 +114,7 @@ const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
                         transform: "scale(1.005)"
                       }
                 }
+                _active={isExpanded ? {} : { transform: "scale(1)" }}
                 onClick={() => {
                   setIsOpen(!isOpen);
                 }}

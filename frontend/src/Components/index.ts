@@ -6,3 +6,4 @@ export * from "./Features";
 export * from "./UserStories";
 export * from "./Tasks";
 export * from "./DeleteModal";
+export * from "./Project";

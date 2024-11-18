@@ -26,7 +26,6 @@ export const theme = extendTheme({
     accordionButton: {
       bgColor: "rgb(69, 98, 106, 0.75)",
       borderTopRadius: "md",
-      _active: { transform: "scale(1)" }
     },
     accordionPanel: {
       bg: "white",
