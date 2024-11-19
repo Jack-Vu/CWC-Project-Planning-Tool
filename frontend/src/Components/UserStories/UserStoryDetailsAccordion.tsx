@@ -200,9 +200,10 @@ function UserStoryDetailsAccordion({
       {updateStoryName ? (
         <Box
           mt={4}
-          border="1px solid black"
+          border="1px solid #170c35"
+          borderRadius="md"
           w="100%"
-          h="58px"
+          h="66px"
           p={4}
           display="flex"
           alignItems="center"
@@ -219,6 +220,8 @@ function UserStoryDetailsAccordion({
           />
 
           <IconButton
+            size="sm"
+            colorScheme="green"
             aria-label={`Edit User Story`}
             icon={<CheckIcon />}
             onClick={() => {
@@ -228,6 +231,8 @@ function UserStoryDetailsAccordion({
           <Box display="flex" alignItems="center" gap={3}>
             <Text layerStyle="text">{storyStatus}</Text>
             <IconButton
+              size="sm"
+              colorScheme="green"
               aria-label="Delete Task"
               icon={<DeleteIcon />}
               onClick={onOpen}
@@ -237,94 +242,129 @@ function UserStoryDetailsAccordion({
         </Box>
       ) : (
         <Accordion allowToggle>
-          <AccordionItem borderTop="none">
-            <AccordionButton
-              mt={4}
-              border="1px solid black"
-              w="100%"
-              h="58px"
-              p={4}
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              gap={3}
-            >
-              <Text textAlign="left" flex={1} layerStyle="text">
-                {storyName}
-              </Text>
-
-              <IconButton
-                aria-label={`Edit User Story`}
-                icon={<EditIcon />}
-                onClick={onClickEditName}
-                marginLeft={2}
-              />
-
-              <Box display="flex" alignItems="center" gap={3}>
-                <Text layerStyle="text">{storyStatus}</Text>
-                <IconButton
-                  aria-label="Delete Task"
-                  icon={<DeleteIcon />}
-                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation();
-                    onOpen();
-                  }}
-                />
-                <AccordionIcon />
-              </Box>
-            </AccordionButton>
-            <AccordionPanel border="1px solid black" borderTop="none" p={0}>
-              <Box
-                p={4}
-                pb={10}
-                textAlign="left"
-                display="flex"
-                alignItems="center"
-                gap={3}
-              >
-                {updateStoryDescription ? (
-                  <Input
-                    value={storyDescription}
-                    onChange={onChangeDescription}
-                    autoFocus
-                    type={"text"}
-                    flex={1}
-                    layerStyle="text"
-                  />
-                ) : (
-                  <Text textAlign="left" flex={1} layerStyle="text">
-                    {storyDescription}
-                  </Text>
-                )}
-                <IconButton
-                  aria-label={`Edit User Story`}
-                  icon={updateStoryDescription ? <CheckIcon /> : <EditIcon />}
-                  onClick={
-                    updateStoryDescription
-                      ? () => updateUserStory("description", storyDescription)
-                      : onClickEditDescription
+          <AccordionItem border="none">
+            {({ isExpanded }) => (
+              <>
+                <AccordionButton
+                  mt={4}
+                  w="100%"
+                  h="66px"
+                  p={4}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  gap={3}
+                  layerStyle="boxButton"
+                  borderBottomRadius={isExpanded ? "none" : "md"}
+                  _hover={
+                    isExpanded
+                      ? {}
+                      : {
+                          cursor: "pointer",
+                          transform: "scale(1.005)"
+                        }
                   }
-                />
-              </Box>
-
-              {taskList?.map((task) => {
-                return (
-                  <Box key={task.id}>
-                    <TaskBox
-                      task={task}
-                      setStoryStatus={setStoryStatus}
-                      setTaskList={setTaskList}
+                  _active={isExpanded ? {} : { transform: "scale(1)" }}
+                >
+                  <Text textAlign="left" flex={1} layerStyle="text">
+                    {storyName}
+                  </Text>
+                  <Box display="flex" alignItems="center" gap={3}>
+                    <Text layerStyle="text">{storyStatus}</Text>
+                    <IconButton
+                      size="sm"
+                      colorScheme="green"
+                      aria-label={`Edit User Story`}
+                      icon={<EditIcon />}
+                      onClick={onClickEditName}
+                      marginLeft={2}
+                    />
+                    <IconButton
+                      size="sm"
+                      colorScheme="green"
+                      aria-label="Delete Task"
+                      icon={<DeleteIcon />}
+                      onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                        e.stopPropagation();
+                        onOpen();
+                      }}
+                    />
+                    <AccordionIcon />
+                  </Box>
+                </AccordionButton>
+                <AccordionPanel
+                  p={0}
+                  borderLeft="1px solid #170c35"
+                  borderRight="1px solid #170c35"
+                  borderBottom="1px solid #170c35"
+                  layerStyle="accordionPanel"
+                >
+                  <Box
+                    p={4}
+                    pb={10}
+                    textAlign="left"
+                    display="flex"
+                    alignItems="center"
+                    gap={3}
+                    borderBottom="1px solid #170c35"
+                  >
+                    {updateStoryDescription ? (
+                      <Input
+                        value={storyDescription}
+                        onChange={onChangeDescription}
+                        autoFocus
+                        type={"text"}
+                        flex={1}
+                        layerStyle="text"
+                      />
+                    ) : (
+                      <Text textAlign="left" flex={1} layerStyle="text">
+                        {storyDescription}
+                      </Text>
+                    )}
+                    <IconButton
+                      size="sm"
+                      colorScheme="green"
+                      aria-label={`Edit User Story`}
+                      icon={
+                        updateStoryDescription ? <CheckIcon /> : <EditIcon />
+                      }
+                      onClick={
+                        updateStoryDescription
+                          ? () =>
+                              updateUserStory("description", storyDescription)
+                          : onClickEditDescription
+                      }
                     />
                   </Box>
-                );
-              })}
-              <CreateTaskAccordion
-                featureId={featureId}
-                projectId={projectId}
-                userStoryId={userStoryId}
-                setProject={setProject}
-              />
-            </AccordionPanel>
+                  <Box
+                    m={5}
+                    display="flex"
+                    flexDir="column"
+                    gap={4}
+                    borderRadius="md"
+                  >
+                    {taskList?.map((task) => {
+                      return (
+                        <Box key={task.id}>
+                          <TaskBox
+                            task={task}
+                            setStoryStatus={setStoryStatus}
+                            setTaskList={setTaskList}
+                          />
+                        </Box>
+                      );
+                    })}
+                    <CreateTaskAccordion
+                      featureId={featureId}
+                      projectId={projectId}
+                      userStoryId={userStoryId}
+                      setProject={setProject}
+                    />
+                  </Box>
+                </AccordionPanel>
+              </>
+            )}
           </AccordionItem>
         </Accordion>
       )}

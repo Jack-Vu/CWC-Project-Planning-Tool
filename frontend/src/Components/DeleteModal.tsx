@@ -46,13 +46,15 @@ const DeleteModal = ({ isOpen, onClose, deleteItem, itemType }: Props) => {
               mb={10}
               textAlign="center"
               fontSize={20}
+              layerStyle="text"
             >{`Are you sure you want to delete this ${itemType}`}</Text>
             <Text
               textAlign="center"
               fontSize={20}
+              layerStyle="text"
             >{`You will be permanently deleting all associated ${getAssociatedItems()}.`}</Text>
           </Box>
-          <Button mr={3} onClick={deleteItem}>
+          <Button colorScheme="green" mr={3} onClick={deleteItem}>
             {`Delete ${capitalizeItemType()}`}
           </Button>
         </ModalContent>

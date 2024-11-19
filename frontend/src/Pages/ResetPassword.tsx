@@ -105,6 +105,7 @@ const ResetPassword = () => {
           <FormLabel layerStyle="text">Password: </FormLabel>
           <InputGroup size="md">
             <Input
+              variant="filled"
               onChange={handleChangePassword}
               name="password"
               type={show ? "text" : "password"}
@@ -125,6 +126,7 @@ const ResetPassword = () => {
           <FormLabel layerStyle="text">Re-enter Password: </FormLabel>
           <InputGroup size="md">
             <Input
+              variant="filled"
               onChange={handleChangeSecondPassword}
               name="password"
               type={showSecond ? "text" : "password"}
@@ -133,6 +135,7 @@ const ResetPassword = () => {
             />
             <InputRightElement width="4.5rem">
               <Button
+                colorScheme="green"
                 h="1.75rem"
                 size="sm"
                 onClick={handleShowHideSecondPasswordClick}
@@ -145,7 +148,7 @@ const ResetPassword = () => {
             <FormErrorMessage>Passwords do not match.</FormErrorMessage>
           )}
         </FormControl>
-        <Button w="100%" onClick={onSubmit}>
+        <Button colorScheme="green" w="100%" onClick={onSubmit}>
           Submit
         </Button>
       </Box>

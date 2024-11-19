@@ -135,7 +135,6 @@ const CreateFeatureAccordion = ({ projectId, setProject }: Props) => {
               borderRight="1px solid #170c35"
               borderBottom="1px solid #170c35"
               layerStyle="accordionPanel"
-              textAlign="left"
             >
               <FormControl isRequired isInvalid={isNameError} mb={2}>
                 <FormLabel>Feature Name:</FormLabel>

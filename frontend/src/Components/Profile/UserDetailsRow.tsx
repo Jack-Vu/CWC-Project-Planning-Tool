@@ -110,6 +110,8 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
         </Text>
       )}
       <IconButton
+        size="sm"
+        colorScheme="green"
         aria-label={`Edit ${field}`}
         icon={updateField ? <CheckIcon /> : <EditIcon />}
         onClick={updateField ? onClickCheck : onClickEdit}

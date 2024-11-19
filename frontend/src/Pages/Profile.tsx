@@ -97,8 +97,8 @@ const Profile = () => {
         </Box>
       </Box>
       <Box display="flex" justifyContent="center" gap={4}>
-        <Button onClick={onLogOut}>Log Out</Button>
-        <Button onClick={deleteAccount}>Delete Account</Button>
+        <Button colorScheme="green" onClick={onLogOut}>Log Out</Button>
+        <Button colorScheme="green" onClick={deleteAccount}>Delete Account</Button>
       </Box>
     </Box>
   );

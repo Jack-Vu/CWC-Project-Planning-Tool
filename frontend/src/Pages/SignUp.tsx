@@ -159,7 +159,7 @@ const SignUp = () => {
   const handleShowHideSecondPasswordClick = () => setSecondShow(!showSecond);
 
   return (
-    <Box mt={20}>
+    <Box my={20}>
       <Heading layerStyle="heading" mb={4} fontSize={28} textAlign="center">
         Create An Account
       </Heading>
@@ -174,6 +174,7 @@ const SignUp = () => {
         <FormControl isRequired isInvalid={isNameError}>
           <FormLabel layerStyle="text">Name: </FormLabel>
           <Input
+            variant="filled"
             onChange={handleChangeForm}
             name="name"
             type="text"
@@ -187,6 +188,7 @@ const SignUp = () => {
         <FormControl isRequired isInvalid={isEmailError}>
           <FormLabel layerStyle="text">Email: </FormLabel>
           <Input
+            variant="filled"
             onChange={handleChangeForm}
             name="email"
             type="email"
@@ -200,6 +202,7 @@ const SignUp = () => {
         <FormControl isRequired isInvalid={isUsernameError}>
           <FormLabel layerStyle="text">Username: </FormLabel>
           <Input
+            variant="filled"
             onChange={handleChangeForm}
             name="username"
             type="text"
@@ -214,6 +217,7 @@ const SignUp = () => {
           <FormLabel layerStyle="text">Password: </FormLabel>
           <InputGroup size="md">
             <Input
+              variant="filled"
               onChange={handleChangeForm}
               name="password"
               type={show ? "text" : "password"}
@@ -221,7 +225,12 @@ const SignUp = () => {
               layerStyle="text"
             />
             <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={handleShowHideClick}>
+              <Button
+                colorScheme="green"
+                h="1.75rem"
+                size="sm"
+                onClick={handleShowHideClick}
+              >
                 {show ? "Hide" : "Show"}
               </Button>
             </InputRightElement>
@@ -234,6 +243,7 @@ const SignUp = () => {
           <FormLabel layerStyle="text">Enter Password Again: </FormLabel>
           <InputGroup size="md">
             <Input
+              variant="filled"
               onChange={handleChangeForm}
               name="secondPassword"
               type={showSecond ? "text" : "password"}
@@ -242,6 +252,7 @@ const SignUp = () => {
             />
             <InputRightElement width="4.5rem">
               <Button
+                colorScheme="green"
                 h="1.75rem"
                 size="sm"
                 onClick={handleShowHideSecondPasswordClick}
@@ -256,14 +267,15 @@ const SignUp = () => {
         </FormControl>
         <Box display="flex" flexDirection="column" alignSelf="flex-start">
           <Text layerStyle="text">Profile Picture:</Text>
-          <Button>Choose File</Button>
+          <Button colorScheme="green">Choose File</Button>
         </Box>
-        <Button w="100%" onClick={onSubmit}>
+        <Button colorScheme="green" w="100%" onClick={onSubmit}>
           Submit
         </Button>
         <Box display="flex" alignItems="center" gap={4} marginTop={2}>
           <Text layerStyle="text">Already have an account? </Text>
           <Button
+            colorScheme="green"
             onClick={() => {
               navigate("/log-in");
             }}

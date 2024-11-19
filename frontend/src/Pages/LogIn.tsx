@@ -121,6 +121,7 @@ const LogIn = () => {
         <FormControl isRequired isInvalid={isUsernameError}>
           <FormLabel layerStyle="text">Username: </FormLabel>
           <Input
+            variant="filled"
             onChange={handleChangeForm}
             name="username"
             type="text"
@@ -135,6 +136,7 @@ const LogIn = () => {
           <FormLabel layerStyle="text">Password: </FormLabel>
           <InputGroup size="md">
             <Input
+              variant="filled"
               onChange={handleChangeForm}
               name="password"
               type={show ? "text" : "password"}
@@ -142,7 +144,12 @@ const LogIn = () => {
               layerStyle="text"
             />
             <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={handleShowHideClick}>
+              <Button
+                colorScheme="green"
+                h="1.75rem"
+                size="sm"
+                onClick={handleShowHideClick}
+              >
                 {show ? "Hide" : "Show"}
               </Button>
             </InputRightElement>
@@ -151,12 +158,16 @@ const LogIn = () => {
             <FormErrorMessage>A password is required</FormErrorMessage>
           )}
         </FormControl>
-        <Button w="100%" onClick={onSubmit}>
+        <Button colorScheme="green" w="100%" onClick={onSubmit}>
           Submit
         </Button>
         <Box display="flex" alignItems="center" gap={10} mt={10}>
-          <Text layerStyle="text" lineHeight="40px">Forgot your password? </Text>
-          <Button onClick={onOpen}>Reset Password</Button>
+          <Text layerStyle="text" lineHeight="40px">
+            Forgot your password?{" "}
+          </Text>
+          <Button colorScheme="green" onClick={onOpen}>
+            Reset Password
+          </Button>
         </Box>
       </Box>
       <ForgotPasswordModal isOpen={isOpen} onClose={onClose} />

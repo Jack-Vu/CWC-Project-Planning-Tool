@@ -84,14 +84,19 @@ const ForgotPasswordModal = ({ isOpen, onClose }: Props) => {
         <ModalCloseButton />
         <ModalBody>
           <Box>
-            <Text mb={4}>
+            <Text mb={4} layerStyle="text">
               Enter the email address associated with your account:
             </Text>
-            <Input value={email} onChange={saveEmail} autoFocus />
+            <Input
+              layerStyle="text"
+              value={email}
+              onChange={saveEmail}
+              autoFocus
+            />
           </Box>
         </ModalBody>
 
-        <Button onClick={submitEmail} mx={6} mb={4} mt={2}>
+        <Button colorScheme="green" onClick={submitEmail} mx={6} mb={4} mt={2}>
           Send Verification Email
         </Button>
       </ModalContent>

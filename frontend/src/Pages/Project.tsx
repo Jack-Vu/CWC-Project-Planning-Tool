@@ -11,11 +11,7 @@ import {
 import { ChangeEvent, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 
-import {
-  DeleteModal,
-  StatusColumn,
-  UserStory
-} from "../Components";
+import { DeleteModal, StatusColumn, UserStory } from "../Components";
 import { ProjectType } from "./Projects";
 import axios from "axios";
 import { CheckIcon, EditIcon } from "@chakra-ui/icons";
@@ -193,6 +189,7 @@ const Project = () => {
               )}
               <IconButton
                 colorScheme="green"
+                size="sm"
                 aria-label={`Edit User Story`}
                 icon={updateProjectName ? <CheckIcon /> : <EditIcon />}
                 onClick={
@@ -219,6 +216,7 @@ const Project = () => {
               )}
               <IconButton
                 colorScheme="green"
+                size="sm"
                 aria-label={`Edit User Story`}
                 icon={updateProjectDescription ? <CheckIcon /> : <EditIcon />}
                 onClick={

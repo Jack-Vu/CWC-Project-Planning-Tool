@@ -153,9 +153,11 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
 
   return (
     <Box
-      px={4}
-      py={3}
-      borderTop="1px solid black"
+      p={4}
+      border="1px solid #170c35"
+      borderRadius="md"
+      bgColor="white"
+      boxShadow="md"
       w="100%"
       display="flex"
       alignItems="center"
@@ -174,19 +176,28 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
         )}
       </Box>
 
-      <Box display="flex" gap={2} alignItems="center">
+      <Box marginLeft={2} display="flex" gap={2} alignItems="center">
+        <Button
+          size="sm"
+          colorScheme="green"
+          w="118px"
+          onClick={toggleTaskStatus}
+        >
+          {taskStatus}
+        </Button>
         <IconButton
+          size="sm"
+          colorScheme="green"
           aria-label={`Edit task`}
           icon={updateName ? <CheckIcon /> : <EditIcon />}
           onClick={
             updateName ? () => updateTask("name", taskName) : onClickEdit
           }
-          marginLeft={2}
+          
         />
-        <Button w="118px" onClick={toggleTaskStatus}>
-          {taskStatus}
-        </Button>
         <IconButton
+          size="sm"
+          colorScheme="green"
           aria-label="Delete Task"
           icon={<DeleteIcon />}
           onClick={deleteTask}

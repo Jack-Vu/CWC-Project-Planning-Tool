@@ -97,27 +97,54 @@ const CreateTaskAccordion = ({
   };
   return (
     <Accordion allowToggle index={isOpen ? 0 : -1}>
-      <AccordionItem borderTop="1px solid black">
+      <AccordionItem border="none">
         {({ isExpanded }) => (
           <>
             <h2>
               <AccordionButton
                 h="58px"
+                layerStyle="accordionButton"
+                borderBottomRadius={isExpanded ? "none" : "md"}
+                _hover={
+                  isExpanded
+                    ? {
+                        bgColor: "rgb(69, 98, 106, 0.75)"
+                      }
+                    : {
+                        bgColor: "rgb(69, 98, 106, 0.75)",
+                        transform: "scale(1.005)"
+                      }
+                }
+                _active={isExpanded ? {} : { transform: "scale(1)" }}
                 onClick={() => {
                   setIsOpen(!isOpen);
                 }}
               >
                 {isExpanded ? (
-                  <MinusIcon fontSize="12px" />
+                  <MinusIcon color="white" fontSize="12px" />
                 ) : (
-                  <AddIcon fontSize="12px" />
+                  <AddIcon color="white" fontSize="12px" />
                 )}
-                <Box layerStyle="text" as="span" flex="1" textAlign="left" ml={3} p={2}>
+                <Box
+                  layerStyle="text"
+                  as="span"
+                  flex="1"
+                  textAlign="left"
+                  ml={3}
+                  p={2}
+                  color="white"
+                >
                   Add a task
                 </Box>
               </AccordionButton>
             </h2>
-            <AccordionPanel pb={4} borderTop="1px solid black" textAlign="left">
+            <AccordionPanel
+              pb={4}
+              layerStyle="accordionPanel"
+              borderLeft="1px solid #170c35"
+              borderRight="1px solid #170c35"
+              borderBottom="1px solid #170c35"
+            >
               <FormControl isRequired isInvalid={isNameError} mb={2}>
                 <FormLabel layerStyle="text">Task Name:</FormLabel>
                 <Input
@@ -133,7 +160,12 @@ const CreateTaskAccordion = ({
                   </FormErrorMessage>
                 )}
               </FormControl>
-              <Button onClick={onSubmit} display="flex" w="100%">
+              <Button
+                colorScheme="green"
+                onClick={onSubmit}
+                display="flex"
+                w="100%"
+              >
                 Create Task
               </Button>
             </AccordionPanel>

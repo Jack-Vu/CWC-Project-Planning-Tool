@@ -208,9 +208,13 @@ function FeatureModal({
                   type={"text"}
                 />
               ) : (
-                <Heading layerStyle="heading" fontSize={28}>{featureName}</Heading>
+                <Heading layerStyle="heading" fontSize={28}>
+                  {featureName}
+                </Heading>
               )}
               <IconButton
+                size="sm"
+                colorScheme="green"
                 aria-label={`Edit User Story`}
                 icon={updateFeatureName ? <CheckIcon /> : <EditIcon />}
                 onClick={
@@ -236,6 +240,8 @@ function FeatureModal({
                 <Text layerStyle="text">{featureDescription}</Text>
               )}
               <IconButton
+                size="sm"
+                colorScheme="green"
                 aria-label={`Edit User Story`}
                 icon={updateFeatureDescription ? <CheckIcon /> : <EditIcon />}
                 onClick={
@@ -273,7 +279,7 @@ function FeatureModal({
             />
           </Box>
         </Box>
-        <Button m={10} onClick={onOpenDelete}>
+        <Button colorScheme="green" m={10} onClick={onOpenDelete}>
           Delete Feature
         </Button>
       </ModalContent>
