@@ -21,7 +21,6 @@ const ProjectBox = ({ project }: Props) => {
       mb={6}
       onClick={() => onProjectClick(project.id)}
       layerStyle="boxButton"
-      h="58px"
     >
       <Text layerStyle="text" w="15%">
         {project.name}
