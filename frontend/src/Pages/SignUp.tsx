@@ -9,6 +9,7 @@ import {
   InputGroup,
   InputRightElement,
   Text,
+  useMediaQuery,
   useToast
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -33,6 +34,7 @@ const SignUp = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const context = useOutletContext() as Context;
+  const [isLargerThan350] = useMediaQuery("(min-width: 350px)");
 
   const [show, setShow] = useState(false);
   const [showSecond, setSecondShow] = useState(false);
@@ -160,7 +162,12 @@ const SignUp = () => {
 
   return (
     <Box my={20}>
-      <Heading layerStyle="heading" mb={4} fontSize={28} textAlign="center">
+      <Heading
+        layerStyle="heading"
+        mb={4}
+        textAlign="center"
+        fontSize={isLargerThan350 ? "28px" : "24px"}
+      >
         Create An Account
       </Heading>
       <Box
@@ -272,7 +279,14 @@ const SignUp = () => {
         <Button colorScheme="green" w="100%" onClick={onSubmit}>
           Submit
         </Button>
-        <Box display="flex" alignItems="center" gap={4} marginTop={2}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          gap={4}
+          marginTop={2}
+          flexWrap="wrap"
+        >
           <Text layerStyle="text">Already have an account? </Text>
           <Button
             colorScheme="green"

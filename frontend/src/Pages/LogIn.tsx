@@ -10,6 +10,7 @@ import {
   InputRightElement,
   Text,
   useDisclosure,
+  useMediaQuery,
   useToast
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -23,6 +24,9 @@ const LogIn = () => {
   const toast = useToast();
   const context = useOutletContext() as Context;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLargerThan350] = useMediaQuery("(min-width: 350px)");
+  const [isLargerThan420] = useMediaQuery("(min-width: 420px)");
+  const [isLargerThan600] = useMediaQuery("(min-width: 600px)");
 
   const [show, setShow] = useState(false);
   const handleShowHideClick = () => setShow(!show);
@@ -107,11 +111,16 @@ const LogIn = () => {
 
   return (
     <Box mt={20}>
-      <Heading layerStyle="heading" textAlign="center" mb={4} fontSize="28px">
+      <Heading
+        layerStyle="heading"
+        textAlign="center"
+        mb={4}
+        fontSize={isLargerThan350 ? "28px" : "24px"}
+      >
         Log In Your Account
       </Heading>
       <Box
-        maxW="75%"
+        maxW={isLargerThan600 ? "75%" : "95%"}
         display="flex"
         flexDirection="column"
         alignItems="center"
@@ -161,7 +170,14 @@ const LogIn = () => {
         <Button colorScheme="green" w="100%" onClick={onSubmit}>
           Submit
         </Button>
-        <Box display="flex" alignItems="center" gap={10} mt={10}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          gap={isLargerThan420 ? 10 : 4}
+          mt={10}
+          flexWrap="wrap"
+        >
           <Text layerStyle="text" lineHeight="40px">
             Forgot your password?{" "}
           </Text>
