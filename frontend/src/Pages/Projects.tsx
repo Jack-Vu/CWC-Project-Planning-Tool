@@ -1,4 +1,4 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, useMediaQuery } from "@chakra-ui/react";
 import { useLoaderData } from "react-router-dom";
 import { Data } from "../App";
 import { CreateProjectAccordion, ProjectBox } from "../Components/Projects";
@@ -20,6 +20,8 @@ type LoaderData = {
 
 const Projects = () => {
   const data = useLoaderData() as LoaderData;
+  const [isLargerThan795] = useMediaQuery("(min-width: 795px)");
+
   const user = data.user as Data;
   const [projects, setProjects] = useState(data.projects);
 
@@ -28,14 +30,14 @@ const Projects = () => {
       <Heading layerStyle="heading" mb={4} fontSize={28} textAlign="center">
         {user.name}'s Projects
       </Heading>
-      {projects.map((project: ProjectType) => {
-        return (
-          <Box key={project.id}>
-            <ProjectBox project={project} />
-          </Box>
-        );
-      })}
-      <Box m={10}>
+      <Box my={10} mx={isLargerThan795 ? 10 : 4}>
+        {projects.map((project: ProjectType) => {
+          return (
+            <Box key={project.id} w="100%">
+              <ProjectBox project={project} />
+            </Box>
+          );
+        })}
         <CreateProjectAccordion projects={projects} setProjects={setProjects} />
       </Box>
     </Box>

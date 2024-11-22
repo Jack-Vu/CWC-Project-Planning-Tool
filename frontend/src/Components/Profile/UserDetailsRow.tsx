@@ -1,5 +1,12 @@
 import { CheckIcon, EditIcon } from "@chakra-ui/icons";
-import { Box, IconButton, Input, Text, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  IconButton,
+  Input,
+  Text,
+  useMediaQuery,
+  useToast
+} from "@chakra-ui/react";
 import axios from "axios";
 import { ChangeEvent, useState } from "react";
 import { isInvalidEmail } from "../../Pages";
@@ -15,6 +22,8 @@ type Props = {
 
 const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
   const toast = useToast();
+  const [isLargerThan300] = useMediaQuery("(min-width: 300px)");
+  const [isLargerThan450] = useMediaQuery("(min-width: 450px)");
 
   const [updateField, setUpdateField] = useState(false);
   const [valueState, setValueState] = useState(value);
@@ -92,20 +101,28 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
   };
   return (
     <Box display="flex" alignItems="center">
-      <Text layerStyle="text" flex={1} lineHeight="32px">
-        {title}:
-      </Text>
+      {isLargerThan450 ? (
+        <Text layerStyle="text" flex={1} lineHeight="32px">
+          {title}:
+        </Text>
+      ) : null}
       {updateField ? (
         <Input
           layerStyle="text"
           flex={1}
           value={valueState}
+          variant="filled"
           onChange={onChange}
-          autoFocus
           type={field === "password" ? "password" : "text"}
+          fontSize={isLargerThan300 ? "16px" : "12px"}
         />
       ) : (
-        <Text textAlign="left" flex={1} layerStyle="text">
+        <Text
+          textAlign="left"
+          flex={1}
+          layerStyle="text"
+          fontSize={isLargerThan300 ? "16px" : "12px"}
+        >
           {field === "password" ? "*********" : valueState}
         </Text>
       )}
