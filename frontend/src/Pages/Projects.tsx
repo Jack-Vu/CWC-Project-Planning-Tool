@@ -32,11 +32,7 @@ const Projects = () => {
       </Heading>
       <Box my={10} mx={isLargerThan795 ? 10 : 4}>
         {projects.map((project: ProjectType) => {
-          return (
-            <Box key={project.id} w="100%">
-              <ProjectBox project={project} />
-            </Box>
-          );
+          return <ProjectBox key={project.id} project={project} />;
         })}
         <CreateProjectAccordion projects={projects} setProjects={setProjects} />
       </Box>

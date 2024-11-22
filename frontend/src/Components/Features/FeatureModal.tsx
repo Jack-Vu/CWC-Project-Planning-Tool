@@ -257,18 +257,17 @@ function FeatureModal({
           <ModalCloseButton />
           {stories?.map((story) => {
             return (
-              <Box key={story.id}>
-                <UserStoryDetailsAccordion
-                  name={story.name}
-                  description={story.description}
-                  status={`${story.completedTasks}/${story.tasksCount}`}
-                  featureId={featureId}
-                  projectId={projectId}
-                  userStoryId={story.id}
-                  tasks={story.tasks}
-                  setProject={setProject}
-                />
-              </Box>
+              <UserStoryDetailsAccordion
+                key={story.id}
+                name={story.name}
+                description={story.description}
+                status={`${story.completedTasks}/${story.tasksCount}`}
+                featureId={featureId}
+                projectId={projectId}
+                userStoryId={story.id}
+                tasks={story.tasks}
+                setProject={setProject}
+              />
             );
           })}
           <Box mt={4}>

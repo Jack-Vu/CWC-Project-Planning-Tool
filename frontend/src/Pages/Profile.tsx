@@ -115,6 +115,7 @@ const Profile = () => {
         gap={4}
         flexDir={isLargerThan400 ? "row" : "column"}
         mx={2}
+        mb={10}
       >
         <Button colorScheme="green" onClick={onLogOut}>
           Log Out

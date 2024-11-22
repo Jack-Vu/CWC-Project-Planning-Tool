@@ -5,7 +5,9 @@ import {
   IconButton,
   Input,
   Text,
+  Textarea,
   useDisclosure,
+  useMediaQuery,
   useToast
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
@@ -32,6 +34,7 @@ const Project = () => {
   const navigate = useNavigate();
   const loaderData = useLoaderData() as ProjectType;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLargerThan500] = useMediaQuery("(min-width: 500px)");
 
   const [project, setProject] = useState(loaderData);
 
@@ -47,13 +50,15 @@ const Project = () => {
   const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
     setProjectName(e.target.value);
   };
-  const onChangeDescription = (e: ChangeEvent<HTMLInputElement>) => {
+
+  const onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setProjectDescription(e.target.value);
   };
 
   const editName = () => {
     setUpdateProjectName(!updateProjectName);
   };
+
   const editDescription = () => {
     setUpdateProjectDescription(!updateProjectDescription);
   };
@@ -169,10 +174,10 @@ const Project = () => {
   };
 
   return (
-    <>
-      <Box mx={10} mt={20}>
-        <Box display="flex" justifyContent="space-between" mb={20}>
-          <Box display="flex" flexDir="column" gap={4}>
+    <Box key={project.name}>
+      <Box mx={isLargerThan500 ? 10 : 4} mt={20}>
+        <Box display="flex" mb={20}>
+          <Box display="flex" flex={1} flexDir="column" gap={4}>
             <Box display="flex" gap={5} alignItems="center">
               {updateProjectName ? (
                 <Input
@@ -201,14 +206,13 @@ const Project = () => {
                 }
               />
             </Box>
-            <Box display="flex" gap={5} alignItems="center">
+            <Box display="flex" gap={5}>
               {updateProjectDescription ? (
-                <Input
+                <Textarea
+                  variant="filled"
                   value={projectDescription}
                   onChange={onChangeDescription}
-                  h="40px"
                   autoFocus
-                  type={"text"}
                   layerStyle="text"
                 />
               ) : (
@@ -229,20 +233,21 @@ const Project = () => {
               />
             </Box>
           </Box>
-          <Button colorScheme="green" onClick={onOpen}>
-            Delete Project
-          </Button>
         </Box>
-        <Box display="flex" gap={10}>
+        <Box display="flex" gap={10} flexWrap="wrap">
           {columns.map((column) => {
             return (
               <StatusColumn
+                key={column.name}
                 column={column}
                 project={project}
                 setProject={setProject}
               />
             );
           })}
+          <Button colorScheme="green" onClick={onOpen} w={"100%"} mb={10}>
+            Delete Project
+          </Button>
         </Box>
       </Box>
       <DeleteModal
@@ -251,7 +256,7 @@ const Project = () => {
         deleteItem={deleteProject}
         itemType="project"
       />
-    </>
+    </Box>
   );
 };
 

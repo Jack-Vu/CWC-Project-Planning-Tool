@@ -346,13 +346,12 @@ function UserStoryDetailsAccordion({
                   >
                     {taskList?.map((task) => {
                       return (
-                        <Box key={task.id}>
-                          <TaskBox
-                            task={task}
-                            setStoryStatus={setStoryStatus}
-                            setTaskList={setTaskList}
-                          />
-                        </Box>
+                        <TaskBox
+                          key={task.id}
+                          task={task}
+                          setStoryStatus={setStoryStatus}
+                          setTaskList={setTaskList}
+                        />
                       );
                     })}
                     <CreateTaskAccordion
