@@ -9,6 +9,7 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
+  Textarea,
   useDisclosure,
   useToast
 } from "@chakra-ui/react";
@@ -72,7 +73,8 @@ function FeatureModal({
   const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
-  const onChangeDescription = (e: ChangeEvent<HTMLInputElement>) => {
+
+  const onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
   };
 
@@ -192,6 +194,7 @@ function FeatureModal({
         }
       });
   };
+
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
@@ -226,14 +229,13 @@ function FeatureModal({
                 }
               />
             </Box>
-            <Box display="flex" alignItems="center" gap={4}>
+            <Box display="flex" gap={4}>
               {updateFeatureDescription ? (
-                <Input
+                <Textarea
                   value={description}
                   onChange={onChangeDescription}
                   h="40px"
                   autoFocus
-                  type={"text"}
                   layerStyle="text"
                 />
               ) : (

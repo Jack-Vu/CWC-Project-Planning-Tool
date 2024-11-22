@@ -3,8 +3,9 @@ import {
   Box,
   Button,
   IconButton,
-  Input,
   Text,
+  Textarea,
+  useMediaQuery,
   useToast
 } from "@chakra-ui/react";
 import { Task } from "../UserStories";
@@ -21,6 +22,8 @@ type Props = {
 const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
+  const [isLargerThan900] = useMediaQuery("(min-width: 900px)");
+
   const [taskStatus, setTaskStatus] = useState(task.status);
   const [taskName, setTaskName] = useState(task.name);
   const [updateName, setUpdateName] = useState(false);
@@ -28,7 +31,8 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
   const onClickEdit = () => {
     setUpdateName(!updateName);
   };
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+  const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setTaskName(e.target.value);
   };
 
@@ -104,6 +108,7 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
       updateTask("status", "To Do");
     }
   };
+
   const deleteTask = () => {
     const token = localStorage.getItem("token");
 
@@ -158,25 +163,37 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
       borderRadius="md"
       bgColor="white"
       boxShadow="md"
-      w="100%"
       display="flex"
-      alignItems="center"
+      flexDir={isLargerThan900 ? "row" : "column"}
+      gap={4}
     >
-      <Box display="flex" flex={1} alignItems="center">
+      <Box
+        display="flex"
+        alignItems="center"
+        flex={1}
+        order={isLargerThan900 ? 1 : 2}
+      >
         {updateName ? (
-          <Input
+          <Textarea
             h="40px"
             value={taskName}
             onChange={onChange}
             autoFocus
-            type={"text"}
+            layerStyle={"text"}
           />
         ) : (
-          <Text textAlign="left">{taskName}</Text>
+          <Text w="100%" textAlign={isLargerThan900 ? "left" : "center"}>
+            {taskName} Hello
+          </Text>
         )}
       </Box>
 
-      <Box marginLeft={2} display="flex" gap={2} alignItems="center">
+      <Box
+        display="flex"
+        gap={2}
+        justifyContent={isLargerThan900 ? "none" : "center"}
+        order={isLargerThan900 ? 2 : 1}
+      >
         <Button
           size="sm"
           colorScheme="green"
@@ -193,7 +210,6 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
           onClick={
             updateName ? () => updateTask("name", taskName) : onClickEdit
           }
-          
         />
         <IconButton
           size="sm"

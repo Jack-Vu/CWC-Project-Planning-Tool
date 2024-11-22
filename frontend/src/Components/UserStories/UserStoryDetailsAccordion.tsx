@@ -14,7 +14,9 @@ import {
   IconButton,
   Input,
   Text,
+  Textarea,
   useDisclosure,
+  useMediaQuery,
   useToast
 } from "@chakra-ui/react";
 import { CreateTaskAccordion, TaskBox } from "../Tasks";
@@ -61,6 +63,7 @@ function UserStoryDetailsAccordion({
   const toast = useToast();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLargerThan900] = useMediaQuery("(min-width: 900px)");
 
   const [storyStatus, setStoryStatus] = useState(status);
   const [storyName, setStoryName] = useState(name);
@@ -83,7 +86,7 @@ function UserStoryDetailsAccordion({
   const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
     setStoryName(e.target.value);
   };
-  const onChangeDescription = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setStoryDescription(e.target.value);
   };
   const updateUserStory = (field: "name" | "description", value: string) => {
@@ -247,12 +250,10 @@ function UserStoryDetailsAccordion({
               <>
                 <AccordionButton
                   mt={4}
-                  w="100%"
-                  h="66px"
+                  h={isLargerThan900 ? "66px" : "fit-content"}
                   p={4}
                   display="flex"
                   alignItems="center"
-                  justifyContent="space-between"
                   gap={3}
                   layerStyle="boxButton"
                   borderBottomRadius={isExpanded ? "none" : "md"}
@@ -265,10 +266,17 @@ function UserStoryDetailsAccordion({
                         }
                   }
                   _active={isExpanded ? {} : { transform: "scale(1)" }}
+                  flexDir={isLargerThan900 ? "row" : "column-reverse"}
                 >
-                  <Text textAlign="left" flex={1} layerStyle="text">
+                  <Text
+                    w="100%"
+                    textAlign={isLargerThan900 ? "left" : "center"}
+                    flex={1}
+                    layerStyle="text"
+                  >
                     {storyName}
                   </Text>
+
                   <Box display="flex" alignItems="center" gap={3}>
                     <Text layerStyle="text">{storyStatus}</Text>
                     <IconButton
@@ -304,16 +312,14 @@ function UserStoryDetailsAccordion({
                     pb={10}
                     textAlign="left"
                     display="flex"
-                    alignItems="center"
                     gap={3}
                     borderBottom="1px solid #170c35"
                   >
                     {updateStoryDescription ? (
-                      <Input
+                      <Textarea
                         value={storyDescription}
                         onChange={onChangeDescription}
                         autoFocus
-                        type={"text"}
                         flex={1}
                         layerStyle="text"
                       />
