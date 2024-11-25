@@ -53,17 +53,16 @@ const FeatureBox = ({ feature, projectId, setProject }: Props) => {
     <>
       <Box
         key={feature.id}
-        border="1px solid black"
         p={4}
         mx={4}
         my={4}
         display="flex"
         justifyContent="space-between"
         onClick={onOpen}
-        cursor="pointer"
+        layerStyle="boxButton"
       >
-        <Text>{feature.name}</Text>
-        <Text>
+        <Text layerStyle="text">{feature.name}</Text>
+        <Text layerStyle="text">
           {feature.completedUserStories}/{feature.userStoryCount}
         </Text>
       </Box>

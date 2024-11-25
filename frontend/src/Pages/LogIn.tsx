@@ -4,11 +4,13 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
   InputGroup,
   InputRightElement,
   Text,
   useDisclosure,
+  useMediaQuery,
   useToast
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -22,6 +24,9 @@ const LogIn = () => {
   const toast = useToast();
   const context = useOutletContext() as Context;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLargerThan350] = useMediaQuery("(min-width: 350px)");
+  const [isLargerThan420] = useMediaQuery("(min-width: 420px)");
+  const [isLargerThan600] = useMediaQuery("(min-width: 600px)");
 
   const [show, setShow] = useState(false);
   const handleShowHideClick = () => setShow(!show);
@@ -105,12 +110,17 @@ const LogIn = () => {
   };
 
   return (
-    <>
-      <Text textAlign="center" mb={4} fontSize="20px">
+    <Box mt={20}>
+      <Heading
+        layerStyle="heading"
+        textAlign="center"
+        mb={4}
+        fontSize={isLargerThan350 ? "28px" : "24px"}
+      >
         Log In Your Account
-      </Text>
+      </Heading>
       <Box
-        maxW="75%"
+        maxW={isLargerThan600 ? "75%" : "95%"}
         display="flex"
         flexDirection="column"
         alignItems="center"
@@ -118,28 +128,37 @@ const LogIn = () => {
         gap={4}
       >
         <FormControl isRequired isInvalid={isUsernameError}>
-          <FormLabel>Username: </FormLabel>
+          <FormLabel layerStyle="text">Username: </FormLabel>
           <Input
+            variant="filled"
             onChange={handleChangeForm}
             name="username"
             type="text"
             value={signUpForm.username}
+            layerStyle="text"
           />
           {isUsernameError && (
             <FormErrorMessage>Username is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isPasswordError}>
-          <FormLabel>Password: </FormLabel>
+          <FormLabel layerStyle="text">Password: </FormLabel>
           <InputGroup size="md">
             <Input
+              variant="filled"
               onChange={handleChangeForm}
               name="password"
               type={show ? "text" : "password"}
               value={signUpForm.password}
+              layerStyle="text"
             />
             <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={handleShowHideClick}>
+              <Button
+                colorScheme="green"
+                h="1.75rem"
+                size="sm"
+                onClick={handleShowHideClick}
+              >
                 {show ? "Hide" : "Show"}
               </Button>
             </InputRightElement>
@@ -148,16 +167,27 @@ const LogIn = () => {
             <FormErrorMessage>A password is required</FormErrorMessage>
           )}
         </FormControl>
-        <Button w="100%" onClick={onSubmit}>
+        <Button colorScheme="green" w="100%" onClick={onSubmit}>
           Submit
         </Button>
-        <Box display="flex" alignItems="center" gap={10} mt={10}>
-          <Text lineHeight="40px">Forgot your password? </Text>
-          <Button onClick={onOpen}>Reset Password</Button>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          gap={isLargerThan420 ? 10 : 4}
+          mt={10}
+          flexWrap="wrap"
+        >
+          <Text layerStyle="text" lineHeight="40px">
+            Forgot your password?{" "}
+          </Text>
+          <Button colorScheme="green" onClick={onOpen}>
+            Reset Password
+          </Button>
         </Box>
       </Box>
       <ForgotPasswordModal isOpen={isOpen} onClose={onClose} />
-    </>
+    </Box>
   );
 };
 

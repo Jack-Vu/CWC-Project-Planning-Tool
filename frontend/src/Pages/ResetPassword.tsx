@@ -4,6 +4,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
   InputGroup,
   InputRightElement,
@@ -71,7 +72,7 @@ const ResetPassword = () => {
           });
         })
         .catch(() => {
-            setSubmitClicked(false);
+          setSubmitClicked(false);
           setSubmitSecondClicked(false);
           setPassword("");
           setSecondPassword("");
@@ -82,65 +83,75 @@ const ResetPassword = () => {
             status: "error",
             duration: 3000,
             isClosable: true
-          })
+          });
         });
     }
   };
 
   return (
-    <Box
-      maxW="75%"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      margin="0 auto"
-      gap={4}
-    >
-      <FormControl isRequired isInvalid={isPasswordError}>
-        <FormLabel>Password: </FormLabel>
-        <InputGroup size="md">
-          <Input
-            onChange={handleChangePassword}
-            name="password"
-            type={show ? "text" : "password"}
-            value={password}
-          />
-          <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleShowHideClick}>
-              {show ? "Hide" : "Show"}
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-        {isPasswordError && (
-          <FormErrorMessage>A password is required</FormErrorMessage>
-        )}
-      </FormControl>
-      <FormControl isRequired isInvalid={isSecondPasswordError}>
-        <FormLabel>Re-enter Password: </FormLabel>
-        <InputGroup size="md">
-          <Input
-            onChange={handleChangeSecondPassword}
-            name="password"
-            type={showSecond ? "text" : "password"}
-            value={secondPassword}
-          />
-          <InputRightElement width="4.5rem">
-            <Button
-              h="1.75rem"
-              size="sm"
-              onClick={handleShowHideSecondPasswordClick}
-            >
-              {showSecond ? "Hide" : "Show"}
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-        {isSecondPasswordError && (
-          <FormErrorMessage>Passwords do not match.</FormErrorMessage>
-        )}
-      </FormControl>
-      <Button w="100%" onClick={onSubmit}>
-        Submit
-      </Button>
+    <Box mt={20}>
+      <Heading textAlign="center" mb={4} fontSize={28} layerStyle="heading">
+        Reset your password
+      </Heading>
+      <Box
+        maxW="75%"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        margin="0 auto"
+        gap={4}
+      >
+        <FormControl isRequired isInvalid={isPasswordError}>
+          <FormLabel layerStyle="text">Password: </FormLabel>
+          <InputGroup size="md">
+            <Input
+              variant="filled"
+              onChange={handleChangePassword}
+              name="password"
+              type={show ? "text" : "password"}
+              value={password}
+              layerStyle="text"
+            />
+            <InputRightElement width="4.5rem">
+              <Button h="1.75rem" size="sm" onClick={handleShowHideClick}>
+                {show ? "Hide" : "Show"}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+          {isPasswordError && (
+            <FormErrorMessage>A password is required</FormErrorMessage>
+          )}
+        </FormControl>
+        <FormControl isRequired isInvalid={isSecondPasswordError}>
+          <FormLabel layerStyle="text">Re-enter Password: </FormLabel>
+          <InputGroup size="md">
+            <Input
+              variant="filled"
+              onChange={handleChangeSecondPassword}
+              name="password"
+              type={showSecond ? "text" : "password"}
+              value={secondPassword}
+              layerStyle="text"
+            />
+            <InputRightElement width="4.5rem">
+              <Button
+                colorScheme="green"
+                h="1.75rem"
+                size="sm"
+                onClick={handleShowHideSecondPasswordClick}
+              >
+                {showSecond ? "Hide" : "Show"}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+          {isSecondPasswordError && (
+            <FormErrorMessage>Passwords do not match.</FormErrorMessage>
+          )}
+        </FormControl>
+        <Button colorScheme="green" w="100%" onClick={onSubmit}>
+          Submit
+        </Button>
+      </Box>
     </Box>
   );
 };

@@ -13,7 +13,9 @@ export class UserStory {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Feature, (feature) => feature.userStories)
+  @ManyToOne(() => Feature, (feature) => feature.userStories, {
+    onDelete: 'CASCADE',
+  })
   feature: Feature;
 
   @OneToMany(() => Task, (task) => task.userStory)

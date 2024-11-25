@@ -4,10 +4,12 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
   InputGroup,
   InputRightElement,
   Text,
+  useMediaQuery,
   useToast
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -32,6 +34,7 @@ const SignUp = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const context = useOutletContext() as Context;
+  const [isLargerThan350] = useMediaQuery("(min-width: 350px)");
 
   const [show, setShow] = useState(false);
   const [showSecond, setSecondShow] = useState(false);
@@ -158,10 +161,15 @@ const SignUp = () => {
   const handleShowHideSecondPasswordClick = () => setSecondShow(!showSecond);
 
   return (
-    <>
-      <Text textAlign="center" mb={4} fontSize="20px">
+    <Box my={20}>
+      <Heading
+        layerStyle="heading"
+        mb={4}
+        textAlign="center"
+        fontSize={isLargerThan350 ? "28px" : "24px"}
+      >
         Create An Account
-      </Text>
+      </Heading>
       <Box
         maxW="75%"
         display="flex"
@@ -171,52 +179,65 @@ const SignUp = () => {
         gap={4}
       >
         <FormControl isRequired isInvalid={isNameError}>
-          <FormLabel>Name: </FormLabel>
+          <FormLabel layerStyle="text">Name: </FormLabel>
           <Input
+            variant="filled"
             onChange={handleChangeForm}
             name="name"
             type="text"
             value={signUpForm.name}
+            layerStyle="text"
           />
           {isNameError && (
             <FormErrorMessage>Name is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isEmailError}>
-          <FormLabel>Email: </FormLabel>
+          <FormLabel layerStyle="text">Email: </FormLabel>
           <Input
+            variant="filled"
             onChange={handleChangeForm}
             name="email"
             type="email"
             value={signUpForm.email}
+            layerStyle="text"
           />
           {isEmailError && (
             <FormErrorMessage>A valid email is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isUsernameError}>
-          <FormLabel>Username: </FormLabel>
+          <FormLabel layerStyle="text">Username: </FormLabel>
           <Input
+            variant="filled"
             onChange={handleChangeForm}
             name="username"
             type="text"
             value={signUpForm.username}
+            layerStyle="text"
           />
           {isUsernameError && (
             <FormErrorMessage>Username is required.</FormErrorMessage>
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isPasswordError}>
-          <FormLabel>Password: </FormLabel>
+          <FormLabel layerStyle="text">Password: </FormLabel>
           <InputGroup size="md">
             <Input
+              variant="filled"
               onChange={handleChangeForm}
               name="password"
               type={show ? "text" : "password"}
               value={signUpForm.password}
+              layerStyle="text"
             />
             <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={handleShowHideClick}>
+              <Button
+                colorScheme="green"
+                h="1.75rem"
+                size="sm"
+                onClick={handleShowHideClick}
+              >
                 {show ? "Hide" : "Show"}
               </Button>
             </InputRightElement>
@@ -226,16 +247,19 @@ const SignUp = () => {
           )}
         </FormControl>
         <FormControl isRequired isInvalid={isSecondPasswordError}>
-          <FormLabel>Enter Password Again: </FormLabel>
+          <FormLabel layerStyle="text">Enter Password Again: </FormLabel>
           <InputGroup size="md">
             <Input
+              variant="filled"
               onChange={handleChangeForm}
               name="secondPassword"
               type={showSecond ? "text" : "password"}
               value={secondPassword}
+              layerStyle="text"
             />
             <InputRightElement width="4.5rem">
               <Button
+                colorScheme="green"
                 h="1.75rem"
                 size="sm"
                 onClick={handleShowHideSecondPasswordClick}
@@ -249,15 +273,23 @@ const SignUp = () => {
           )}
         </FormControl>
         <Box display="flex" flexDirection="column" alignSelf="flex-start">
-          <Text>Profile Picture:</Text>
-          <Button>Choose File</Button>
+          <Text layerStyle="text">Profile Picture:</Text>
+          <Button colorScheme="green">Choose File</Button>
         </Box>
-        <Button w="100%" onClick={onSubmit}>
+        <Button colorScheme="green" w="100%" onClick={onSubmit}>
           Submit
         </Button>
-        <Box display="flex" alignItems="center" gap={4} marginTop={2}>
-          <Text>Already have an account? </Text>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          gap={4}
+          marginTop={2}
+          flexWrap="wrap"
+        >
+          <Text layerStyle="text">Already have an account? </Text>
           <Button
+            colorScheme="green"
             onClick={() => {
               navigate("/log-in");
             }}
@@ -266,7 +298,7 @@ const SignUp = () => {
           </Button>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 

@@ -292,4 +292,36 @@ export class AuthService {
       projectId,
     );
   }
+
+  async deleteTask(taskId: number, userId: number) {
+    const userStoryId = await this.tasksService.deleteTask(taskId, userId);
+    const storyStatus =
+      await this.userStoriesService.getUserStoryStatusById(userStoryId);
+    const updatedUserStory =
+      await this.userStoriesService.getUserStoryById(userStoryId);
+    return {
+      storyStatus,
+      taskList: updatedUserStory.tasks,
+    };
+  }
+
+  async deleteUserStory(userStoryId: number, userId: number) {
+    const projectId = await this.userStoriesService.deleteUserStory(
+      userStoryId,
+      userId,
+    );
+    return await this.projectsService.getProjectById(projectId);
+  }
+
+  async deleteFeature(featureId: number, userId: number) {
+    const projectId = await this.featuresService.deleteFeature(
+      featureId,
+      userId,
+    );
+    return await this.projectsService.getProjectById(projectId);
+  }
+
+  async deleteProject(projectId: number, userId: number) {
+    return await this.projectsService.deleteProject(projectId, userId);
+  }
 }

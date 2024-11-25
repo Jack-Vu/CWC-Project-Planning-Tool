@@ -3,8 +3,9 @@ import {
   Box,
   Button,
   IconButton,
-  Input,
   Text,
+  Textarea,
+  useMediaQuery,
   useToast
 } from "@chakra-ui/react";
 import { Task } from "../UserStories";
@@ -15,11 +16,14 @@ import { useNavigate } from "react-router-dom";
 type Props = {
   task: Task;
   setStoryStatus: Dispatch<SetStateAction<string>>;
+  setTaskList: Dispatch<SetStateAction<Task[]>>;
 };
 
-const TaskBox = ({ task, setStoryStatus }: Props) => {
+const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
+  const [isLargerThan900] = useMediaQuery("(min-width: 900px)");
+
   const [taskStatus, setTaskStatus] = useState(task.status);
   const [taskName, setTaskName] = useState(task.name);
   const [updateName, setUpdateName] = useState(false);
@@ -27,7 +31,8 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
   const onClickEdit = () => {
     setUpdateName(!updateName);
   };
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+  const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setTaskName(e.target.value);
   };
 
@@ -103,42 +108,116 @@ const TaskBox = ({ task, setStoryStatus }: Props) => {
       updateTask("status", "To Do");
     }
   };
+
+  const deleteTask = () => {
+    const token = localStorage.getItem("token");
+
+    axios
+      .post(
+        "http://localhost:3025/auth/delete-task",
+        {
+          taskId: task.id
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
+      .then((response) => {
+        setStoryStatus(response.data.storyStatus);
+        setTaskList(response.data.taskList);
+        toast({
+          title: "Success.",
+          description: "Your task has been deleted!",
+          status: "success",
+          duration: 3000,
+          isClosable: true
+        });
+      })
+      .catch((error) => {
+        if (error.response.data.message === "Unauthorized") {
+          toast({
+            title: "Error.",
+            description: "Your session has expired, please log in again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+          navigate("/log-in");
+        } else {
+          toast({
+            title: "Error.",
+            description:
+              "There was an error deleting your task. Please try again!",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+        }
+      });
+  };
+
   return (
     <Box
-      px={4}
-      py={3}
-      borderTop="1px solid black"
-      w="100%"
+      p={4}
+      border="1px solid #170c35"
+      borderRadius="md"
+      bgColor="white"
+      boxShadow="md"
       display="flex"
-      alignItems="center"
+      flexDir={isLargerThan900 ? "row" : "column"}
+      gap={4}
     >
-      <Box display="flex" flex={1} alignItems="center">
+      <Box
+        display="flex"
+        alignItems="center"
+        flex={1}
+        order={isLargerThan900 ? 1 : 2}
+      >
         {updateName ? (
-          <Input
+          <Textarea
             h="40px"
             value={taskName}
             onChange={onChange}
             autoFocus
-            type={"text"}
+            layerStyle={"text"}
           />
         ) : (
-          <Text textAlign="left">{taskName}</Text>
+          <Text w="100%" textAlign={isLargerThan900 ? "left" : "center"}>
+            {taskName} Hello
+          </Text>
         )}
       </Box>
 
-      <Box display="flex" gap={2} alignItems="center">
+      <Box
+        display="flex"
+        gap={2}
+        justifyContent={isLargerThan900 ? "none" : "center"}
+        order={isLargerThan900 ? 2 : 1}
+      >
+        <Button
+          size="sm"
+          colorScheme="green"
+          w="118px"
+          onClick={toggleTaskStatus}
+        >
+          {taskStatus}
+        </Button>
         <IconButton
+          size="sm"
+          colorScheme="green"
           aria-label={`Edit task`}
           icon={updateName ? <CheckIcon /> : <EditIcon />}
           onClick={
             updateName ? () => updateTask("name", taskName) : onClickEdit
           }
-          marginLeft={2}
         />
-        <Button w="118px" onClick={toggleTaskStatus}>
-          {taskStatus}
-        </Button>
-        <DeleteIcon />
+        <IconButton
+          size="sm"
+          colorScheme="green"
+          aria-label="Delete Task"
+          icon={<DeleteIcon />}
+          onClick={deleteTask}
+        />
       </Box>
     </Box>
   );

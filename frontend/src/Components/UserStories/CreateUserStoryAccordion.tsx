@@ -102,34 +102,62 @@ const CreateUserStoryAccordion = ({
 
   return (
     <Accordion allowToggle index={isOpen ? 0 : -1}>
-      <AccordionItem border="1px solid black">
+      <AccordionItem border="none">
         {({ isExpanded }) => (
           <>
             <h2>
               <AccordionButton
                 h="58px"
+                layerStyle="accordionButton"
+                borderBottomRadius={isExpanded ? "none" : "md"}
+                _hover={
+                  isExpanded
+                    ? {
+                        bgColor: "rgb(69, 98, 106, 0.75)"
+                      }
+                    : {
+                        bgColor: "rgb(69, 98, 106, 0.75)",
+                        transform: "scale(1.005)"
+                      }
+                }
+                _active={isExpanded ? {} : { transform: "scale(1)" }}
                 onClick={() => {
                   setIsOpen(!isOpen);
                 }}
               >
                 {isExpanded ? (
-                  <MinusIcon fontSize="12px" />
+                  <MinusIcon color="white" fontSize="12px" />
                 ) : (
-                  <AddIcon fontSize="12px" />
+                  <AddIcon color="white" fontSize="12px" />
                 )}
-                <Box as="span" flex="1" textAlign="left" ml={3} p={2}>
+                <Box
+                  layerStyle="text"
+                  as="span"
+                  flex="1"
+                  textAlign="left"
+                  ml={3}
+                  p={2}
+                  color="white"
+                >
                   Add a user story
                 </Box>
               </AccordionButton>
             </h2>
-            <AccordionPanel pb={4} borderTop="1px solid black" textAlign="left">
+            <AccordionPanel
+              pb={4}
+              borderLeft="1px solid #170c35"
+              borderRight="1px solid #170c35"
+              borderBottom="1px solid #170c35"
+              layerStyle="accordionPanel"
+            >
               <FormControl isRequired isInvalid={isNameError} mb={2}>
-                <FormLabel>User Story Name:</FormLabel>
+                <FormLabel layerStyle="text">User Story Name:</FormLabel>
                 <Input
                   onChange={onChangeName}
                   name="name"
                   type="text"
                   value={name}
+                  layerStyle="text"
                 />
                 {isNameError && (
                   <FormErrorMessage>
@@ -138,14 +166,20 @@ const CreateUserStoryAccordion = ({
                 )}
               </FormControl>
               <FormControl mb={4}>
-                <FormLabel>User Story Description:</FormLabel>
+                <FormLabel layerStyle="text">User Story Description:</FormLabel>
                 <Textarea
                   onChange={onChangeDescription}
                   name="description"
                   value={description}
+                  layerStyle="text"
                 />
               </FormControl>
-              <Button onClick={onSubmit} display="flex" w="100%">
+              <Button
+                colorScheme="green"
+                onClick={onSubmit}
+                display="flex"
+                w="100%"
+              >
                 Create User Story
               </Button>
             </AccordionPanel>

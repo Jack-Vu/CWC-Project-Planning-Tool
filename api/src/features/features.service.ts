@@ -44,9 +44,24 @@ export class FeaturesService {
 
     if (featureToUpdate) {
       featureToUpdate[field] = value;
-      const updatedFeature = await this.featuresRepository.save(featureToUpdate);
+      const updatedFeature =
+        await this.featuresRepository.save(featureToUpdate);
 
       return updatedFeature.project.id;
+    } else {
+      throw new BadRequestException('You cannot edit that feature');
+    }
+  }
+
+  async deleteFeature(featureId: number, userId: number) {
+    const featureToDelete = await this.featuresRepository.findOne({
+      where: { id: featureId, project: { user: { id: userId } } },
+      relations: ['project'],
+    });
+
+    if (featureToDelete) {
+      await this.featuresRepository.delete(featureToDelete);
+      return featureToDelete.project.id;
     } else {
       throw new BadRequestException('You cannot edit that feature');
     }

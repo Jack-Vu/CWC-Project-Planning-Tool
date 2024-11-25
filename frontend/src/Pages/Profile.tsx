@@ -1,4 +1,12 @@
-import { Avatar, Box, Button, Text, useToast } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Heading,
+  Text,
+  useMediaQuery,
+  useToast
+} from "@chakra-ui/react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Context, Data } from "../App";
 import { UserDetailsRow } from "../Components";
@@ -6,10 +14,14 @@ import { useState } from "react";
 import axios from "axios";
 
 const Profile = () => {
+  const toast = useToast();
+  const navigate = useNavigate();
+  const [isLargerThan400] = useMediaQuery("(min-width: 400px)");
+  const [isLargerThan825] = useMediaQuery("(min-width: 825px)");
+  const [isLargerThan1200] = useMediaQuery("(min-width: 1200px)");
+
   const loaderData = useLoaderData() as Data;
   const [data, setData] = useState(loaderData);
-  const navigate = useNavigate();
-  const toast = useToast();
   const context = useOutletContext() as Context;
 
   const onLogOut = () => {
@@ -65,11 +77,11 @@ const Profile = () => {
   ];
 
   return (
-    <>
-      <Text textAlign="center" mb={4} fontSize="20px">
+    <Box mt={20}>
+      <Heading layerStyle="heading" textAlign="center" mb={4} fontSize="28px">
         Account Details
-      </Text>
-      <Text fontSize={20} textAlign="center" mb={4}>
+      </Heading>
+      <Text layerStyle="text" fontSize={20} textAlign="center" mb={4}>
         Welcome {data.name}! You can manage your account details here.
       </Text>
       <Box
@@ -77,8 +89,9 @@ const Profile = () => {
         alignItems="center"
         margin="0 auto"
         py={20}
-        w="60%"
+        w={isLargerThan825 ? "60%" : "90%"}
         gap={10}
+        flexDirection={isLargerThan1200 ? "row" : "column"}
       >
         <Avatar size="2xl" name={data.name}></Avatar>
         <Box w="100%" display="flex" flexDirection="column" gap={3}>
@@ -96,11 +109,22 @@ const Profile = () => {
           })}
         </Box>
       </Box>
-      <Box display="flex" justifyContent="center" gap={4}>
-        <Button onClick={onLogOut}>Log Out</Button>
-        <Button onClick={deleteAccount}>Delete Account</Button>
+      <Box
+        display="flex"
+        justifyContent="center"
+        gap={4}
+        flexDir={isLargerThan400 ? "row" : "column"}
+        mx={2}
+        mb={10}
+      >
+        <Button colorScheme="green" onClick={onLogOut}>
+          Log Out
+        </Button>
+        <Button colorScheme="green" onClick={deleteAccount}>
+          Delete Account
+        </Button>
       </Box>
-    </>
+    </Box>
   );
 };
 
