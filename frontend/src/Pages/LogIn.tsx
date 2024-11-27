@@ -110,7 +110,7 @@ const LogIn = () => {
   };
 
   return (
-    <Box mt={20}>
+    <Box my={20}>
       <Heading
         layerStyle="heading"
         textAlign="center"
@@ -120,7 +120,7 @@ const LogIn = () => {
         Log In Your Account
       </Heading>
       <Box
-        maxW={isLargerThan600 ? "75%" : "95%"}
+        maxW={isLargerThan600 ? "75%" : "90%"}
         display="flex"
         flexDirection="column"
         alignItems="center"

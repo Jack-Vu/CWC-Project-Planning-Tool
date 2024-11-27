@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import App from "./App";
 import {
+  Home,
   LogIn,
   Profile,
   Project,
@@ -41,12 +42,65 @@ const router = createBrowserRouter([
     },
     children: [
       {
+        path: "/",
+        index: true,
+        element: <Home />,
+        loader: async () => {
+          const token = localStorage.getItem("token");
+          if (token) {
+            try {
+              const response = await axios.get(
+                "http://localhost:3025/auth/profile",
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              return redirect("/projects");
+            } catch (error) {
+              return {};
+            }
+          } else {
+            return {};
+          }
+        }
+      },
+      {
         path: "/sign-up",
-        element: <SignUp />
+        element: <SignUp />,
+        loader: async () => {
+          const token = localStorage.getItem("token");
+          if (token) {
+            try {
+              const response = await axios.get(
+                "http://localhost:3025/auth/profile",
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              return redirect("/projects");
+            } catch (error) {
+              return {};
+            }
+          } else {
+            return {};
+          }
+        }
       },
       {
         path: "/log-in",
-        element: <LogIn />
+        element: <LogIn />,
+        loader: async () => {
+          const token = localStorage.getItem("token");
+          if (token) {
+            try {
+              const response = await axios.get(
+                "http://localhost:3025/auth/profile",
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              return redirect("/projects");
+            } catch (error) {
+              return {};
+            }
+          } else {
+            return {};
+          }
+        }
       },
       {
         path: "/projects",

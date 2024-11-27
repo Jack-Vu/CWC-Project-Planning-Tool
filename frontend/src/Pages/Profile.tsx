@@ -81,7 +81,7 @@ const Profile = () => {
       <Heading layerStyle="heading" textAlign="center" mb={4} fontSize="28px">
         Account Details
       </Heading>
-      <Text layerStyle="text" fontSize={20} textAlign="center" mb={4}>
+      <Text mx={4} layerStyle="text" fontSize={20} textAlign="center" mb={4}>
         Welcome {data.name}! You can manage your account details here.
       </Text>
       <Box
@@ -115,7 +115,7 @@ const Profile = () => {
         gap={4}
         flexDir={isLargerThan400 ? "row" : "column"}
         mx={2}
-        mb={10}
+        mb={20}
       >
         <Button colorScheme="green" onClick={onLogOut}>
           Log Out
