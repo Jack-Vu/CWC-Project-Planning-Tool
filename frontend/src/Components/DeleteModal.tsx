@@ -12,12 +12,14 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   deleteItem: () => void;
-  itemType: "project" | "feature" | "user story";
+  itemType: "account" | "project" | "feature" | "user story";
 };
 
 const DeleteModal = ({ isOpen, onClose, deleteItem, itemType }: Props) => {
   const getAssociatedItems = () => {
-    if (itemType === "project") {
+    if (itemType === "account") {
+      return "projects, features, user stories, and developer tasks";
+    } else if (itemType === "project") {
       return "features, user stories, and developer tasks";
     } else if (itemType === "feature") {
       return "user stories and developer tasks";
@@ -27,7 +29,9 @@ const DeleteModal = ({ isOpen, onClose, deleteItem, itemType }: Props) => {
   };
 
   const capitalizeItemType = () => {
-    if (itemType === "project") {
+    if (itemType === "account") {
+      return "Account";
+    } else if (itemType === "project") {
       return "Project";
     } else if (itemType === "feature") {
       return "Feature";

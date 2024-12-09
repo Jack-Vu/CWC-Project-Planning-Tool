@@ -4,18 +4,20 @@ import {
   Button,
   Heading,
   Text,
+  useDisclosure,
   useMediaQuery,
   useToast
 } from "@chakra-ui/react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Context, Data } from "../App";
-import { UserDetailsRow } from "../Components";
+import { DeleteModal, UserDetailsRow } from "../Components";
 import { useState } from "react";
 import axios from "axios";
 
 const Profile = () => {
   const toast = useToast();
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLargerThan400] = useMediaQuery("(min-width: 400px)");
   const [isLargerThan825] = useMediaQuery("(min-width: 825px)");
   const [isLargerThan1200] = useMediaQuery("(min-width: 1200px)");
@@ -49,6 +51,7 @@ const Profile = () => {
       .then((response) => {
         localStorage.removeItem("token");
         navigate("/sign-up");
+        context.toggledLoggedIn()
         toast({
           title: "Success.",
           description: "Your account has been deleted!",
@@ -120,10 +123,16 @@ const Profile = () => {
         <Button colorScheme="green" onClick={onLogOut}>
           Log Out
         </Button>
-        <Button colorScheme="green" onClick={deleteAccount}>
+        <Button colorScheme="green" onClick={onOpen}>
           Delete Account
         </Button>
       </Box>
+      <DeleteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        itemType="account"
+        deleteItem={deleteAccount}
+      />
     </Box>
   );
 };
