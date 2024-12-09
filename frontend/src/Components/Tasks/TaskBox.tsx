@@ -183,7 +183,7 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
           />
         ) : (
           <Text w="100%" textAlign={isLargerThan900 ? "left" : "center"}>
-            {taskName} Hello
+            {taskName}
           </Text>
         )}
       </Box>

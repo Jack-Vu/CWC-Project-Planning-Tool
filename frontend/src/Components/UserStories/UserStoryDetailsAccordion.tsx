@@ -324,8 +324,14 @@ function UserStoryDetailsAccordion({
                         layerStyle="text"
                       />
                     ) : (
-                      <Text textAlign="left" flex={1} layerStyle="text">
-                        {storyDescription}
+                      <Text
+                        textAlign="left"
+                        layerStyle="text"
+                        mr={4}
+                        lineHeight="32px"
+                      >
+                        {storyDescription ||
+                          "There is no user story description..."}
                       </Text>
                     )}
                     <IconButton

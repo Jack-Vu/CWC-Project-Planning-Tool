@@ -178,17 +178,18 @@ const Project = () => {
       <Box mx={isLargerThan500 ? 10 : 4} mt={20}>
         <Box display="flex" mb={20}>
           <Box display="flex" flex={1} flexDir="column" gap={4}>
-            <Box display="flex" gap={5} alignItems="center">
+            <Box display="flex" gap={5}>
               {updateProjectName ? (
                 <Input
                   value={projectName}
                   onChange={onChangeName}
-                  h="40px"
+                  h="32px"
                   autoFocus
+                  variant="filled"
                   type={"text"}
                 />
               ) : (
-                <Heading layerStyle="heading" fontSize={28}>
+                <Heading layerStyle="heading" fontSize={28} lineHeight="32px">
                   {project.name}
                 </Heading>
               )}
@@ -216,7 +217,9 @@ const Project = () => {
                   layerStyle="text"
                 />
               ) : (
-                <Text layerStyle="text">{project.description}</Text>
+                <Text layerStyle="text" mr={4} lineHeight="32px">
+                  {project.description || "There is no project description..."}
+                </Text>
               )}
               <IconButton
                 colorScheme="green"
