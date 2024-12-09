@@ -13,7 +13,9 @@ export class Project {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.project)
+  @ManyToOne(() => User, (user) => user.project, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @Column()
