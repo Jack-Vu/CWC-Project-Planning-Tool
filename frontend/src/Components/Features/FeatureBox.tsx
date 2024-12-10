@@ -3,7 +3,8 @@ import { Feature, ProjectType } from "../../Pages";
 import { FeatureModal } from "./FeatureModal";
 import { Dispatch, SetStateAction } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Context } from "../../App";
 
 type Props = {
   feature: Feature;
@@ -14,6 +15,8 @@ type Props = {
 const FeatureBox = ({ feature, projectId, setProject }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
+  const context = useOutletContext() as Context;
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onCloseModal = () => {
@@ -35,6 +38,7 @@ const FeatureBox = ({ feature, projectId, setProject }: Props) => {
             duration: 3000,
             isClosable: true
           });
+          context.toggledLoggedIn();
           navigate("/log-in");
         } else {
           toast({

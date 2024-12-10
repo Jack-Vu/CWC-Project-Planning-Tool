@@ -16,7 +16,8 @@ import {
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { ProjectType } from "../../Pages";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Context } from "../../App";
 
 type Props = {
   projects: ProjectType[];
@@ -26,6 +27,8 @@ type Props = {
 const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
+  const context = useOutletContext() as Context;
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [createButtonClicked, setCreateButtonClicked] = useState(false);
@@ -79,6 +82,7 @@ const CreateProjectAccordion = ({ projects, setProjects }: Props) => {
               duration: 3000,
               isClosable: true
             });
+            context.toggledLoggedIn();
             navigate("/log-in");
           } else {
             toast({

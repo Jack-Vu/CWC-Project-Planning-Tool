@@ -11,12 +11,13 @@ import {
   useToast
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 
 import { DeleteModal, StatusColumn, UserStory } from "../Components";
 import { ProjectType } from "./Projects";
 import axios from "axios";
 import { CheckIcon, EditIcon } from "@chakra-ui/icons";
+import { Context } from "../App";
 
 export type Feature = {
   name: string;
@@ -32,6 +33,8 @@ const columns = [{ name: "To Do" }, { name: "In Progress" }, { name: "Done!" }];
 const Project = () => {
   const toast = useToast();
   const navigate = useNavigate();
+  const context = useOutletContext() as Context;
+
   const loaderData = useLoaderData() as ProjectType;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLargerThan500] = useMediaQuery("(min-width: 500px)");
@@ -112,6 +115,7 @@ const Project = () => {
               duration: 3000,
               isClosable: true
             });
+            context.toggledLoggedIn();
             navigate("/log-in");
           } else {
             toast({
@@ -159,6 +163,7 @@ const Project = () => {
             duration: 3000,
             isClosable: true
           });
+          context.toggledLoggedIn();
           navigate("/log-in");
         } else {
           toast({

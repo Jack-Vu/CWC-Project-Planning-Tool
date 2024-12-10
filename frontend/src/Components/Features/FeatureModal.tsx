@@ -21,9 +21,10 @@ import {
 import { ProjectType } from "../../Pages";
 import { ChangeEvent, useState } from "react";
 import { CheckIcon, EditIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 import { DeleteModal } from "../DeleteModal";
+import { Context } from "../../App";
 
 type Props = {
   isOpen: boolean;
@@ -57,6 +58,8 @@ function FeatureModal({
 }: Props) {
   const toast = useToast();
   const navigate = useNavigate();
+  const context = useOutletContext() as Context;
+
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
@@ -134,6 +137,7 @@ function FeatureModal({
               duration: 3000,
               isClosable: true
             });
+            context.toggledLoggedIn();
             navigate("/log-in");
           } else {
             toast({
@@ -181,6 +185,7 @@ function FeatureModal({
             duration: 3000,
             isClosable: true
           });
+          context.toggledLoggedIn();
           navigate("/log-in");
         } else {
           toast({

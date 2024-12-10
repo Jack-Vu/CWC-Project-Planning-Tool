@@ -15,8 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { ProjectType } from "../../Pages";
+import { Context } from "../../App";
 
 type Props = {
   featureId: number;
@@ -31,6 +32,8 @@ const CreateUserStoryAccordion = ({
 }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
+  const context = useOutletContext() as Context;
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [createButtonClicked, setCreateButtonClicked] = useState(false);
@@ -85,6 +88,7 @@ const CreateUserStoryAccordion = ({
               duration: 3000,
               isClosable: true
             });
+            context.toggledLoggedIn();
             navigate("/log-in");
           } else {
             toast({
