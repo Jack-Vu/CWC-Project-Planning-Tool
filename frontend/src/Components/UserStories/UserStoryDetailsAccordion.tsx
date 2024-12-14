@@ -94,6 +94,14 @@ function UserStoryDetailsAccordion({
   };
   const updateUserStory = (field: "name" | "description", value: string) => {
     const token = localStorage.getItem("token");
+    if (field === "name" && name === storyName) {
+      setUpdateStoryName(false);
+      return;
+    }
+    if (field === "description" && description === storyDescription) {
+      setUpdateStoryDescription(false);
+      return;
+    }
     if (storyName === "") {
       toast({
         title: "Error.",

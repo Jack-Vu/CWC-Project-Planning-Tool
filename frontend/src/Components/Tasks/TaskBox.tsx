@@ -41,6 +41,10 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
 
   const updateTask = (field: "status" | "name", value: string) => {
     const token = localStorage.getItem("token");
+    if (field === "name" && task.name === taskName) {
+      setUpdateName(false);
+      return;
+    }
     if (!value) {
       toast({
         title: "Error.",
@@ -187,7 +191,11 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
             layerStyle={"text"}
           />
         ) : (
-          <Text w="100%" lineHeight="32px" textAlign={isLargerThan900 ? "left" : "center"}>
+          <Text
+            w="100%"
+            lineHeight="32px"
+            textAlign={isLargerThan900 ? "left" : "center"}
+          >
             {taskName}
           </Text>
         )}

@@ -67,6 +67,14 @@ const Project = () => {
   };
 
   const updateProject = (field: "name" | "description", value?: string) => {
+    if(field === "name" && project.name === projectName) {
+      setUpdateProjectName(false);
+      return 
+    }
+    if(field === "description" && project.description === projectDescription) {
+      setUpdateProjectDescription(false);
+      return 
+    }
     const token = localStorage.getItem("token");
     if (projectName === "") {
       toast({

@@ -90,6 +90,14 @@ function FeatureModal({
 
   const updateFeature = (field: "name" | "description", value?: string) => {
     const token = localStorage.getItem("token");
+    if(field === "name" && featureName === name) {
+      setUpdateFeatureName(false);
+      return 
+    }
+    if(field === "description" && featureDescription === description) {
+      setUpdateFeatureDescription(false);
+      return 
+    }
     if (name === "") {
       toast({
         title: "Error.",
