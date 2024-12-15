@@ -22,7 +22,7 @@ import { TasksModule } from 'src/tasks/tasks.module';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1hr' },
+      signOptions: { expiresIn: '5s' },
     }),
   ],
 })

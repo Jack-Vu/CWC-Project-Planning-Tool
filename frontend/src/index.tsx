@@ -107,7 +107,7 @@ const router = createBrowserRouter([
         element: <Projects />,
         loader: async () => {
           const token = localStorage.getItem("token");
-          if (token) {
+          if (token && token !== "") {
             try {
               const response = await axios.get(
                 "http://localhost:3025/auth/user-projects",
@@ -115,6 +115,7 @@ const router = createBrowserRouter([
               );
               return response.data;
             } catch (error) {
+              localStorage.removeItem("token");
               toast({
                 title: "An error occurred.",
                 description: "You must be signed in to view this page",
@@ -141,7 +142,7 @@ const router = createBrowserRouter([
         element: <Profile />,
         loader: async () => {
           const token = localStorage.getItem("token");
-          if (token) {
+          if (token && token !== "") {
             try {
               const response = await axios.get(
                 "http://localhost:3025/auth/profile",
@@ -149,6 +150,7 @@ const router = createBrowserRouter([
               );
               return response.data;
             } catch (error) {
+              localStorage.removeItem("token");
               toast({
                 title: "An error occurred.",
                 description: "You must be signed in to view this page",
@@ -179,7 +181,7 @@ const router = createBrowserRouter([
         element: <Project />,
         loader: async ({ params }) => {
           const token = localStorage.getItem("token");
-          if (token) {
+          if (token && token !== "") {
             try {
               const response = await axios.get(
                 `http://localhost:3025/auth/project/${params.id}`,
@@ -197,6 +199,7 @@ const router = createBrowserRouter([
               }
               return response.data;
             } catch (error) {
+              localStorage.removeItem("token");
               toast({
                 title: "An error occurred.",
                 description: "You must be signed in to view this page",
