@@ -30,8 +30,9 @@ import {
 } from "react";
 import { ProjectType } from "../../Pages";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { DeleteModal } from "../DeleteModal";
+import { Context } from "../../App";
 
 export type Task = {
   id: number;
@@ -62,7 +63,9 @@ function UserStoryDetailsAccordion({
 }: Props) {
   const toast = useToast();
   const navigate = useNavigate();
+  const context = useOutletContext() as Context;
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [isLargerThan900] = useMediaQuery("(min-width: 900px)");
 
   const [storyStatus, setStoryStatus] = useState(status);
@@ -91,6 +94,14 @@ function UserStoryDetailsAccordion({
   };
   const updateUserStory = (field: "name" | "description", value: string) => {
     const token = localStorage.getItem("token");
+    if (field === "name" && name === storyName) {
+      setUpdateStoryName(false);
+      return;
+    }
+    if (field === "description" && description === storyDescription) {
+      setUpdateStoryDescription(false);
+      return;
+    }
     if (storyName === "") {
       toast({
         title: "Error.",
@@ -138,6 +149,7 @@ function UserStoryDetailsAccordion({
               duration: 3000,
               isClosable: true
             });
+            context.toggledLoggedIn();
             navigate("/log-in");
           } else {
             toast({
@@ -185,6 +197,7 @@ function UserStoryDetailsAccordion({
             duration: 3000,
             isClosable: true
           });
+          context.toggledLoggedIn();
           navigate("/log-in");
         } else {
           toast({
@@ -216,7 +229,7 @@ function UserStoryDetailsAccordion({
           <Input
             value={storyName}
             onChange={onChangeName}
-            h="40px"
+            h="32px"
             autoFocus
             type={"text"}
             layerStyle="text"
@@ -324,8 +337,14 @@ function UserStoryDetailsAccordion({
                         layerStyle="text"
                       />
                     ) : (
-                      <Text textAlign="left" flex={1} layerStyle="text">
-                        {storyDescription}
+                      <Text
+                        textAlign="left"
+                        layerStyle="text"
+                        mr={4}
+                        lineHeight="32px"
+                      >
+                        {storyDescription ||
+                          "There is no user story description..."}
                       </Text>
                     )}
                     <IconButton

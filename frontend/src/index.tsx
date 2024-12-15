@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import App from "./App";
 import {
+  Home,
   LogIn,
   Profile,
   Project,
@@ -41,19 +42,72 @@ const router = createBrowserRouter([
     },
     children: [
       {
+        path: "/",
+        index: true,
+        element: <Home />,
+        loader: async () => {
+          const token = localStorage.getItem("token");
+          if (token) {
+            try {
+              const response = await axios.get(
+                "http://localhost:3025/auth/profile",
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              return redirect("/projects");
+            } catch (error) {
+              return {};
+            }
+          } else {
+            return {};
+          }
+        }
+      },
+      {
         path: "/sign-up",
-        element: <SignUp />
+        element: <SignUp />,
+        loader: async () => {
+          const token = localStorage.getItem("token");
+          if (token) {
+            try {
+              const response = await axios.get(
+                "http://localhost:3025/auth/profile",
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              return redirect("/projects");
+            } catch (error) {
+              return {};
+            }
+          } else {
+            return {};
+          }
+        }
       },
       {
         path: "/log-in",
-        element: <LogIn />
+        element: <LogIn />,
+        loader: async () => {
+          const token = localStorage.getItem("token");
+          if (token) {
+            try {
+              const response = await axios.get(
+                "http://localhost:3025/auth/profile",
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              return redirect("/projects");
+            } catch (error) {
+              return {};
+            }
+          } else {
+            return {};
+          }
+        }
       },
       {
         path: "/projects",
         element: <Projects />,
         loader: async () => {
           const token = localStorage.getItem("token");
-          if (token) {
+          if (token && token !== "") {
             try {
               const response = await axios.get(
                 "http://localhost:3025/auth/user-projects",
@@ -61,6 +115,7 @@ const router = createBrowserRouter([
               );
               return response.data;
             } catch (error) {
+              localStorage.removeItem("token");
               toast({
                 title: "An error occurred.",
                 description: "You must be signed in to view this page",
@@ -87,7 +142,7 @@ const router = createBrowserRouter([
         element: <Profile />,
         loader: async () => {
           const token = localStorage.getItem("token");
-          if (token) {
+          if (token && token !== "") {
             try {
               const response = await axios.get(
                 "http://localhost:3025/auth/profile",
@@ -95,6 +150,7 @@ const router = createBrowserRouter([
               );
               return response.data;
             } catch (error) {
+              localStorage.removeItem("token");
               toast({
                 title: "An error occurred.",
                 description: "You must be signed in to view this page",
@@ -125,7 +181,7 @@ const router = createBrowserRouter([
         element: <Project />,
         loader: async ({ params }) => {
           const token = localStorage.getItem("token");
-          if (token) {
+          if (token && token !== "") {
             try {
               const response = await axios.get(
                 `http://localhost:3025/auth/project/${params.id}`,
@@ -143,6 +199,7 @@ const router = createBrowserRouter([
               }
               return response.data;
             } catch (error) {
+              localStorage.removeItem("token");
               toast({
                 title: "An error occurred.",
                 description: "You must be signed in to view this page",

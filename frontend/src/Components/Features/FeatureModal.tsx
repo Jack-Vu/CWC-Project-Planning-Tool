@@ -21,9 +21,10 @@ import {
 import { ProjectType } from "../../Pages";
 import { ChangeEvent, useState } from "react";
 import { CheckIcon, EditIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 import { DeleteModal } from "../DeleteModal";
+import { Context } from "../../App";
 
 type Props = {
   isOpen: boolean;
@@ -57,6 +58,8 @@ function FeatureModal({
 }: Props) {
   const toast = useToast();
   const navigate = useNavigate();
+  const context = useOutletContext() as Context;
+
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
@@ -87,6 +90,14 @@ function FeatureModal({
 
   const updateFeature = (field: "name" | "description", value?: string) => {
     const token = localStorage.getItem("token");
+    if(field === "name" && featureName === name) {
+      setUpdateFeatureName(false);
+      return 
+    }
+    if(field === "description" && featureDescription === description) {
+      setUpdateFeatureDescription(false);
+      return 
+    }
     if (name === "") {
       toast({
         title: "Error.",
@@ -134,6 +145,7 @@ function FeatureModal({
               duration: 3000,
               isClosable: true
             });
+            context.toggledLoggedIn();
             navigate("/log-in");
           } else {
             toast({
@@ -181,6 +193,7 @@ function FeatureModal({
             duration: 3000,
             isClosable: true
           });
+          context.toggledLoggedIn();
           navigate("/log-in");
         } else {
           toast({
@@ -201,17 +214,17 @@ function FeatureModal({
       <ModalContent minW="75%" minH="75%" justifyContent="space-between">
         <Box m={10}>
           <Box mb={20}>
-            <Box display="flex" alignItems="center" mb={4} gap={4}>
+            <Box display="flex" mb={4} gap={4}>
               {updateFeatureName ? (
                 <Input
                   value={name}
                   onChange={onChangeName}
-                  h="40px"
+                  h="32px"
                   autoFocus
                   type={"text"}
                 />
               ) : (
-                <Heading layerStyle="heading" fontSize={28}>
+                <Heading layerStyle="heading" fontSize={28} lineHeight="32px">
                   {featureName}
                 </Heading>
               )}
@@ -234,12 +247,14 @@ function FeatureModal({
                 <Textarea
                   value={description}
                   onChange={onChangeDescription}
-                  h="40px"
+                  h="32px"
                   autoFocus
                   layerStyle="text"
                 />
               ) : (
-                <Text layerStyle="text">{featureDescription}</Text>
+                <Text layerStyle="text" mr={4} lineHeight="32px">
+                  {featureDescription || "There is no feature description..."}
+                </Text>
               )}
               <IconButton
                 size="sm"

@@ -4,3 +4,4 @@ export * from "./Projects";
 export * from "./Profile";
 export * from "./ResetPassword";
 export * from "./Project";
+export * from "./Home";

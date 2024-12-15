@@ -14,7 +14,7 @@ import {
   useToast
 } from "@chakra-ui/react";
 import axios from "axios";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Context } from "../App";
 import { ForgotPasswordModal } from "../Components";
@@ -27,6 +27,14 @@ const LogIn = () => {
   const [isLargerThan350] = useMediaQuery("(min-width: 350px)");
   const [isLargerThan420] = useMediaQuery("(min-width: 420px)");
   const [isLargerThan600] = useMediaQuery("(min-width: 600px)");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token === null) {
+      context.toggledLoggedIn();
+      localStorage.setItem("token", "");
+    }
+  }, [context]);
 
   const [show, setShow] = useState(false);
   const handleShowHideClick = () => setShow(!show);
@@ -110,7 +118,7 @@ const LogIn = () => {
   };
 
   return (
-    <Box mt={20}>
+    <Box my={20}>
       <Heading
         layerStyle="heading"
         textAlign="center"
@@ -120,7 +128,7 @@ const LogIn = () => {
         Log In Your Account
       </Heading>
       <Box
-        maxW={isLargerThan600 ? "75%" : "95%"}
+        maxW={isLargerThan600 ? "75%" : "90%"}
         display="flex"
         flexDirection="column"
         alignItems="center"

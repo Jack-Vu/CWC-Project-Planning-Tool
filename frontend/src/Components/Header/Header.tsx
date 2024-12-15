@@ -2,6 +2,7 @@ import { Box, Heading, Image, useMediaQuery } from "@chakra-ui/react";
 import React from "react";
 import { FullMenu } from "./FullMenu";
 import { HamburgerMenu } from "./HamburgerMenu";
+import { Link } from "react-router-dom";
 
 export type Page = {
   name: string;
@@ -36,35 +37,43 @@ const Header = ({ loggedIn }: Props) => {
   };
 
   return (
-    <Box py={4} px={isLargerThan500 ? 8 : 4} display="flex" alignItems="center">
-      <Box
-        display="flex"
-        flex={1}
-        gap={isLargerThan500 ? 4 : 2}
-        alignItems="center"
-      >
-        <Image
-          borderRadius="50%"
-          boxShadow="lg"
-          boxSize={
-            isLargerThan775
-              ? "80px"
-              : isLargerThan500
-              ? "65px"
-              : isLargerThan350
-              ? "58px"
-              : "50px"
-          }
-          src="https://media.istockphoto.com/id/1195743934/vector/cute-panda-character-vector-design.jpg?s=612x612&w=0&k=20&c=J3ht-bKADmsXvF6gFIleRtfJ6NGhXnfIsrwlsUF8w80="
-          alt="Profile Picture Logo"
-        />
-        <Heading
-          layerStyle="heading"
-          fontSize={isLargerThan775 ? "4xl" : isLargerThan500 ? "3xl" : "xl"}
+    <Box
+      py={4}
+      px={isLargerThan500 ? 8 : 4}
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+    >
+      <Link to={loggedIn ? "/projects" : "/"}>
+        <Box
+          display="flex"
+          flex={1}
+          gap={isLargerThan500 ? 4 : 2}
+          alignItems="center"
         >
-          {isLargerThan350 ? "Project Planning Tool" : "Planning Tool"}
-        </Heading>
-      </Box>
+          <Image
+            borderRadius="50%"
+            boxShadow="lg"
+            boxSize={
+              isLargerThan775
+                ? "80px"
+                : isLargerThan500
+                ? "65px"
+                : isLargerThan350
+                ? "58px"
+                : "50px"
+            }
+            src="https://media.istockphoto.com/id/1195743934/vector/cute-panda-character-vector-design.jpg?s=612x612&w=0&k=20&c=J3ht-bKADmsXvF6gFIleRtfJ6NGhXnfIsrwlsUF8w80="
+            alt="Profile Picture Logo"
+          />
+          <Heading
+            layerStyle="heading"
+            fontSize={isLargerThan775 ? "4xl" : isLargerThan500 ? "3xl" : "xl"}
+          >
+            {isLargerThan350 ? "Project Planning Tool" : "Planning Tool"}
+          </Heading>
+        </Box>
+      </Link>
 
       {isLargerThan1000 ? (
         <FullMenu pages={filterPages(pages)} />

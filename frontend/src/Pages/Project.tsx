@@ -11,12 +11,13 @@ import {
   useToast
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 
 import { DeleteModal, StatusColumn, UserStory } from "../Components";
 import { ProjectType } from "./Projects";
 import axios from "axios";
 import { CheckIcon, EditIcon } from "@chakra-ui/icons";
+import { Context } from "../App";
 
 export type Feature = {
   name: string;
@@ -32,6 +33,8 @@ const columns = [{ name: "To Do" }, { name: "In Progress" }, { name: "Done!" }];
 const Project = () => {
   const toast = useToast();
   const navigate = useNavigate();
+  const context = useOutletContext() as Context;
+
   const loaderData = useLoaderData() as ProjectType;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLargerThan500] = useMediaQuery("(min-width: 500px)");
@@ -64,6 +67,14 @@ const Project = () => {
   };
 
   const updateProject = (field: "name" | "description", value?: string) => {
+    if(field === "name" && project.name === projectName) {
+      setUpdateProjectName(false);
+      return 
+    }
+    if(field === "description" && project.description === projectDescription) {
+      setUpdateProjectDescription(false);
+      return 
+    }
     const token = localStorage.getItem("token");
     if (projectName === "") {
       toast({
@@ -112,6 +123,7 @@ const Project = () => {
               duration: 3000,
               isClosable: true
             });
+            context.toggledLoggedIn();
             navigate("/log-in");
           } else {
             toast({
@@ -159,6 +171,7 @@ const Project = () => {
             duration: 3000,
             isClosable: true
           });
+          context.toggledLoggedIn();
           navigate("/log-in");
         } else {
           toast({
@@ -178,17 +191,18 @@ const Project = () => {
       <Box mx={isLargerThan500 ? 10 : 4} mt={20}>
         <Box display="flex" mb={20}>
           <Box display="flex" flex={1} flexDir="column" gap={4}>
-            <Box display="flex" gap={5} alignItems="center">
+            <Box display="flex" gap={5}>
               {updateProjectName ? (
                 <Input
                   value={projectName}
                   onChange={onChangeName}
-                  h="40px"
+                  h="32px"
                   autoFocus
+                  variant="filled"
                   type={"text"}
                 />
               ) : (
-                <Heading layerStyle="heading" fontSize={28}>
+                <Heading layerStyle="heading" fontSize={28} lineHeight="32px">
                   {project.name}
                 </Heading>
               )}
@@ -216,7 +230,9 @@ const Project = () => {
                   layerStyle="text"
                 />
               ) : (
-                <Text layerStyle="text">{project.description}</Text>
+                <Text layerStyle="text" mr={4} lineHeight="32px">
+                  {project.description || "There is no project description..."}
+                </Text>
               )}
               <IconButton
                 colorScheme="green"

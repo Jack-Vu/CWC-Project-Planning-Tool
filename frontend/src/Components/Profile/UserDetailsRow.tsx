@@ -38,6 +38,10 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
     setValueState(e.target.value);
   };
   const onClickCheck = () => {
+    if (valueState === value) {
+      setUpdateField(!updateField);
+      return;
+    }
     if (field === "email") {
       const invalidEmail = isInvalidEmail(valueState);
       if (invalidEmail) {
@@ -72,7 +76,7 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
       .post(
         "http://localhost:3025/auth/change-account-detail",
         {
-          username: username,
+          username,
           field,
           value: valueState
         },
@@ -89,6 +93,7 @@ const UserDetailsRow = ({ field, title, value, username, setData }: Props) => {
         });
       })
       .catch((error) => {
+        setValueState(value);
         toast({
           title: "Error.",
           description:

@@ -35,6 +35,7 @@ const SignUp = () => {
   const toast = useToast();
   const context = useOutletContext() as Context;
   const [isLargerThan350] = useMediaQuery("(min-width: 350px)");
+  const [isLargerThan600] = useMediaQuery("(min-width: 600px)");
 
   const [show, setShow] = useState(false);
   const [showSecond, setSecondShow] = useState(false);
@@ -58,9 +59,8 @@ const SignUp = () => {
   const isUsernameError = signUpForm.username === "" && submitClicked.username;
   const isPasswordError = signUpForm.password === "" && submitClicked.password;
   const isSecondPasswordError =
-    (isInvalidSecondPassword(signUpForm.password, secondPassword) &&
-      submitClicked.secondPassword) ||
-    (signUpForm.password === "" && submitClicked.secondPassword);
+    isInvalidSecondPassword(signUpForm.password, secondPassword) &&
+    submitClicked.secondPassword;
 
   const handleChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -171,7 +171,7 @@ const SignUp = () => {
         Create An Account
       </Heading>
       <Box
-        maxW="75%"
+        maxW={isLargerThan600 ? "75%" : "90%"}
         display="flex"
         flexDirection="column"
         alignItems="center"
@@ -272,10 +272,13 @@ const SignUp = () => {
             <FormErrorMessage>Passwords do not match.</FormErrorMessage>
           )}
         </FormControl>
-        <Box display="flex" flexDirection="column" alignSelf="flex-start">
+        {
+          //TODO hide for now till I add this portion
+          /* <Box display="flex" flexDirection="column" alignSelf="flex-start">
           <Text layerStyle="text">Profile Picture:</Text>
           <Button colorScheme="green">Choose File</Button>
-        </Box>
+        </Box> */
+        }
         <Button colorScheme="green" w="100%" onClick={onSubmit}>
           Submit
         </Button>

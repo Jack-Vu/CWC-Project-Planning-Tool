@@ -11,7 +11,8 @@ import {
 import { Task } from "../UserStories";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Context } from "../../App";
 
 type Props = {
   task: Task;
@@ -22,6 +23,8 @@ type Props = {
 const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
   const toast = useToast();
   const navigate = useNavigate();
+  const context = useOutletContext() as Context;
+
   const [isLargerThan900] = useMediaQuery("(min-width: 900px)");
 
   const [taskStatus, setTaskStatus] = useState(task.status);
@@ -38,6 +41,10 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
 
   const updateTask = (field: "status" | "name", value: string) => {
     const token = localStorage.getItem("token");
+    if (field === "name" && task.name === taskName) {
+      setUpdateName(false);
+      return;
+    }
     if (!value) {
       toast({
         title: "Error.",
@@ -81,6 +88,7 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
               duration: 3000,
               isClosable: true
             });
+            context.toggledLoggedIn();
             navigate("/log-in");
           } else {
             toast({
@@ -142,6 +150,7 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
             duration: 3000,
             isClosable: true
           });
+          context.toggledLoggedIn();
           navigate("/log-in");
         } else {
           toast({
@@ -175,15 +184,19 @@ const TaskBox = ({ task, setStoryStatus, setTaskList }: Props) => {
       >
         {updateName ? (
           <Textarea
-            h="40px"
+            h="32px"
             value={taskName}
             onChange={onChange}
             autoFocus
             layerStyle={"text"}
           />
         ) : (
-          <Text w="100%" textAlign={isLargerThan900 ? "left" : "center"}>
-            {taskName} Hello
+          <Text
+            w="100%"
+            lineHeight="32px"
+            textAlign={isLargerThan900 ? "left" : "center"}
+          >
+            {taskName}
           </Text>
         )}
       </Box>

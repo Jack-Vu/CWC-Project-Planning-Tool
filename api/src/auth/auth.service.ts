@@ -47,20 +47,39 @@ export class AuthService {
       return await this.jwtService.signAsync(payload);
     }
   }
+  async verifyUniqueUsername(username: string) {
+    const user = await this.usersService.findUserByUsername(username);
+    if (!user?.username) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async verifyUniqueEmail(email: string) {
+    const user = await this.usersService.findUserByEmail(email);
+    if (!user?.email) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   async signUp(signUpDto: SignUpDto) {
-    const usernameExists = (
-      await this.usersService.findUserByUsername(signUpDto.username)
-    )?.username;
-    const emailExists = (
-      await this.usersService.findUserByEmail(signUpDto.email)
-    )?.email;
-    if (usernameExists) {
+    const isUniqueUsername = await this.verifyUniqueUsername(
+      signUpDto.username,
+    );
+    const isUniqueEmail = await this.verifyUniqueEmail(signUpDto.email);
+    console.log('Username is unique', isUniqueUsername);
+    console.log('Email is unique', isUniqueEmail);
+
+    if (!isUniqueUsername) {
       throw new BadRequestException('Bad Request!');
     }
-    if (emailExists) {
+    if (!isUniqueEmail) {
       throw new BadRequestException('Bad Request!');
     }
+
     const hashedPassword = await this.hashPassword(signUpDto.password);
     signUpDto.password = hashedPassword;
     const user = await this.usersService.createUser(signUpDto);
@@ -94,6 +113,22 @@ export class AuthService {
       const plainTextPassword = accountDetailDto.value;
       const hashedPassword = await this.hashPassword(plainTextPassword);
       user[accountDetailDto.field] = hashedPassword;
+    } else if (accountDetailDto.field === 'username') {
+      const isUniqueUsername = await this.verifyUniqueUsername(
+        accountDetailDto.value,
+      );
+      if (!isUniqueUsername) {
+        throw new BadRequestException('Bad request!');
+      }
+      user[accountDetailDto.field] = accountDetailDto.value;
+    } else if (accountDetailDto.field === 'email') {
+      const isUniqueEmail = await this.verifyUniqueEmail(
+        accountDetailDto.value,
+      );
+      if (!isUniqueEmail) {
+        throw new BadRequestException('Bad request!');
+      }
+      user[accountDetailDto.field] = accountDetailDto.value;
     } else {
       user[accountDetailDto.field] = accountDetailDto.value;
     }
