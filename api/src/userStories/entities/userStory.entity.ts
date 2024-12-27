@@ -1,5 +1,5 @@
-import { Feature } from 'src/features/entities/feature.entity';
-import { Task } from 'src/tasks/entities/task.entity';
+import { Feature } from '../../features/entities/feature.entity';
+import { Task } from '../../tasks/entities/task.entity';
 import {
   Entity,
   Column,

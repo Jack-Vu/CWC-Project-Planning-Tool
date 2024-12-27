@@ -1,5 +1,5 @@
-import { Project } from 'src/projects/entities/project.entity';
-import { UserStory } from 'src/userStories/entities/userStory.entity';
+import { Project } from '../../projects/entities/project.entity';
+import { UserStory } from '../../userStories/entities/userStory.entity';
 import {
   Entity,
   Column,
