@@ -9,11 +9,6 @@ describe('UsersService', () => {
 
   const mockUserRepository = {
     findOneBy: jest.fn(),
-    findUserById: jest.fn(),
-    findUserByUsername: jest.fn(),
-    findUserByEmail: jest.fn(),
-    createUser: jest.fn(),
-    deleteUser: jest.fn(),
     save: jest.fn(),
     delete: jest.fn(),
   };
