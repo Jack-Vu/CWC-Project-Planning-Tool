@@ -138,7 +138,7 @@ export class ProjectsService {
   async deleteProject(projectId: number, userId: number) {
     const projectToDelete = await this.projectsRepository.findOne({
       where: { id: projectId, user: { id: userId } },
-    });
+    })
     if (projectToDelete) {
       return await this.projectsRepository.delete(projectToDelete);
     } else {
