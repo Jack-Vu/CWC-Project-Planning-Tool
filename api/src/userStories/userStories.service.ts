@@ -28,19 +28,6 @@ export class UserStoriesService {
     return await this.getFeatureUserStories(featureId);
   }
 
-  async getUserStoryStatusById(id: number) {
-    const userStory = await this.userStoriesRepository.findOne({
-      where: { id },
-      relations: ['tasks'],
-    });
-
-    const tasks = userStory.tasks;
-    const taskCount = tasks.length;
-    const completedTasks = tasks.filter((task) => task.status === 'Done!');
-    const completedTasksLength = completedTasks.length;
-    return `${completedTasksLength}/${taskCount}`;
-  }
-
   async getUserStoryById(id: number) {
     return await this.userStoriesRepository.findOne({
       where: { id },
@@ -49,6 +36,16 @@ export class UserStoriesService {
       },
       relations: ['tasks'],
     });
+  }
+
+  async getUserStoryStatusById(id: number) {
+    const userStory = await this.getUserStoryById(id);
+
+    const tasks = userStory.tasks;
+    const taskCount = tasks.length;
+    const completedTasks = tasks.filter((task) => task.status === 'Done!');
+    const completedTasksLength = completedTasks.length;
+    return `${completedTasksLength}/${taskCount}`;
   }
 
   async updateUserStory(
