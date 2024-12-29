@@ -214,9 +214,13 @@ describe('FeaturesService', () => {
         id: 2,
       },
     } as Feature;
+    const deletedResult = {
+      raw: [],
+      affected: 1,
+    };
 
     jest.spyOn(mockFeaturesRepository, 'findOne').mockReturnValue(feature);
-    jest.spyOn(mockFeaturesRepository, 'delete').mockReturnValue(feature);
+    jest.spyOn(mockFeaturesRepository, 'delete').mockReturnValue(deletedResult);
 
     const result = await service.deleteFeature(featureId, userId);
 

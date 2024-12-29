@@ -47,7 +47,7 @@ export class AuthService {
       return await this.jwtService.signAsync(payload);
     }
   }
-  
+
   async verifyUniqueUsername(username: string) {
     const user = await this.usersService.findUserByUsername(username);
     if (!user?.username) {
@@ -70,13 +70,13 @@ export class AuthService {
     const isUniqueUsername = await this.verifyUniqueUsername(
       signUpDto.username,
     );
-    const isUniqueEmail = await this.verifyUniqueEmail(signUpDto.email);
-    console.log('Username is unique', isUniqueUsername);
-    console.log('Email is unique', isUniqueEmail);
 
     if (!isUniqueUsername) {
       throw new BadRequestException('Bad Request!');
     }
+
+    const isUniqueEmail = await this.verifyUniqueEmail(signUpDto.email);
+
     if (!isUniqueEmail) {
       throw new BadRequestException('Bad Request!');
     }
@@ -106,6 +106,7 @@ export class AuthService {
 
     return await this.createAccessToken(user);
   }
+
   async changeAccountDetail(accountDetailDto: AccountDetailDto) {
     const user = await this.usersService.findUserByUsername(
       accountDetailDto.username,
@@ -164,18 +165,23 @@ export class AuthService {
   async saveNewPassword(newPassword: string, id: number, token: string) {
     const user = await this.usersService.findUserById(id);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const payload = await this.jwtService
-      .verifyAsync(token, {
+
+    try {
+      await this.jwtService.verifyAsync(token, {
         secret: user.password,
-      })
-      .catch(() => {
-        throw new UnauthorizedException('token is invalid');
-      })
-      .then(async () => {
-        const hashedNewPassword = await this.hashPassword(newPassword);
-        user.password = hashedNewPassword;
-        return await this.usersService.createUser(user);
       });
+
+      const hashedNewPassword = await this.hashPassword(newPassword);
+      user.password = hashedNewPassword;
+      const updatedUser = await this.usersService.createUser(user);
+      return {
+        email: updatedUser.email,
+        name: updatedUser.name,
+        username: updatedUser.username,
+      };
+    } catch {
+      throw new UnauthorizedException('token is invalid');
+    }
   }
 
   async deleteUser(id: number) {
@@ -186,13 +192,31 @@ export class AuthService {
     return this.projectsService.getUserProjects(userId);
   }
 
+  async getProjectById(projectId: number, userId: number) {
+    const projects = await this.projectsService.getUserProjects(userId);
+    return projects.filter((project) => project.id === projectId)[0];
+  }
+
   async createProject(name: string, description: string, userId: number) {
     return await this.projectsService.createProject(name, description, userId);
   }
 
-  async getProjectById(projectId: number, userId: number) {
-    const projects = await this.projectsService.getUserProjects(userId);
-    return projects.filter((project) => project.id === projectId)[0];
+  async updateProject(
+    field: string,
+    value: string,
+    userId: number,
+    projectId: number,
+  ) {
+    return await this.projectsService.updateProject(
+      field,
+      value,
+      userId,
+      projectId,
+    );
+  }
+
+  async deleteProject(projectId: number, userId: number) {
+    return await this.projectsService.deleteProject(projectId, userId);
   }
 
   async createFeature(
@@ -213,6 +237,30 @@ export class AuthService {
       throw new UnauthorizedException('Unauthorized!');
     }
   }
+
+  async updateFeature(
+    field: string,
+    value: string,
+    userId: number,
+    featureId: number,
+  ) {
+    const projectId = await this.featuresService.updateFeature(
+      field,
+      value,
+      userId,
+      featureId,
+    );
+    return await this.projectsService.getProjectById(projectId);
+  }
+
+  async deleteFeature(featureId: number, userId: number) {
+    const projectId = await this.featuresService.deleteFeature(
+      featureId,
+      userId,
+    );
+    return await this.projectsService.getProjectById(projectId);
+  }
+
   async createUserStory(
     name: string,
     description: string,
@@ -240,6 +288,29 @@ export class AuthService {
     } else {
       throw new UnauthorizedException('Unauthorized!');
     }
+  }
+
+  async updateUserStory(
+    field: string,
+    value: string,
+    userId: number,
+    userStoryId: number,
+  ) {
+    const projectId = await this.userStoriesService.updateUserStory(
+      field,
+      value,
+      userId,
+      userStoryId,
+    );
+    return await this.projectsService.getProjectById(projectId);
+  }
+
+  async deleteUserStory(userStoryId: number, userId: number) {
+    const projectId = await this.userStoriesService.deleteUserStory(
+      userStoryId,
+      userId,
+    );
+    return await this.projectsService.getProjectById(projectId);
   }
 
   async createTask(
@@ -273,6 +344,7 @@ export class AuthService {
       throw new UnauthorizedException('Unauthorized!');
     }
   }
+
   async updateTask(
     field: string,
     value: string,
@@ -287,48 +359,7 @@ export class AuthService {
     );
     return await this.userStoriesService.getUserStoryStatusById(userStoryId);
   }
-  async updateUserStory(
-    field: string,
-    value: string,
-    userId: number,
-    userStoryId: number,
-  ) {
-    const projectId = await this.userStoriesService.updateUserStory(
-      field,
-      value,
-      userId,
-      userStoryId,
-    );
-    return await this.projectsService.getProjectById(projectId);
-  }
-  async updateFeature(
-    field: string,
-    value: string,
-    userId: number,
-    featureId: number,
-  ) {
-    const projectId = await this.featuresService.updateFeature(
-      field,
-      value,
-      userId,
-      featureId,
-    );
-    return await this.projectsService.getProjectById(projectId);
-  }
-  async updateProject(
-    field: string,
-    value: string,
-    userId: number,
-    projectId: number,
-  ) {
-    return await this.projectsService.updateProject(
-      field,
-      value,
-      userId,
-      projectId,
-    );
-  }
-
+  
   async deleteTask(taskId: number, userId: number) {
     const userStoryId = await this.tasksService.deleteTask(taskId, userId);
     const storyStatus =
@@ -341,23 +372,9 @@ export class AuthService {
     };
   }
 
-  async deleteUserStory(userStoryId: number, userId: number) {
-    const projectId = await this.userStoriesService.deleteUserStory(
-      userStoryId,
-      userId,
-    );
-    return await this.projectsService.getProjectById(projectId);
-  }
 
-  async deleteFeature(featureId: number, userId: number) {
-    const projectId = await this.featuresService.deleteFeature(
-      featureId,
-      userId,
-    );
-    return await this.projectsService.getProjectById(projectId);
-  }
 
-  async deleteProject(projectId: number, userId: number) {
-    return await this.projectsService.deleteProject(projectId, userId);
-  }
+ 
+
+  
 }

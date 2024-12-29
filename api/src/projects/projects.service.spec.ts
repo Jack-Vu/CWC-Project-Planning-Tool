@@ -907,13 +907,9 @@ describe('ProjectsService', () => {
         id: 15,
       },
     };
-    const deletedProject = {
-      id: 3,
-      name: 'P3',
-      description: 'asdf',
-      user: {
-        id: 15,
-      },
+    const deletedResult = {
+      raw: [],
+      affected: 1,
     };
 
     jest
@@ -921,11 +917,11 @@ describe('ProjectsService', () => {
       .mockReturnValue(projectToDelete);
     jest
       .spyOn(mockProjectsRepository, 'delete')
-      .mockReturnValue(deletedProject);
+      .mockReturnValue(deletedResult);
 
     const result = await service.deleteProject(projectId, userId);
 
-    expect(result).toEqual(deletedProject);
+    expect(result).toEqual(deletedResult);
     expect(mockProjectsRepository.findOne).toHaveBeenCalled();
     expect(mockProjectsRepository.findOne).toHaveBeenCalledWith({
       where: { id: projectId, user: { id: userId } },

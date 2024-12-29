@@ -233,21 +233,17 @@ describe('TasksService', () => {
         id: 5,
       },
     } as Task;
-    const deletedTask = {
-      id: 1,
-      name: 'Task 1',
-      status: 'To Do',
-      userStory: {
-        id: 5,
-      },
-    } as Task;
+    const deletedResult = {
+      raw: [],
+      affected: 1,
+    };
 
     jest.spyOn(mockTaskRepository, 'findOne').mockReturnValue(taskToDelete);
-    jest.spyOn(mockTaskRepository, 'delete').mockReturnValue(deletedTask);
+    jest.spyOn(mockTaskRepository, 'delete').mockReturnValue(deletedResult);
 
     const result = await service.deleteTask(taskId, userId);
 
-    expect(result).toEqual(deletedTask.userStory.id);
+    expect(result).toEqual(taskToDelete.userStory.id);
     expect(mockTaskRepository.findOne).toHaveBeenCalled();
     expect(mockTaskRepository.findOne).toHaveBeenCalledWith({
       where: {

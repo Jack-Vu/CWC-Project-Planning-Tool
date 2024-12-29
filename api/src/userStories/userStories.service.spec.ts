@@ -364,8 +364,13 @@ describe('UserStoriesService', () => {
       },
     } as UserStory;
 
+    const deletedResult = {
+      raw: [],
+      affected: 1,
+    };
+
     jest.spyOn(mockUserStoriesRepository, 'findOne').mockReturnValue(story);
-    jest.spyOn(mockUserStoriesRepository, 'delete').mockReturnValue(story);
+    jest.spyOn(mockUserStoriesRepository, 'delete').mockReturnValue(deletedResult);
 
     const result = await service.deleteUserStory(userStoryId, userId);
 

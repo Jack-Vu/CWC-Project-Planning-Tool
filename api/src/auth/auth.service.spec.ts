@@ -10,6 +10,9 @@ import { MailService } from '../mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
+import { AccountDetailDto, LogInDto, SignUpDto } from './auth.controller';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { UserStory } from '../userStories/entities/userStory.entity';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -155,5 +158,1183 @@ describe('AuthService', () => {
     expect(result).toEqual(true);
     expect(usersService.findUserByUsername).toHaveBeenCalled();
     expect(usersService.findUserByUsername).toHaveBeenCalledWith(username);
+  });
+
+  it('verifyUniqueEmail => should return false if user with email exist', async () => {
+    const email = 'jacknvu98@gmail.com';
+    const user = {
+      id: 15,
+      username: 'JackV981',
+      name: 'Jack',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-password',
+    } as User;
+
+    usersService.findUserByEmail.mockResolvedValue(user);
+
+    const result = await service.verifyUniqueEmail(email);
+
+    expect(result).toEqual(false);
+    expect(usersService.findUserByEmail).toHaveBeenCalled();
+    expect(usersService.findUserByEmail).toHaveBeenCalledWith(email);
+  });
+
+  it('verifyUniqueEmail => should return true if user with email does not exist', async () => {
+    const email = 'doesnotexist@gmail.com';
+
+    usersService.findUserByEmail.mockResolvedValue(undefined);
+
+    const result = await service.verifyUniqueEmail(email);
+
+    expect(result).toEqual(true);
+    expect(usersService.findUserByEmail).toHaveBeenCalled();
+    expect(usersService.findUserByEmail).toHaveBeenCalledWith(email);
+  });
+
+  it('signUp => should return an access token if username and email are unique', async () => {
+    const signUpDto = {
+      name: 'Jack Vu',
+      username: 'JackV981',
+      password: 'fake-password',
+      email: 'jacknvu98@gmail.com',
+    } as SignUpDto;
+
+    const user = {
+      id: 1,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      password: 'hashed-fake-password',
+      email: 'jacknvu98@gmail.com',
+    } as User;
+
+    usersService.findUserByUsername.mockResolvedValue(undefined);
+    usersService.findUserByEmail.mockResolvedValue(undefined);
+
+    const hashedPassword = 'hashed-fake-password';
+
+    const bcryptHash = jest.fn().mockReturnValue(hashedPassword);
+    (bcrypt.hash as jest.Mock) = bcryptHash;
+
+    usersService.createUser.mockResolvedValue(user);
+
+    const token = 'fake-jwt';
+
+    jwtService.signAsync.mockResolvedValue(token);
+
+    const result = await service.signUp(signUpDto);
+
+    expect(result).toEqual(token);
+    expect(usersService.findUserByUsername).toHaveBeenCalled();
+    expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+      signUpDto.username,
+    );
+    expect(usersService.findUserByEmail).toHaveBeenCalled();
+    expect(usersService.findUserByEmail).toHaveBeenCalledWith(signUpDto.email);
+    expect(bcryptHash).toHaveBeenCalled();
+    expect(bcryptHash).toHaveBeenCalledWith('fake-password', 10);
+    expect(usersService.createUser).toHaveBeenCalled();
+    expect(usersService.createUser).toHaveBeenCalledWith(signUpDto);
+    expect(jwtService.signAsync).toHaveBeenCalled();
+    expect(jwtService.signAsync).toHaveBeenCalledWith({ sub: user.id });
+  });
+
+  it('signUp => should throw an error that username already exist', async () => {
+    const signUpDto = {
+      name: 'Jack Vu',
+      username: 'JackV981',
+      password: 'fake-password',
+      email: 'jacknvu98@gmail.com',
+    } as SignUpDto;
+
+    const user = {
+      id: 1,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      password: 'hashed-fake-password',
+      email: 'jacknvu98@gmail.com',
+    } as User;
+
+    usersService.findUserByUsername.mockResolvedValue(user);
+
+    expect(async () => {
+      await service.signUp(signUpDto);
+    }).rejects.toThrow(BadRequestException);
+    expect(usersService.findUserByUsername).toHaveBeenCalled();
+    expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+      signUpDto.username,
+    );
+  });
+
+  it('signUp => should throw an error that email already exist', async () => {
+    const signUpDto = {
+      name: 'Jack Vu',
+      username: 'JackV981',
+      password: 'fake-password',
+      email: 'jacknvu98@gmail.com',
+    } as SignUpDto;
+
+    const user = {
+      id: 1,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      password: 'hashed-fake-password',
+      email: 'jacknvu98@gmail.com',
+    } as User;
+
+    usersService.findUserByUsername.mockResolvedValue(undefined);
+    usersService.findUserByEmail.mockResolvedValue(user);
+
+    try {
+      await service.signUp(signUpDto);
+    } catch (error) {
+      expect(error.message).toBe('Bad Request!');
+      expect(usersService.findUserByUsername).toHaveBeenCalled();
+      expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+        signUpDto.username,
+      );
+      expect(usersService.findUserByEmail).toHaveBeenCalled();
+      expect(usersService.findUserByEmail).toHaveBeenCalledWith(
+        signUpDto.email,
+      );
+    }
+  });
+
+  it('verifyPassword => should return true if entered password matches existing hashed password', async () => {
+    const enteredPassword = 'plain-text-password';
+    const existingPassword = 'matching-hashed-password';
+
+    const bcryptCompare = jest.fn().mockReturnValue(true);
+    (bcrypt.compare as jest.Mock) = bcryptCompare;
+
+    const result = await service.verifyPassword(
+      enteredPassword,
+      existingPassword,
+    );
+
+    expect(result).toEqual(true);
+    expect(bcryptCompare).toHaveBeenCalled();
+    expect(bcryptCompare).toHaveBeenCalledWith(
+      enteredPassword,
+      existingPassword,
+    );
+  });
+
+  it('verifyPassword => should return false if entered password does not match existing hashed password', async () => {
+    const enteredPassword = 'plain-text-password';
+    const existingPassword = 'not-matching-hashed-password';
+
+    const bcryptCompare = jest.fn().mockReturnValue(false);
+    (bcrypt.compare as jest.Mock) = bcryptCompare;
+
+    const result = await service.verifyPassword(
+      enteredPassword,
+      existingPassword,
+    );
+
+    expect(result).toEqual(false);
+    expect(bcryptCompare).toHaveBeenCalled();
+    expect(bcryptCompare).toHaveBeenCalledWith(
+      enteredPassword,
+      existingPassword,
+    );
+  });
+
+  it('logIn => should return access token if user exist and passwords match', async () => {
+    const logInDto = {
+      username: 'JackV981',
+      password: 'fake-password',
+    } as LogInDto;
+
+    const user = {
+      id: 1,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      password: 'hashed-fake-password',
+      email: 'jacknvu98@gmail.com',
+    } as User;
+
+    const token = 'fake-jwt';
+
+    usersService.findUserByUsername.mockResolvedValue(user);
+
+    const bcryptCompare = jest.fn().mockReturnValue(true);
+    (bcrypt.compare as jest.Mock) = bcryptCompare;
+
+    jwtService.signAsync.mockResolvedValue(token);
+
+    const result = await service.logIn(logInDto);
+
+    expect(result).toEqual(token);
+    expect(usersService.findUserByUsername).toHaveBeenCalled();
+    expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+      logInDto.username,
+    );
+    expect(bcryptCompare).toHaveBeenCalled();
+    expect(bcryptCompare).toHaveBeenCalledWith(
+      logInDto.password,
+      user.password,
+    );
+    expect(jwtService.signAsync).toHaveBeenCalled();
+    expect(jwtService.signAsync).toHaveBeenCalledWith({ sub: user.id });
+  });
+
+  it('logIn => should throw unauthorized error if user exist and passwords do not match', async () => {
+    const logInDto = {
+      username: 'JackV981',
+      password: 'incorrect-password',
+    } as LogInDto;
+
+    const user = {
+      id: 1,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      password: 'hashed-fake-password',
+      email: 'jacknvu98@gmail.com',
+    } as User;
+
+    usersService.findUserByUsername.mockResolvedValue(user);
+
+    const bcryptCompare = jest.fn().mockReturnValue(false);
+    (bcrypt.compare as jest.Mock) = bcryptCompare;
+
+    try {
+      await service.logIn(logInDto);
+    } catch (error) {
+      expect(error.message).toEqual('Unauthorized!');
+      expect(usersService.findUserByUsername).toHaveBeenCalled();
+      expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+        logInDto.username,
+      );
+      expect(bcryptCompare).toHaveBeenCalled();
+      expect(bcryptCompare).toHaveBeenCalledWith(
+        logInDto.password,
+        user.password,
+      );
+    }
+  });
+
+  it('logIn => should throw unauthorized error if user does not exist', async () => {
+    const logInDto = {
+      username: 'fake-user',
+      password: 'incorrect-password',
+    } as LogInDto;
+
+    usersService.findUserByUsername.mockResolvedValue(undefined);
+
+    try {
+      await service.logIn(logInDto);
+    } catch (error) {
+      expect(error.message).toEqual('Unauthorized!');
+      expect(usersService.findUserByUsername).toHaveBeenCalled();
+      expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+        logInDto.username,
+      );
+    }
+  });
+
+  it('changeAccountDetail => should return name, email, username after hashing and changing user password', async () => {
+    const accountDetailDto = {
+      field: 'password',
+      username: 'JackV981',
+      value: 'new-password',
+    } as AccountDetailDto;
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    const updatedUser = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'hashed-new-password',
+    } as User;
+
+    const hashedNewPassword = 'hashed-new-password';
+
+    usersService.findUserByUsername.mockResolvedValue(user);
+
+    const bcryptHash = jest.fn().mockReturnValue(hashedNewPassword);
+    (bcrypt.hash as jest.Mock) = bcryptHash;
+
+    usersService.createUser.mockResolvedValue(updatedUser);
+
+    const result = await service.changeAccountDetail(accountDetailDto);
+
+    expect(result).toEqual({
+      name: updatedUser.name,
+      email: updatedUser.email,
+      username: updatedUser.username,
+    });
+    expect(usersService.findUserByUsername).toHaveBeenCalled();
+    expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+      accountDetailDto.username,
+    );
+    expect(usersService.createUser).toHaveBeenCalled();
+    expect(usersService.createUser).toHaveBeenCalledWith(updatedUser);
+    expect(bcryptHash).toHaveBeenCalled();
+    expect(bcryptHash).toHaveBeenCalledWith(accountDetailDto.value, 10);
+  });
+
+  it('changeAccountDetail => should return name, email, username after changing user username', async () => {
+    const accountDetailDto = {
+      field: 'username',
+      username: 'JackV981',
+      value: 'JackV9812',
+    } as AccountDetailDto;
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    const updatedUser = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV9812',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    usersService.findUserByUsername.mockResolvedValueOnce(user);
+    usersService.createUser.mockResolvedValue(updatedUser);
+    usersService.findUserByUsername.mockResolvedValueOnce(undefined);
+
+    const result = await service.changeAccountDetail(accountDetailDto);
+
+    expect(result).toEqual({
+      name: updatedUser.name,
+      email: updatedUser.email,
+      username: updatedUser.username,
+    });
+    expect(usersService.findUserByUsername).toHaveBeenCalled();
+    expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+      accountDetailDto.username,
+    );
+    expect(usersService.createUser).toHaveBeenCalled();
+    expect(usersService.createUser).toHaveBeenCalledWith(updatedUser);
+  });
+
+  it('changeAccountDetail => should return name, email, username after changing user email', async () => {
+    const accountDetailDto = {
+      field: 'email',
+      username: 'JackV981',
+      value: 'jacknvu@gmail.com',
+    } as AccountDetailDto;
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    const updatedUser = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    usersService.findUserByUsername.mockResolvedValue(user);
+    usersService.createUser.mockResolvedValue(updatedUser);
+    usersService.findUserByEmail.mockResolvedValue(undefined);
+
+    const result = await service.changeAccountDetail(accountDetailDto);
+
+    expect(result).toEqual({
+      name: updatedUser.name,
+      email: updatedUser.email,
+      username: updatedUser.username,
+    });
+    expect(usersService.findUserByUsername).toHaveBeenCalled();
+    expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+      accountDetailDto.username,
+    );
+    expect(usersService.findUserByEmail).toHaveBeenCalled();
+    expect(usersService.findUserByEmail).toHaveBeenCalledWith(
+      accountDetailDto.value,
+    );
+    expect(usersService.createUser).toHaveBeenCalled();
+    expect(usersService.createUser).toHaveBeenCalledWith(updatedUser);
+  });
+
+  it('changeAccountDetail => should throws an error if new username is duplicate', async () => {
+    const accountDetailDto = {
+      field: 'username',
+      username: 'JackV981',
+      value: 'codingDupe',
+    } as AccountDetailDto;
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    const duplicateUser = {
+      id: 12,
+      name: 'Duppy',
+      username: 'codingDupe',
+      email: 'dup@gmail.com',
+      password: 'hashed-fake-password',
+    } as User;
+
+    usersService.findUserByUsername.mockResolvedValueOnce(user);
+    usersService.findUserByUsername.mockResolvedValueOnce(duplicateUser);
+
+    try {
+      await service.changeAccountDetail(accountDetailDto);
+    } catch (error) {
+      expect(error.message).toBe('Bad request!');
+      expect(usersService.findUserByUsername).toHaveBeenCalled();
+      expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+        accountDetailDto.username,
+      );
+    }
+  });
+
+  it('changeAccountDetail => should throws an error if new email is duplicate', async () => {
+    const accountDetailDto = {
+      field: 'email',
+      username: 'JackV981',
+      value: 'dup@gmail.com',
+    } as AccountDetailDto;
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    const duplicateUser = {
+      id: 12,
+      name: 'Duppy',
+      username: 'codingDupe',
+      email: 'dup@gmail.com',
+      password: 'hashed-fake-password',
+    } as User;
+
+    usersService.findUserByUsername.mockResolvedValueOnce(user);
+    usersService.findUserByEmail.mockResolvedValueOnce(duplicateUser);
+
+    try {
+      await service.changeAccountDetail(accountDetailDto);
+    } catch (error) {
+      expect(error.message).toEqual('Bad request!');
+      expect(usersService.findUserByUsername).toHaveBeenCalled();
+      expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+        accountDetailDto.username,
+      );
+      expect(usersService.findUserByEmail).toHaveBeenCalled();
+      expect(usersService.findUserByEmail).toHaveBeenCalledWith(
+        accountDetailDto.value,
+      );
+    }
+  });
+
+  it('changeAccountDetail => should return name, email, username after changing user name', async () => {
+    const accountDetailDto = {
+      field: 'name',
+      username: 'JackV981',
+      value: 'Jack',
+    } as AccountDetailDto;
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    const updatedUser = {
+      id: 15,
+      name: 'Jack',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    usersService.findUserByUsername.mockResolvedValue(user);
+    usersService.createUser.mockResolvedValue(updatedUser);
+
+    const result = await service.changeAccountDetail(accountDetailDto);
+
+    expect(result).toEqual({
+      name: updatedUser.name,
+      email: updatedUser.email,
+      username: updatedUser.username,
+    });
+    expect(usersService.findUserByUsername).toHaveBeenCalled();
+    expect(usersService.findUserByUsername).toHaveBeenCalledWith(
+      accountDetailDto.username,
+    );
+    expect(usersService.createUser).toHaveBeenCalled();
+    expect(usersService.createUser).toHaveBeenCalledWith(updatedUser);
+  });
+
+  it('getProfileData => should return name, email, username corresponding to passed in user id', async () => {
+    const id = 15;
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    const returningUser = {
+      name: user.name,
+      email: user.email,
+      username: user.username,
+    };
+    usersService.findUserById.mockResolvedValue(user);
+
+    const result = await service.getProfileData(id);
+
+    expect(result).toEqual(returningUser);
+    expect(usersService.findUserById).toHaveBeenCalled();
+    expect(usersService.findUserById).toHaveBeenCalledWith(id);
+  });
+
+  it('saveNewPassword => should throw an unauthorized error when token is invalid', async () => {
+    const newPassword = 'fake-new-password';
+    const id = 15;
+    const token = 'fake-token';
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    usersService.findUserById.mockResolvedValue(user);
+    jwtService.verifyAsync.mockRejectedValue(
+      new UnauthorizedException('token is invalid'),
+    );
+
+    try {
+      await service.saveNewPassword(newPassword, id, token);
+    } catch (error) {
+      expect(error.message).toEqual('token is invalid');
+      expect(usersService.findUserById).toHaveBeenCalled();
+      expect(usersService.findUserById).toHaveBeenCalledWith(id);
+      expect(jwtService.verifyAsync).toHaveBeenCalled();
+      expect(jwtService.verifyAsync).toHaveBeenCalledWith(token, {
+        secret: user.password,
+      });
+    }
+  });
+
+  it('saveNewPassword => should return user email, name , and username after updating the user password', async () => {
+    const newPassword = 'fake-new-password';
+    const id = 15;
+    const token = 'valid-token';
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
+    const hashedPassword = 'hashed-fake-new-password';
+
+    const updatedUser = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: hashedPassword,
+    } as User;
+
+    usersService.findUserById.mockResolvedValue(user);
+    jwtService.verifyAsync.mockResolvedValue({});
+    const bcryptHash = jest.fn().mockReturnValue(hashedPassword);
+    (bcrypt.hash as jest.Mock) = bcryptHash;
+    usersService.createUser.mockResolvedValue(updatedUser);
+
+    const result = await service.saveNewPassword(newPassword, id, token);
+
+    expect(result).toEqual({
+      name: updatedUser.name,
+      email: updatedUser.email,
+      username: updatedUser.username,
+    });
+    expect(usersService.findUserById).toHaveBeenCalled();
+    expect(usersService.findUserById).toHaveBeenCalledWith(id);
+    expect(jwtService.verifyAsync).toHaveBeenCalled();
+    expect(jwtService.verifyAsync).toHaveBeenCalledWith(token, {
+      secret: 'fake-hashed-password',
+    });
+    expect(bcryptHash).toHaveBeenCalled();
+    expect(bcryptHash).toHaveBeenCalledWith(newPassword, 10);
+    expect(usersService.createUser).toHaveBeenCalled();
+    expect(usersService.createUser).toHaveBeenCalledWith(user);
+  });
+
+  it('deleteUser => should called users service delete user method and return the deleted user', async () => {
+    const id = 15;
+
+    const deletedResult = {
+      raw: [],
+      affected: 1,
+    };
+
+    usersService.deleteUser.mockResolvedValue(deletedResult);
+
+    const result = await service.deleteUser(id);
+
+    expect(result).toEqual(deletedResult);
+    expect(usersService.deleteUser).toHaveBeenCalled();
+    expect(usersService.deleteUser).toHaveBeenCalledWith(id);
+  });
+
+  it('getUserProjects => should return users projects based on corresponding useId', async () => {
+    const userId = 15;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 2,
+                completedTasks: 1,
+                tasks: [
+                  { id: 3, name: 'T3', status: 'Done!' },
+                  { id: 4, name: 'T4', status: 'To Do' },
+                ],
+              },
+            ],
+          },
+          {
+            id: 2,
+            name: 'F2',
+            description: 'F2 Desc',
+            userStoryCount: 2,
+            completedUserStories: 1,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 3,
+                name: 'US3',
+                description: 'US3 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 5, name: 'T5', status: 'To Do' },
+                  { id: 6, name: 'T6', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 4,
+                name: 'US4',
+                description: 'US4 Desc',
+                tasksCount: 2,
+                completedTasks: 2,
+                tasks: [
+                  { id: 7, name: 'T7', status: 'Done!' },
+                  { id: 8, name: 'T8', status: 'Done!' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'P2',
+        user: { id: 15 },
+        description: 'P2 description',
+        status: 'To Do',
+        features: [],
+      },
+      ,
+    ];
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+
+    const result = await service.getUserProjects(userId);
+
+    expect(result).toEqual(projectsWithStatues);
+    expect(projectsService.getUserProjects).toHaveBeenCalled();
+    expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+  });
+
+  it('getProjectById => should return a project based on corresponding project id and user id', async () => {
+    const userId = 15;
+    const projectId = 1;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 2,
+                completedTasks: 1,
+                tasks: [
+                  { id: 3, name: 'T3', status: 'Done!' },
+                  { id: 4, name: 'T4', status: 'To Do' },
+                ],
+              },
+            ],
+          },
+          {
+            id: 2,
+            name: 'F2',
+            description: 'F2 Desc',
+            userStoryCount: 2,
+            completedUserStories: 1,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 3,
+                name: 'US3',
+                description: 'US3 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 5, name: 'T5', status: 'To Do' },
+                  { id: 6, name: 'T6', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 4,
+                name: 'US4',
+                description: 'US4 Desc',
+                tasksCount: 2,
+                completedTasks: 2,
+                tasks: [
+                  { id: 7, name: 'T7', status: 'Done!' },
+                  { id: 8, name: 'T8', status: 'Done!' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'P2',
+        user: { id: 15 },
+        description: 'P2 description',
+        status: 'To Do',
+        features: [],
+      },
+      ,
+    ];
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+
+    const result = await service.getProjectById(projectId, userId);
+
+    expect(result).toEqual(projectsWithStatues[0]);
+    expect(projectsService.getUserProjects).toHaveBeenCalled();
+    expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+  });
+
+  it('updateProject => should update project value', async () => {
+    const field = 'name';
+    const value = 'P1 - Edited';
+    const userId = 15;
+    const projectId = 1;
+
+    const updatedProject = {
+      id: 1,
+      user: { id: 15 },
+      name: 'P1 - Edited',
+      description: 'P1 Desc',
+      status: 'In Progress',
+      features: [
+        {
+          id: 1,
+          name: 'F1',
+          description: 'F1 Desc',
+          userStoryCount: 2,
+          completedUserStories: 0,
+          status: 'In Progress',
+          userStories: [
+            {
+              id: 1,
+              name: 'US1',
+              description: 'US1 Desc',
+              tasksCount: 2,
+              completedTasks: 0,
+              tasks: [
+                { id: 1, name: 'T1', status: 'To Do' },
+                { id: 2, name: 'T2', status: 'In Progress' },
+              ],
+            },
+            {
+              id: 2,
+              name: 'US2',
+              description: 'US2 Desc',
+              tasksCount: 2,
+              completedTasks: 1,
+              tasks: [
+                { id: 3, name: 'T3', status: 'Done!' },
+                { id: 4, name: 'T4', status: 'To Do' },
+              ],
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: 'F2',
+          description: 'F2 Desc',
+          userStoryCount: 2,
+          completedUserStories: 1,
+          status: 'In Progress',
+          userStories: [
+            {
+              id: 3,
+              name: 'US3',
+              description: 'US3 Desc',
+              tasksCount: 2,
+              completedTasks: 0,
+              tasks: [
+                { id: 5, name: 'T5', status: 'To Do' },
+                { id: 6, name: 'T6', status: 'In Progress' },
+              ],
+            },
+            {
+              id: 4,
+              name: 'US4',
+              description: 'US4 Desc',
+              tasksCount: 2,
+              completedTasks: 2,
+              tasks: [
+                { id: 7, name: 'T7', status: 'Done!' },
+                { id: 8, name: 'T8', status: 'Done!' },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    projectsService.updateProject.mockResolvedValue(updatedProject);
+
+    const result = await service.updateProject(field, value, userId, projectId);
+
+    expect(result).toEqual(updatedProject);
+    expect(projectsService.updateProject).toHaveBeenCalled();
+    expect(projectsService.updateProject).toHaveBeenCalledWith(
+      field,
+      value,
+      userId,
+      projectId,
+    );
+  });
+
+  it('deleteProject => should return a delete result after calling the deleteProject method in projectsService', async () => {
+    const projectId = 1;
+    const userId = 15;
+
+    const deletedResult = {
+      raw: [],
+      affected: 1,
+    };
+
+    projectsService.deleteProject.mockResolvedValue(deletedResult);
+
+    const result = await service.deleteProject(projectId, userId);
+
+    expect(result).toEqual(deletedResult);
+    expect(projectsService.deleteProject).toHaveBeenCalled();
+    expect(projectsService.deleteProject).toHaveBeenCalledWith(
+      projectId,
+      userId,
+    );
+  });
+
+  it('deleteFeature => should delete the feature and return the updated project', async () => {
+    const featureId = 3;
+    const userId = 15;
+
+    const projectId = 1;
+
+    const projectWithStatues = {
+      id: 1,
+      user: { id: 15 },
+      name: 'P1',
+      description: 'P1 Desc',
+      status: 'In Progress',
+      features: [
+        {
+          id: 1,
+          name: 'F1',
+          description: 'F1 Desc',
+          userStoryCount: 2,
+          completedUserStories: 0,
+          status: 'In Progress',
+          userStories: [
+            {
+              id: 1,
+              name: 'US1',
+              description: 'US1 Desc',
+              tasksCount: 2,
+              completedTasks: 0,
+              tasks: [
+                { id: 1, name: 'T1', status: 'To Do' },
+                { id: 2, name: 'T2', status: 'In Progress' },
+              ],
+            },
+            {
+              id: 2,
+              name: 'US2',
+              description: 'US2 Desc',
+              tasksCount: 2,
+              completedTasks: 1,
+              tasks: [
+                { id: 3, name: 'T3', status: 'Done!' },
+                { id: 4, name: 'T4', status: 'To Do' },
+              ],
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: 'F2',
+          description: 'F2 Desc',
+          userStoryCount: 2,
+          completedUserStories: 1,
+          status: 'In Progress',
+          userStories: [
+            {
+              id: 3,
+              name: 'US3',
+              description: 'US3 Desc',
+              tasksCount: 2,
+              completedTasks: 0,
+              tasks: [
+                { id: 5, name: 'T5', status: 'To Do' },
+                { id: 6, name: 'T6', status: 'In Progress' },
+              ],
+            },
+            {
+              id: 4,
+              name: 'US4',
+              description: 'US4 Desc',
+              tasksCount: 2,
+              completedTasks: 2,
+              tasks: [
+                { id: 7, name: 'T7', status: 'Done!' },
+                { id: 8, name: 'T8', status: 'Done!' },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    featuresService.deleteFeature.mockResolvedValue(projectId);
+    projectsService.getProjectById.mockResolvedValue(projectWithStatues);
+
+    const result = await service.deleteFeature(featureId, userId);
+
+    expect(result).toEqual(projectWithStatues);
+    expect(featuresService.deleteFeature).toHaveBeenCalled();
+    expect(featuresService.deleteFeature).toHaveBeenCalledWith(
+      featureId,
+      userId,
+    );
+    expect(projectsService.getProjectById).toHaveBeenCalled();
+    expect(projectsService.getProjectById).toHaveBeenCalledWith(projectId);
+  });
+
+  it('deleteUserStory => should delete the user story and return the updated project', async () => {
+    const userStoryId = 3;
+    const userId = 15;
+
+    const projectId = 1;
+
+    const projectWithStatues = {
+      id: 1,
+      user: { id: 15 },
+      name: 'P1',
+      description: 'P1 Desc',
+      status: 'In Progress',
+      features: [
+        {
+          id: 1,
+          name: 'F1',
+          description: 'F1 Desc',
+          userStoryCount: 2,
+          completedUserStories: 0,
+          status: 'In Progress',
+          userStories: [
+            {
+              id: 1,
+              name: 'US1',
+              description: 'US1 Desc',
+              tasksCount: 2,
+              completedTasks: 0,
+              tasks: [
+                { id: 1, name: 'T1', status: 'To Do' },
+                { id: 2, name: 'T2', status: 'In Progress' },
+              ],
+            },
+            {
+              id: 2,
+              name: 'US2',
+              description: 'US2 Desc',
+              tasksCount: 2,
+              completedTasks: 1,
+              tasks: [
+                { id: 3, name: 'T3', status: 'Done!' },
+                { id: 4, name: 'T4', status: 'To Do' },
+              ],
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: 'F2',
+          description: 'F2 Desc',
+          userStoryCount: 2,
+          completedUserStories: 1,
+          status: 'In Progress',
+          userStories: [
+            {
+              id: 4,
+              name: 'US4',
+              description: 'US4 Desc',
+              tasksCount: 2,
+              completedTasks: 2,
+              tasks: [
+                { id: 7, name: 'T7', status: 'Done!' },
+                { id: 8, name: 'T8', status: 'Done!' },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    userStoriesService.deleteUserStory.mockResolvedValue(projectId);
+    projectsService.getProjectById.mockResolvedValue(projectWithStatues);
+
+    const result = await service.deleteUserStory(userStoryId, userId);
+
+    expect(result).toEqual(projectWithStatues);
+    expect(userStoriesService.deleteUserStory).toHaveBeenCalled();
+    expect(userStoriesService.deleteUserStory).toHaveBeenCalledWith(
+      userStoryId,
+      userId,
+    );
+    expect(projectsService.getProjectById).toHaveBeenCalled();
+    expect(projectsService.getProjectById).toHaveBeenCalledWith(projectId);
+  });
+
+  it('deleteTask => should delete the task and return the corresponding story status and its updated task list', async () => {
+    const taskId = 3;
+    const userId = 15;
+
+    const userStoryId = 1;
+    const storyStatus = '2/2';
+    const updatedUserStory = {
+      id: 1,
+      name: 'US1',
+      description: 'US1 Desc',
+      tasks: [
+        { id: 1, name: 'T1', status: 'Done!' },
+        { id: 2, name: 'T2', status: 'Done!' },
+      ],
+    } as UserStory;
+
+    const returnObject = {
+      storyStatus,
+      taskList: updatedUserStory.tasks,
+    };
+
+    tasksService.deleteTask.mockResolvedValue(userStoryId);
+    userStoriesService.getUserStoryStatusById.mockResolvedValue(storyStatus);
+    userStoriesService.getUserStoryById.mockResolvedValue(updatedUserStory);
+
+    const result = await service.deleteTask(taskId, userId);
+
+    expect(result).toEqual(returnObject);
+    expect(tasksService.deleteTask).toHaveBeenCalled();
+    expect(tasksService.deleteTask).toHaveBeenCalledWith(taskId, userId);
+    expect(userStoriesService.getUserStoryStatusById).toHaveBeenCalled();
+    expect(userStoriesService.getUserStoryStatusById).toHaveBeenCalledWith(
+      userStoryId,
+    );
+    expect(userStoriesService.getUserStoryById).toHaveBeenCalled();
+    expect(userStoriesService.getUserStoryById).toHaveBeenCalledWith(
+      userStoryId,
+    );
   });
 });
