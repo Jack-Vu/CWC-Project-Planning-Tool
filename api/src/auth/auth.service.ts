@@ -3,7 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -12,12 +12,12 @@ import {
   LogInDto,
   SignUpDto,
 } from './auth.controller';
-import { User } from 'src/users/entities/user.entity';
-import { MailService } from 'src/mail/mail.service';
-import { ProjectsService } from 'src/projects/projects.service';
-import { FeaturesService } from 'src/features/features.service';
-import { UserStoriesService } from 'src/userStories/userStories.service';
-import { TasksService } from 'src/tasks/tasks.service';
+import { User } from '../users/entities/user.entity';
+import { MailService } from '../mail/mail.service';
+import { ProjectsService } from '../projects/projects.service';
+import { FeaturesService } from '../features/features.service';
+import { UserStoriesService } from '../userStories/userStories.service';
+import { TasksService } from '../tasks/tasks.service';
 
 @Injectable()
 export class AuthService {
@@ -47,6 +47,7 @@ export class AuthService {
       return await this.jwtService.signAsync(payload);
     }
   }
+  
   async verifyUniqueUsername(username: string) {
     const user = await this.usersService.findUserByUsername(username);
     if (!user?.username) {
