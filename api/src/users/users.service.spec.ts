@@ -9,11 +9,6 @@ describe('UsersService', () => {
 
   const mockUserRepository = {
     findOneBy: jest.fn(),
-    findUserById: jest.fn(),
-    findUserByUsername: jest.fn(),
-    findUserByEmail: jest.fn(),
-    createUser: jest.fn(),
-    deleteUser: jest.fn(),
     save: jest.fn(),
     delete: jest.fn(),
   };
@@ -117,18 +112,16 @@ describe('UsersService', () => {
 
   it('deleteUser => should return the user object that corresponds to the id passed in', async () => {
     const id = 1;
-    const user = {
-      id: 1,
-      name: 'test',
-      email: 'test@test.com',
-      username: 'test',
-      password: 'test-fake-password',
+
+    const deletedResult = {
+      raw: [],
+      affected: 1,
     };
 
-    jest.spyOn(mockUserRepository, 'delete').mockReturnValue(user);
+    jest.spyOn(mockUserRepository, 'delete').mockReturnValue(deletedResult);
     const result = await service.deleteUser(id);
 
-    expect(result).toEqual(user);
+    expect(result).toEqual(deletedResult);
     expect(mockUserRepository.delete).toHaveBeenCalled();
     expect(mockUserRepository.delete).toHaveBeenCalledWith(id);
   });

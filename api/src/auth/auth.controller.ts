@@ -195,35 +195,16 @@ export class AuthController {
     return this.authService.getProfileData(req.user.sub);
   }
 
-  @Post('reset-password')
-  sendResetPasswordEmail(@Body() email: Email) {
-    return this.authService.sendResetPasswordEmail(email);
-  }
-
-  @Post('save-new-password')
-  saveNewPassword(@Body() body: NewPasswordDto) {
-    return this.authService.saveNewPassword(
-      body.newPassword,
-      body.id,
-      body.token,
-    );
-  }
-
-  @UseGuards(AuthGuard)
-  @Post('delete-user')
-  deleteUser(@Request() req) {
-    return this.authService.deleteUser(req.user.sub);
-  }
-
   @UseGuards(AuthGuard)
   @Get('user-projects')
   async getUserProjects(@Request() req) {
-    const user = await this.authService.getProfileData(req.user.sub);
-    const projects = await this.authService.getUserProjects(req.user.sub);
-    return {
-      user,
-      projects,
-    };
+    return this.authService.getUserProjects(req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('project/:id')
+  getProjectById(@Param('id') id: number, @Request() req) {
+    return this.authService.getProjectById(id, req.user.sub);
   }
 
   @UseGuards(AuthGuard)
@@ -237,9 +218,20 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('project/:id')
-  getProjectById(@Param('id') id: number, @Request() req) {
-    return this.authService.getProjectById(id, req.user.sub);
+  @Post('update-project')
+  updateProject(@Body() updateProjectDto: UpdateProjectDto, @Request() req) {
+    return this.authService.updateProject(
+      updateProjectDto.field,
+      updateProjectDto.value,
+      req.user.sub,
+      updateProjectDto.projectId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('delete-project')
+  deleteProject(@Body('projectId') projectId: number, @Request() req) {
+    return this.authService.deleteProject(projectId, req.user.sub);
   }
 
   @UseGuards(AuthGuard)
@@ -252,6 +244,24 @@ export class AuthController {
       featureDto.projectId,
     );
   }
+
+  @UseGuards(AuthGuard)
+  @Post('update-feature')
+  updateFeature(@Body() updateFeatureDto: UpdateFeatureDto, @Request() req) {
+    return this.authService.updateFeature(
+      updateFeatureDto.field,
+      updateFeatureDto.value,
+      req.user.sub,
+      updateFeatureDto.featureId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('delete-feature')
+  deleteFeature(@Body('featureId') featureId: number, @Request() req) {
+    return this.authService.deleteFeature(featureId, req.user.sub);
+  }
+
   @UseGuards(AuthGuard)
   @Post('create-user-story')
   createUserStory(@Body() userStoryDto: UserStoryDto, @Request() req) {
@@ -262,6 +272,26 @@ export class AuthController {
       userStoryDto.projectId,
       userStoryDto.featureId,
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('update-user-story')
+  updateUserStory(
+    @Body() updateUserStoryDto: UpdateUserStoryDto,
+    @Request() req,
+  ) {
+    return this.authService.updateUserStory(
+      updateUserStoryDto.field,
+      updateUserStoryDto.value,
+      req.user.sub,
+      updateUserStoryDto.userStoryId,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('delete-user-story')
+  deleteUserStory(@Body('userStoryId') userStoryId: number, @Request() req) {
+    return this.authService.deleteUserStory(userStoryId, req.user.sub);
   }
 
   @UseGuards(AuthGuard)
@@ -286,40 +316,6 @@ export class AuthController {
       updateTaskDto.taskId,
     );
   }
-  @UseGuards(AuthGuard)
-  @Post('update-user-story')
-  updateUserStory(
-    @Body() updateUserStoryDto: UpdateUserStoryDto,
-    @Request() req,
-  ) {
-    return this.authService.updateUserStory(
-      updateUserStoryDto.field,
-      updateUserStoryDto.value,
-      req.user.sub,
-      updateUserStoryDto.userStoryId,
-    );
-  }
-
-  @UseGuards(AuthGuard)
-  @Post('update-feature')
-  updateFeature(@Body() updateFeatureDto: UpdateFeatureDto, @Request() req) {
-    return this.authService.updateFeature(
-      updateFeatureDto.field,
-      updateFeatureDto.value,
-      req.user.sub,
-      updateFeatureDto.featureId,
-    );
-  }
-  @UseGuards(AuthGuard)
-  @Post('update-project')
-  updateProject(@Body() updateProjectDto: UpdateProjectDto, @Request() req) {
-    return this.authService.updateProject(
-      updateProjectDto.field,
-      updateProjectDto.value,
-      req.user.sub,
-      updateProjectDto.projectId,
-    );
-  }
 
   @UseGuards(AuthGuard)
   @Post('delete-task')
@@ -327,21 +323,23 @@ export class AuthController {
     return this.authService.deleteTask(taskId, req.user.sub);
   }
 
-  @UseGuards(AuthGuard)
-  @Post('delete-user-story')
-  deleteUserStory(@Body('userStoryId') userStoryId: number, @Request() req) {
-    return this.authService.deleteUserStory(userStoryId, req.user.sub);
+  @Post('reset-password')
+  sendResetPasswordEmail(@Body() email: string) {
+    return this.authService.sendResetPasswordEmail(email);
+  }
+
+  @Post('save-new-password')
+  saveNewPassword(@Body() body: NewPasswordDto) {
+    return this.authService.saveNewPassword(
+      body.newPassword,
+      body.id,
+      body.token,
+    );
   }
 
   @UseGuards(AuthGuard)
-  @Post('delete-feature')
-  deleteFeature(@Body('featureId') featureId: number, @Request() req) {
-    return this.authService.deleteFeature(featureId, req.user.sub);
-  }
-
-  @UseGuards(AuthGuard)
-  @Post('delete-project')
-  deleteProject(@Body('projectId') projectId: number, @Request() req) {
-    return this.authService.deleteProject(projectId, req.user.sub);
+  @Post('delete-user')
+  deleteUser(@Request() req) {
+    return this.authService.deleteUser(req.user.sub);
   }
 }

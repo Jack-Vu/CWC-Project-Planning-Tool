@@ -59,7 +59,7 @@ export class ProjectsService {
     return project;
   }
 
-  async getUserProjects(id: number) {
+  async getUserProjects(id: number): Promise<any> {
     const projects = await this.projectsRepository.find({
       where: { user: { id } },
       order: {
@@ -82,7 +82,7 @@ export class ProjectsService {
     return projects.map((project) => this.addStatusesToProject(project));
   }
 
-  async getProjectById(id: number) {
+  async getProjectById(id: number): Promise<any> {
     const project = await this.projectsRepository.findOne({
       where: { id },
       order: {
@@ -121,7 +121,7 @@ export class ProjectsService {
     value: string,
     userId: number,
     projectId: number,
-  ) {
+  ): Promise<any> {
     const projectToUpdate = await this.projectsRepository.findOne({
       where: { id: projectId, user: { id: userId } },
     });
