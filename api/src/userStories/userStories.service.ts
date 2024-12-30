@@ -87,6 +87,5 @@ export class UserStoriesService {
     } else {
       throw new BadRequestException('You cannot delete that user story');
     }
-    console.log('Story to delete', storyToDelete);
   }
 }

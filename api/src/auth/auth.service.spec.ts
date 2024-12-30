@@ -812,6 +812,14 @@ describe('AuthService', () => {
   it('getUserProjects => should return users projects based on corresponding useId', async () => {
     const userId = 15;
 
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      username: 'JackV981',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-hashed-password',
+    } as User;
+
     const projectsWithStatues = [
       {
         id: 1,
@@ -896,11 +904,21 @@ describe('AuthService', () => {
       },
     ];
 
+    usersService.findUserById.mockResolvedValue(user);
     projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
 
     const result = await service.getUserProjects(userId);
 
-    expect(result).toEqual(projectsWithStatues);
+    expect(result).toEqual({
+      user: {
+        name: user.name,
+        email: user.email,
+        username: user.username,
+      },
+      projects: projectsWithStatues,
+    });
+    expect(usersService.findUserById).toHaveBeenCalled();
+    expect(usersService.findUserById).toHaveBeenCalledWith(userId);
     expect(projectsService.getUserProjects).toHaveBeenCalled();
     expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
   });
@@ -2244,5 +2262,55 @@ describe('AuthService', () => {
     expect(userStoriesService.getUserStoryById).toHaveBeenCalledWith(
       userStoryId,
     );
+  });
+
+  it('sendResetPasswordEmail => should find the user and send the user a password reset email', async () => {
+    const email = 'jacknvu98@gmail.com';
+
+    const user = {
+      id: 15,
+      name: 'Jack Vu',
+      email: 'jacknvu98@gmail.com',
+      password: 'fake-password',
+      username: 'JackV981',
+    } as User;
+
+    const token = 'fake token';
+
+    usersService.findUserByEmail.mockResolvedValue(user);
+    jwtService.signAsync.mockResolvedValue(token);
+    mailService.sendPasswordResetEmail.mockResolvedValue(undefined);
+
+    const result = await service.sendResetPasswordEmail(email);
+
+    expect(result).toBeUndefined();
+    expect(usersService.findUserByEmail).toHaveBeenCalled();
+    expect(usersService.findUserByEmail).toHaveBeenCalledWith(email);
+    expect(jwtService.signAsync).toHaveBeenCalled();
+    expect(jwtService.signAsync).toHaveBeenCalledWith(
+      { sub: 15 },
+      { secret: 'fake-password', expiresIn: '10m' },
+    );
+    expect(mailService.sendPasswordResetEmail).toHaveBeenCalled();
+    expect(mailService.sendPasswordResetEmail).toHaveBeenCalledWith(
+      user,
+      token,
+    );
+  });
+
+  it('sendResetPasswordEmail => should throw a bad request exception when user is not found', async () => {
+    const email = 'jacknvu98@gmail.com';
+
+    const user = null;
+
+    usersService.findUserByEmail.mockResolvedValue(user);
+
+    try {
+      await service.sendResetPasswordEmail(email);
+    } catch (error) {
+      expect(error).toEqual(new BadRequestException('email not found'));
+      expect(usersService.findUserByEmail).toHaveBeenCalled();
+      expect(usersService.findUserByEmail).toHaveBeenCalledWith(email);
+    }
   });
 });

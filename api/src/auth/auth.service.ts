@@ -6,12 +6,7 @@ import {
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import {
-  AccountDetailDto,
-  Email,
-  LogInDto,
-  SignUpDto,
-} from './auth.controller';
+import { AccountDetailDto, LogInDto, SignUpDto } from './auth.controller';
 import { User } from '../users/entities/user.entity';
 import { MailService } from '../mail/mail.service';
 import { ProjectsService } from '../projects/projects.service';
@@ -152,8 +147,8 @@ export class AuthService {
     };
   }
 
-  async sendResetPasswordEmail(email: Email) {
-    const user = await this.usersService.findUserByEmail(email.email);
+  async sendResetPasswordEmail(email: string) {
+    const user = await this.usersService.findUserByEmail(email);
     if (!user) {
       throw new BadRequestException('email not found');
     }
@@ -189,7 +184,13 @@ export class AuthService {
   }
 
   async getUserProjects(userId: number) {
-    return this.projectsService.getUserProjects(userId);
+    const user = await this.getProfileData(userId);
+    const projects = await this.projectsService.getUserProjects(userId);
+
+    return {
+      user,
+      projects,
+    };
   }
 
   async getProjectById(projectId: number, userId: number) {
@@ -267,13 +268,6 @@ export class AuthService {
     featureId: number,
   ) {
     const projects = await this.projectsService.getUserProjects(userId);
-    console.log(projects);
-
-    console.log(
-      projects.find((project) => projectId === project.id),
-      projectId,
-    );
-
     const project = projects.find((project) => project.id === projectId);
     if (project) {
       const features = project.features;
@@ -354,7 +348,7 @@ export class AuthService {
     value: string,
     userId: number,
     taskId: number,
-  ) {
+  ): Promise<any> {
     const userStoryId = await this.tasksService.updateTask(
       field,
       value,
