@@ -225,13 +225,11 @@ export class AuthService {
     userId: number,
     projectId: number,
   ) {
-    const project = (await this.projectsService.getUserProjects(userId)).find(
-      (project) => {
-        return project.id === projectId;
-      },
-    );
+    const projects = await this.projectsService.getUserProjects(userId);
+    const project = projects.find((project) => project.id === projectId);
+
     if (project) {
-      await this.featuresService.createFeature(name, description, project.id);
+      await this.featuresService.createFeature(name, description, projectId);
       return await this.projectsService.getProjectById(projectId);
     } else {
       throw new UnauthorizedException('Unauthorized!');
@@ -269,8 +267,14 @@ export class AuthService {
     featureId: number,
   ) {
     const projects = await this.projectsService.getUserProjects(userId);
-    const project = projects.find((project) => project.id === projectId);
+    console.log(projects);
 
+    console.log(
+      projects.find((project) => projectId === project.id),
+      projectId,
+    );
+
+    const project = projects.find((project) => project.id === projectId);
     if (project) {
       const features = project.features;
       const feature = features.find((feature) => feature.id === featureId);
@@ -359,7 +363,7 @@ export class AuthService {
     );
     return await this.userStoriesService.getUserStoryStatusById(userStoryId);
   }
-  
+
   async deleteTask(taskId: number, userId: number) {
     const userStoryId = await this.tasksService.deleteTask(taskId, userId);
     const storyStatus =
@@ -371,10 +375,4 @@ export class AuthService {
       taskList: updatedUserStory.tasks,
     };
   }
-
-
-
- 
-
-  
 }

@@ -894,7 +894,6 @@ describe('AuthService', () => {
         status: 'To Do',
         features: [],
       },
-      ,
     ];
 
     projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
@@ -992,7 +991,6 @@ describe('AuthService', () => {
         status: 'To Do',
         features: [],
       },
-      ,
     ];
 
     projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
@@ -1119,6 +1117,283 @@ describe('AuthService', () => {
     );
   });
 
+  it('createFeature => should create a feature to an existing project and return the updated project', async () => {
+    const name = 'F1';
+    const description = 'F1 Desc';
+    const userId = 15;
+    const projectId = 2;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 2,
+                completedTasks: 1,
+                tasks: [
+                  { id: 3, name: 'T3', status: 'Done!' },
+                  { id: 4, name: 'T4', status: 'To Do' },
+                ],
+              },
+            ],
+          },
+          {
+            id: 2,
+            name: 'F2',
+            description: 'F2 Desc',
+            userStoryCount: 2,
+            completedUserStories: 1,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 3,
+                name: 'US3',
+                description: 'US3 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 5, name: 'T5', status: 'To Do' },
+                  { id: 6, name: 'T6', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 4,
+                name: 'US4',
+                description: 'US4 Desc',
+                tasksCount: 2,
+                completedTasks: 2,
+                tasks: [
+                  { id: 7, name: 'T7', status: 'Done!' },
+                  { id: 8, name: 'T8', status: 'Done!' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'P2',
+        user: { id: 15 },
+        description: 'P2 description',
+        status: 'To Do',
+        features: [],
+      },
+    ];
+
+    const updatedProject = {
+      id: 2,
+      name: 'P2',
+      user: { id: 15 },
+      description: 'P2 description',
+      status: 'To Do',
+      features: [
+        {
+          id: 3,
+          name: 'F1',
+          description: 'F1 Desc',
+          userStoryCount: 0,
+          completedUserStories: 0,
+          status: 'To Do',
+          userStories: [],
+        },
+      ],
+    };
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+    projectsService.getProjectById.mockResolvedValue(updatedProject);
+
+    const result = await service.createFeature(
+      name,
+      description,
+      userId,
+      projectId,
+    );
+
+    expect(result).toEqual(updatedProject);
+    expect(projectsService.getUserProjects).toHaveBeenCalled();
+    expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+    expect(featuresService.createFeature).toHaveBeenCalled();
+    expect(featuresService.createFeature).toHaveBeenCalledWith(
+      name,
+      description,
+      projectId,
+    );
+    expect(projectsService.getProjectById).toHaveBeenCalled();
+    expect(projectsService.getProjectById).toHaveBeenCalledWith(projectId);
+  });
+
+  it('createFeature => should throw unauthorized error when project is undefined', async () => {
+    const name = 'F1';
+    const description = 'F1 Desc';
+    const userId = 1;
+    const projectId = 40;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 2,
+                completedTasks: 1,
+                tasks: [
+                  { id: 3, name: 'T3', status: 'Done!' },
+                  { id: 4, name: 'T4', status: 'To Do' },
+                ],
+              },
+            ],
+          },
+          {
+            id: 2,
+            name: 'F2',
+            description: 'F2 Desc',
+            userStoryCount: 2,
+            completedUserStories: 1,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 3,
+                name: 'US3',
+                description: 'US3 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 5, name: 'T5', status: 'To Do' },
+                  { id: 6, name: 'T6', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 4,
+                name: 'US4',
+                description: 'US4 Desc',
+                tasksCount: 2,
+                completedTasks: 2,
+                tasks: [
+                  { id: 7, name: 'T7', status: 'Done!' },
+                  { id: 8, name: 'T8', status: 'Done!' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: 'P2',
+        user: { id: 15 },
+        description: 'P2 description',
+        status: 'To Do',
+        features: [],
+      },
+    ];
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+
+    try {
+      await service.createFeature(name, description, userId, projectId);
+    } catch (error) {
+      expect(error).toEqual(new UnauthorizedException('Unauthorized!'));
+      expect(projectsService.getUserProjects).toHaveBeenCalled();
+      expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+    }
+  });
+
+  it('updateFeature => should call the featuresService updateFeature method and return the updated project', async () => {
+    const field = 'name';
+    const value = 'F1 - Edited';
+    const userId = 15;
+    const featureId = 3;
+
+    const projectId = 2;
+
+    const updatedProject = {
+      id: 2,
+      name: 'P2',
+      user: { id: 15 },
+      description: 'P2 description',
+      status: 'To Do',
+      features: [
+        {
+          id: 3,
+          name: 'F1 - Edited',
+          description: 'F1 Desc',
+          userStoryCount: 0,
+          completedUserStories: 0,
+          status: 'To Do',
+          userStories: [],
+        },
+      ],
+    };
+
+    featuresService.updateFeature.mockResolvedValue(projectId);
+    projectsService.getProjectById.mockResolvedValue(updatedProject);
+
+    const result = await service.updateFeature(field, value, userId, featureId);
+
+    expect(result).toEqual(updatedProject);
+    expect(featuresService.updateFeature).toHaveBeenCalled();
+    expect(featuresService.updateFeature).toHaveBeenCalledWith(
+      field,
+      value,
+      userId,
+      featureId,
+    );
+    expect(projectsService.getProjectById).toHaveBeenCalled();
+    expect(projectsService.getProjectById).toHaveBeenCalledWith(projectId);
+  });
+
   it('deleteFeature => should delete the feature and return the updated project', async () => {
     const featureId = 3;
     const userId = 15;
@@ -1214,6 +1489,326 @@ describe('AuthService', () => {
     expect(projectsService.getProjectById).toHaveBeenCalledWith(projectId);
   });
 
+  it('createUserStory => should call the usersStoriesService to create a user story and return the updated project', async () => {
+    const name = 'US3';
+    const description = 'US3 Desc';
+    const userId = 15;
+    const projectId = 1;
+    const featureId = 1;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 2,
+                completedTasks: 1,
+                tasks: [
+                  { id: 3, name: 'T3', status: 'Done!' },
+                  { id: 4, name: 'T4', status: 'To Do' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    const updatedProject = {
+      id: 1,
+      user: { id: 15 },
+      name: 'P1',
+      description: 'P1 Desc',
+      status: 'In Progress',
+      features: [
+        {
+          id: 1,
+          name: 'F1',
+          description: 'F1 Desc',
+          userStoryCount: 2,
+          completedUserStories: 0,
+          status: 'In Progress',
+          userStories: [
+            {
+              id: 1,
+              name: 'US1',
+              description: 'US1 Desc',
+              tasksCount: 2,
+              completedTasks: 0,
+              tasks: [
+                { id: 1, name: 'T1', status: 'To Do' },
+                { id: 2, name: 'T2', status: 'In Progress' },
+              ],
+            },
+            {
+              id: 2,
+              name: 'US2',
+              description: 'US2 Desc',
+              tasksCount: 2,
+              completedTasks: 1,
+              tasks: [
+                { id: 3, name: 'T3', status: 'Done!' },
+                { id: 4, name: 'T4', status: 'To Do' },
+              ],
+            },
+            {
+              id: 3,
+              name: 'US3',
+              description: 'US3 Desc',
+              tasks: [],
+            },
+          ],
+        },
+      ],
+    };
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+    projectsService.getProjectById.mockResolvedValue(updatedProject);
+
+    const result = await service.createUserStory(
+      name,
+      description,
+      userId,
+      projectId,
+      featureId,
+    );
+
+    expect(result).toEqual(updatedProject);
+    expect(projectsService.getUserProjects).toHaveBeenCalled();
+    expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+    expect(userStoriesService.createUserStory).toHaveBeenCalled();
+    expect(userStoriesService.createUserStory).toHaveBeenCalledWith(
+      name,
+      description,
+      featureId,
+    );
+    expect(projectsService.getProjectById).toHaveBeenCalled();
+    expect(projectsService.getProjectById).toHaveBeenCalledWith(projectId);
+  });
+
+  it('createUserStory => should throw unauthorized error when feature is undefined', async () => {
+    const name = 'US3';
+    const description = 'US3 Desc';
+    const userId = 15;
+    const projectId = 1;
+    const featureId = 100;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 2,
+                completedTasks: 1,
+                tasks: [
+                  { id: 3, name: 'T3', status: 'Done!' },
+                  { id: 4, name: 'T4', status: 'To Do' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+
+    try {
+      await service.createUserStory(
+        name,
+        description,
+        userId,
+        projectId,
+        featureId,
+      );
+    } catch (error) {
+      expect(error).toEqual(new UnauthorizedException('Unauthorized!'));
+      expect(projectsService.getUserProjects).toHaveBeenCalled();
+      expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+    }
+  });
+
+  it('createUserStory => should throw unauthorized error when project is undefined', async () => {
+    const name = 'US3';
+    const description = 'US3 Desc';
+    const userId = 15;
+    const projectId = 900;
+    const featureId = 1;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 2,
+                completedTasks: 1,
+                tasks: [
+                  { id: 3, name: 'T3', status: 'Done!' },
+                  { id: 4, name: 'T4', status: 'To Do' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+
+    try {
+      await service.createUserStory(
+        name,
+        description,
+        userId,
+        projectId,
+        featureId,
+      );
+    } catch (error) {
+      expect(error).toEqual(new UnauthorizedException('Unauthorized!'));
+      expect(projectsService.getUserProjects).toHaveBeenCalled();
+      expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+    }
+  });
+
+  it('updateUserStory => should call the userStoriesService updateUserStory method and return the updated project', async () => {
+    const field = 'name';
+    const value = 'US1 - Edited';
+    const userId = 15;
+    const userStoryId = 1;
+
+    const projectId = 2;
+
+    const updatedProject = {
+      id: 2,
+      name: 'P2',
+      user: { id: 15 },
+      description: 'P2 description',
+      status: 'To Do',
+      features: [
+        {
+          id: 3,
+          name: 'F1',
+          description: 'F1 Desc',
+          userStoryCount: 2,
+          completedUserStories: 0,
+          status: 'In Progress',
+          userStories: [
+            {
+              id: 1,
+              name: 'US1 - Edited',
+              description: 'US1 Desc',
+              tasksCount: 2,
+              completedTasks: 0,
+              tasks: [
+                { id: 1, name: 'T1', status: 'To Do' },
+                { id: 2, name: 'T2', status: 'In Progress' },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    userStoriesService.updateUserStory.mockResolvedValue(projectId);
+    projectsService.getProjectById.mockResolvedValue(updatedProject);
+
+    const result = await service.updateUserStory(
+      field,
+      value,
+      userId,
+      userStoryId,
+    );
+
+    expect(result).toEqual(updatedProject);
+    expect(userStoriesService.updateUserStory).toHaveBeenCalled();
+    expect(userStoriesService.updateUserStory).toHaveBeenCalledWith(
+      field,
+      value,
+      userId,
+      userStoryId,
+    );
+    expect(projectsService.getProjectById).toHaveBeenCalled();
+    expect(projectsService.getProjectById).toHaveBeenCalledWith(projectId);
+  });
+
   it('deleteUserStory => should delete the user story and return the updated project', async () => {
     const userStoryId = 3;
     const userId = 15;
@@ -1296,6 +1891,319 @@ describe('AuthService', () => {
     );
     expect(projectsService.getProjectById).toHaveBeenCalled();
     expect(projectsService.getProjectById).toHaveBeenCalledWith(projectId);
+  });
+
+  it('createTask => should call the tasksService to create a task and return the updated project', async () => {
+    const name = 'T3';
+    const userId = 15;
+    const projectId = 1;
+    const featureId = 1;
+    const userStoryId = 1;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 0,
+                completedTasks: 0,
+                tasks: [],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    const updatedProject = {
+      id: 1,
+      user: { id: 15 },
+      name: 'P1',
+      description: 'P1 Desc',
+      status: 'In Progress',
+      features: [
+        {
+          id: 1,
+          name: 'F1',
+          description: 'F1 Desc',
+          userStoryCount: 2,
+          completedUserStories: 0,
+          status: 'In Progress',
+          userStories: [
+            {
+              id: 1,
+              name: 'US1',
+              description: 'US1 Desc',
+              tasksCount: 2,
+              completedTasks: 0,
+              tasks: [
+                { id: 1, name: 'T1', status: 'To Do' },
+                { id: 2, name: 'T2', status: 'In Progress' },
+                { id: 3, name: 'T3', status: 'To Do' },
+              ],
+            },
+            {
+              id: 2,
+              name: 'US2',
+              description: 'US2 Desc',
+              tasksCount: 0,
+              completedTasks: 0,
+              tasks: [],
+            },
+          ],
+        },
+      ],
+    };
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+    projectsService.getProjectById.mockResolvedValue(updatedProject);
+
+    const result = await service.createTask(
+      name,
+      userId,
+      projectId,
+      featureId,
+      userStoryId,
+    );
+
+    expect(result).toEqual(updatedProject);
+    expect(projectsService.getUserProjects).toHaveBeenCalled();
+    expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+    expect(tasksService.createTask).toHaveBeenCalled();
+    expect(tasksService.createTask).toHaveBeenCalledWith(name, userStoryId);
+    expect(projectsService.getProjectById).toHaveBeenCalled();
+    expect(projectsService.getProjectById).toHaveBeenCalledWith(projectId);
+  });
+
+  it('createTask => should throw an error when user story is undefined', async () => {
+    const name = 'T3';
+    const userId = 15;
+    const projectId = 1;
+    const featureId = 1;
+    const userStoryId = 100;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 0,
+                completedTasks: 0,
+                tasks: [],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+    try {
+      await service.createTask(name, userId, projectId, featureId, userStoryId);
+    } catch (error) {
+      expect(error).toEqual(new UnauthorizedException('Unauthorized!'));
+      expect(projectsService.getUserProjects).toHaveBeenCalled();
+      expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+    }
+  });
+
+  it('createTask => should throw an error when feature is undefined', async () => {
+    const name = 'T3';
+    const userId = 15;
+    const projectId = 1;
+    const featureId = 100;
+    const userStoryId = 1;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 0,
+                completedTasks: 0,
+                tasks: [],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+    try {
+      await service.createTask(name, userId, projectId, featureId, userStoryId);
+    } catch (error) {
+      expect(error).toEqual(new UnauthorizedException('Unauthorized!'));
+      expect(projectsService.getUserProjects).toHaveBeenCalled();
+      expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+    }
+  });
+
+  it('createTask => should throw an error when project is undefined', async () => {
+    const name = 'T3';
+    const userId = 15;
+    const projectId = 100;
+    const featureId = 1;
+    const userStoryId = 1;
+
+    const projectsWithStatues = [
+      {
+        id: 1,
+        user: { id: 15 },
+        name: 'P1',
+        description: 'P1 Desc',
+        status: 'In Progress',
+        features: [
+          {
+            id: 1,
+            name: 'F1',
+            description: 'F1 Desc',
+            userStoryCount: 2,
+            completedUserStories: 0,
+            status: 'In Progress',
+            userStories: [
+              {
+                id: 1,
+                name: 'US1',
+                description: 'US1 Desc',
+                tasksCount: 2,
+                completedTasks: 0,
+                tasks: [
+                  { id: 1, name: 'T1', status: 'To Do' },
+                  { id: 2, name: 'T2', status: 'In Progress' },
+                ],
+              },
+              {
+                id: 2,
+                name: 'US2',
+                description: 'US2 Desc',
+                tasksCount: 0,
+                completedTasks: 0,
+                tasks: [],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    projectsService.getUserProjects.mockResolvedValue(projectsWithStatues);
+    try {
+      await service.createTask(name, userId, projectId, featureId, userStoryId);
+    } catch (error) {
+      expect(error).toEqual(new UnauthorizedException('Unauthorized!'));
+      expect(projectsService.getUserProjects).toHaveBeenCalled();
+      expect(projectsService.getUserProjects).toHaveBeenCalledWith(userId);
+    }
+  });
+
+  it('updateTask => should call the tasksService updateTask method and return the updated user story status', async () => {
+    const field = 'name';
+    const value = 'T1 - Edited';
+    const userId = 15;
+    const taskId = 1;
+
+    const userStoryId = 1;
+
+    const updatedUserStoryStatus = '0/3';
+
+    tasksService.updateTask.mockResolvedValue(userStoryId);
+    userStoriesService.getUserStoryStatusById.mockResolvedValue(
+      updatedUserStoryStatus,
+    );
+
+    const result = await service.updateTask(field, value, userId, taskId);
+
+    expect(result).toEqual(updatedUserStoryStatus);
+    expect(tasksService.updateTask).toHaveBeenCalled();
+    expect(tasksService.updateTask).toHaveBeenCalledWith(
+      field,
+      value,
+      userId,
+      taskId,
+    );
+    expect(userStoriesService.getUserStoryStatusById).toHaveBeenCalled();
+    expect(userStoriesService.getUserStoryStatusById).toHaveBeenCalledWith(
+      userStoryId,
+    );
   });
 
   it('deleteTask => should delete the task and return the corresponding story status and its updated task list', async () => {
